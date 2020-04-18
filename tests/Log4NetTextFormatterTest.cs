@@ -167,6 +167,21 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void ExceptionFormatter()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
+            var formatter = new Log4NetTextFormatter(options => options.ExceptionFormatter = e => $"Type = {e.GetType().FullName}{options.XmlWriterSettings.NewLineChars}Message = {e.Message}");
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
         public void ThreadId()
         {
             // Arrange
@@ -291,6 +306,19 @@ namespace Serilog.Formatting.Log4Net.Tests
                 o.FilterProperty = null!;
             });
             Assert.NotNull(options.FilterProperty);
+        }
+
+        [Fact]
+        public void ExceptionFormatterIsNeverNull()
+        {
+            Log4NetTextFormatterOptions? options = null!;
+            // ReSharper disable once ObjectCreationAsStatement
+            new Log4NetTextFormatter(o =>
+            {
+                options = o;
+                o.ExceptionFormatter = null!;
+            });
+            Assert.NotNull(options.ExceptionFormatter);
         }
     }
 }

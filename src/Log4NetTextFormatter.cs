@@ -68,7 +68,9 @@ namespace Serilog.Formatting.Log4Net
             _options = new Log4NetTextFormatterOptions();
             configureOptions?.Invoke(_options);
             _options.XmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
-            _options.FilterProperty ??= new Log4NetTextFormatterOptions().FilterProperty;
+            var defaultOptions = new Log4NetTextFormatterOptions();
+            _options.FilterProperty ??= defaultOptions.FilterProperty;
+            _options.ExceptionFormatter ??= defaultOptions.ExceptionFormatter;
         }
 
         /// <summary>
@@ -241,7 +243,7 @@ namespace Serilog.Formatting.Log4Net
             var exception = logEvent.Exception;
             if (exception != null)
             {
-                WriteContent(writer, "exception", exception.ToString());
+                WriteContent(writer, "exception", _options.ExceptionFormatter(exception));
             }
         }
 

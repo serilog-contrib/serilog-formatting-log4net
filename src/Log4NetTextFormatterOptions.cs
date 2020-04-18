@@ -40,5 +40,11 @@ namespace Serilog.Formatting.Log4Net
         /// The default value always returns <c>true</c>, i.e. it doesn't filter out any property.
         /// </summary>
         public Func<LogEvent, string, bool> FilterProperty { get; set; } = (logEvent, propertyName) => true;
+
+        /// <summary>
+        /// A function controlling how all exceptions are formatted.
+        /// The default implementation calls <see cref="Exception.ToString"/>.
+        /// </summary>
+        public Func<Exception, string> ExceptionFormatter { get; set; } = exception => exception.ToString();
     }
 }

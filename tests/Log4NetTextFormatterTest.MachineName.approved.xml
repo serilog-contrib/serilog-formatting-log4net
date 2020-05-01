@@ -2,5 +2,5 @@
   <log4net:properties>
     <log4net:data name="log4net:HostName" value="the-machine-name" />
   </log4net:properties>
-  <log4net:message>Hello from Serilog</log4net:message>
+  <log4net:message><![CDATA[Hello from Serilog]]></log4net:message>
 </log4net:event>

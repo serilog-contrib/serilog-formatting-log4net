@@ -14,10 +14,10 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
-        /// The <see cref="CDataMode"/> controlling how CData sections are emitted.
-        /// The default value is <see cref="Log4Net.CDataMode.IfNeeded"/>.
+        /// The <see cref="CDataMode"/> controlling how <c>message</c> and <c>exception</c> XML elements are written.
+        /// The default value is <see cref="Log4Net.CDataMode.Always"/>.
         /// </summary>
-        public CDataMode CDataMode { get; set; } = CDataMode.IfNeeded;
+        public CDataMode CDataMode { get; set; } = CDataMode.Always;
 
         /// <summary>
         /// The XML namespace used on log events. Set to <c>null</c> to remove namespaces.

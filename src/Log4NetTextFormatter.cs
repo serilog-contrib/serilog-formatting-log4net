@@ -117,9 +117,9 @@ namespace Serilog.Formatting.Log4Net
         /// <remarks>Only properties with a <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
         private static void WriteEventAttribute(LogEvent logEvent, XmlWriter writer, string attributeName, string propertyName)
         {
-            if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue)
+            if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue && scalarValue.Value != null)
             {
-                writer.WriteAttributeString(attributeName, scalarValue.Value.ToString());
+                writer.WriteAttributeString(attributeName, RenderValue(scalarValue));
             }
         }
 
@@ -151,7 +151,8 @@ namespace Serilog.Formatting.Log4Net
         private void WriteProperties(LogEvent logEvent, XmlWriter writer)
         {
             var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key)).ToList();
-            if (properties.Count == 0 && !logEvent.Properties.ContainsKey(MachineNamePropertyName))
+            var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue scalarValue && scalarValue.Value != null;
+            if (properties.Count == 0 && !hasMachineNameProperty)
             {
                 return;
             }
@@ -168,6 +169,20 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
+        /// Render a <see cref="LogEventPropertyValue"/> as <see cref="string"/>, without quotes if the value is a <see cref="ScalarValue"/> containing a <see cref="string"/>.
+        /// This is appropriate to use for an XML attribute.
+        /// </summary>
+        /// <param name="value">The value to render.</param>
+        /// <returns>A string representation of the <paramref name="value"/>.</returns>
+        private static string RenderValue(LogEventPropertyValue value)
+        {
+            var valueWriter = new StringWriter();
+            // The "l" format specifier switches off quoting of strings, see https://github.com/serilog/serilog/wiki/Formatting-Output#formatting-plain-text
+            value.Render(valueWriter, value is ScalarValue scalarValue && scalarValue.Value is string ? "l" : null);
+            return valueWriter.ToString();
+        }
+
+        /// <summary>
         /// Write a single Serilog property into log4net property format, handling all <see cref="LogEventPropertyValue"/> types, i.e.
         /// <see cref="ScalarValue"/>, <see cref="DictionaryValue"/>, <see cref="SequenceValue"/> and <see cref="StructureValue"/>.
         /// </summary>
@@ -179,12 +194,11 @@ namespace Serilog.Formatting.Log4Net
         {
             void WriteProperty(string name, LogEventPropertyValue value)
             {
-                var valueWriter = new StringWriter();
-                // The "l" format specifier switches off quoting of strings, see https://github.com/serilog/serilog/wiki/Formatting-Output#formatting-plain-text
-                value.Render(valueWriter, value is ScalarValue scalarValue && scalarValue.Value is string ? "l" : null);
+                if (value is ScalarValue scalarValue && scalarValue.Value == null)
+                    return;
                 WriteStartElement(writer, "data");
                 writer.WriteAttributeString("name", name);
-                writer.WriteAttributeString("value", valueWriter.ToString());
+                writer.WriteAttributeString("value", RenderValue(value));
                 writer.WriteEndElement();
             }
 

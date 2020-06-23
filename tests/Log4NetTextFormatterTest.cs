@@ -100,6 +100,21 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void NullProperty()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty("n/a", new ScalarValue(null)));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
         public void TwoProperties()
         {
             // Arrange
@@ -107,6 +122,24 @@ namespace Serilog.Formatting.Log4Net.Tests
             var logEvent = CreateLogEvent(properties: new[]{
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
+            });
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void TwoPropertiesOneNull()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new[]{
+                new LogEventProperty("n/a", new ScalarValue(null)),
+                new LogEventProperty("one", new ScalarValue(1)),
             });
             var formatter = new Log4NetTextFormatter();
 
@@ -197,6 +230,21 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void ThreadIdNull()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty("ThreadId", new ScalarValue(null)));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
         public void UserName()
         {
             // Arrange
@@ -212,11 +260,41 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void UserNameNull()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty("EnvironmentUserName", new ScalarValue(null)));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
         public void MachineName()
         {
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty("MachineName", new ScalarValue("the-machine-name")));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void MachineNameNull()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty("MachineName", new ScalarValue(null)));
             var formatter = new Log4NetTextFormatter();
 
             // Act

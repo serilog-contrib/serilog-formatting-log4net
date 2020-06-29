@@ -6,6 +6,7 @@ using System.Xml;
 using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
+using FluentAssertions;
 using Serilog.Events;
 using Serilog.Parsing;
 using Xunit;
@@ -363,14 +364,18 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Fact]
         public void ConformanceLevelIsAlwaysFragment()
         {
+            // Arrange
             Log4NetTextFormatterOptions? options = null!;
-            // ReSharper disable once ObjectCreationAsStatement
-            new Log4NetTextFormatter(o =>
+
+            // Act
+            _ = new Log4NetTextFormatter(o =>
             {
                 options = o;
                 o.XmlWriterSettings.ConformanceLevel = ConformanceLevel.Document;
             });
-            Assert.Equal(ConformanceLevel.Fragment, options.XmlWriterSettings.ConformanceLevel);
+
+            // Assert
+            options.XmlWriterSettings.ConformanceLevel.Should().Be(ConformanceLevel.Fragment);
         }
 
         [Fact]

@@ -68,9 +68,14 @@ namespace Serilog.Formatting.Log4Net
             _options = new Log4NetTextFormatterOptions();
             configureOptions?.Invoke(_options);
             _options.XmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
-            var defaultOptions = new Log4NetTextFormatterOptions();
-            _options.FilterProperty ??= defaultOptions.FilterProperty;
-            _options.ExceptionFormatter ??= defaultOptions.ExceptionFormatter;
+            if (_options.FilterProperty == null)
+            {
+                throw new ArgumentNullException(nameof(_options.FilterProperty), "The Log4NetTextFormatterOptions.FilterProperty option can not be null.");
+            }
+            if (_options.ExceptionFormatter == null)
+            {
+                throw new ArgumentNullException(nameof(_options.ExceptionFormatter), "The Log4NetTextFormatterOptions.ExceptionFormatter option can not be null.");
+            }
         }
 
         /// <summary>

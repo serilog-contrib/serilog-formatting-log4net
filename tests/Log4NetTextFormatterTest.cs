@@ -379,29 +379,27 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
-        public void FilterPropertyIsNeverNull()
+        public void SettingFilterPropertyToNullThrowsArgumentNullException()
         {
-            Log4NetTextFormatterOptions? options = null!;
-            // ReSharper disable once ObjectCreationAsStatement
-            new Log4NetTextFormatter(o =>
-            {
-                options = o;
-                o.FilterProperty = null!;
-            });
-            Assert.NotNull(options.FilterProperty);
+            // Arrange
+            static void SetFilterPropertyToNull() => _ = new Log4NetTextFormatter(o => o.FilterProperty = null!);
+
+            // Act + Assert
+            FluentActions.Invoking(SetFilterPropertyToNull)
+                .Should().ThrowExactly<ArgumentNullException>()
+                .And.Message.Should().StartWith("The Log4NetTextFormatterOptions.FilterProperty option can not be null.");
         }
 
         [Fact]
-        public void ExceptionFormatterIsNeverNull()
+        public void SettingExceptionFormatterToNullThrowsArgumentNullException()
         {
-            Log4NetTextFormatterOptions? options = null!;
-            // ReSharper disable once ObjectCreationAsStatement
-            new Log4NetTextFormatter(o =>
-            {
-                options = o;
-                o.ExceptionFormatter = null!;
-            });
-            Assert.NotNull(options.ExceptionFormatter);
+            // Arrange
+            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatter(o => o.ExceptionFormatter = null!);
+
+            // Act + Assert
+            FluentActions.Invoking(SetExceptionFormatterToNull).Should()
+                .ThrowExactly<ArgumentNullException>()
+                .And.Message.Should().StartWith("The Log4NetTextFormatterOptions.ExceptionFormatter option can not be null.");
         }
     }
 }

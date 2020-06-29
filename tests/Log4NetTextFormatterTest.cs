@@ -216,6 +216,21 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void ExceptionFormatterReturningNull()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
+            var formatter = new Log4NetTextFormatter(options => options.ExceptionFormatter = e => null!);
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
         public void ThreadId()
         {
             // Arrange

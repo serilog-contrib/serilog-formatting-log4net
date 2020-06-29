@@ -262,7 +262,11 @@ namespace Serilog.Formatting.Log4Net
             var exception = logEvent.Exception;
             if (exception != null)
             {
-                WriteContent(writer, "exception", _options.ExceptionFormatter(exception));
+                var formattedException = _options.ExceptionFormatter(exception);
+                if (formattedException != null)
+                {
+                    WriteContent(writer, "exception", formattedException);
+                }
             }
         }
 

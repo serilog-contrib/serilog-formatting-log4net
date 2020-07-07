@@ -160,7 +160,30 @@ namespace Serilog.Formatting.Log4Net.Tests
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
             });
-            var formatter = new Log4NetTextFormatter(options => options.FilterProperty = (_, s) => s != "one");
+            var formatter = new Log4NetTextFormatter(options => options.FilterProperty = (_, propertyName) => propertyName != "one");
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void FilterPropertyThrowing()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new[]{
+                new LogEventProperty("one", new ScalarValue(1)),
+                new LogEventProperty("two", new ScalarValue(2)),
+            });
+            var formatter = new Log4NetTextFormatter(options => options.FilterProperty = (_, propertyName) =>
+            {
+                if (propertyName == "one")
+                    return true;
+                throw new InvalidOperationException($"Can't handle property '{propertyName}'.");
+            });
 
             // Act
             formatter.Format(logEvent, output);
@@ -206,7 +229,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.ExceptionFormatter = e => $"Type = {e.GetType().FullName}{options.XmlWriterSettings.NewLineChars}Message = {e.Message}");
+            var formatter = new Log4NetTextFormatter(options => options.FormatException = e => $"Type = {e.GetType().FullName}{options.XmlWriterSettings.NewLineChars}Message = {e.Message}");
 
             // Act
             formatter.Format(logEvent, output);
@@ -221,7 +244,22 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.ExceptionFormatter = e => null!);
+            var formatter = new Log4NetTextFormatter(options => options.FormatException = e => null!);
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void ExceptionFormatterThrowing()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
+            var formatter = new Log4NetTextFormatter(options => options.FormatException = e => throw new InvalidOperationException("💥 Boom 💥"));
 
             // Act
             formatter.Format(logEvent, output);
@@ -397,19 +435,19 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Act + Assert
             FluentActions.Invoking(SetFilterPropertyToNull)
                 .Should().ThrowExactly<ArgumentNullException>()
-                .And.Message.Should().StartWith("The Log4NetTextFormatterOptions.FilterProperty option can not be null.");
+                .And.Message.Should().StartWith("The FilterProperty option can not be null.");
         }
 
         [Fact]
         public void SettingExceptionFormatterToNullThrowsArgumentNullException()
         {
             // Arrange
-            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatter(o => o.ExceptionFormatter = null!);
+            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatter(o => o.FormatException = null!);
 
             // Act + Assert
             FluentActions.Invoking(SetExceptionFormatterToNull).Should()
                 .ThrowExactly<ArgumentNullException>()
-                .And.Message.Should().StartWith("The Log4NetTextFormatterOptions.ExceptionFormatter option can not be null.");
+                .And.Message.Should().StartWith("The FormatException option can not be null.");
         }
     }
 }

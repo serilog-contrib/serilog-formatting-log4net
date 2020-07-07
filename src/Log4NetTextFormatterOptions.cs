@@ -34,17 +34,32 @@ namespace Serilog.Formatting.Log4Net
         public XmlWriterSettings XmlWriterSettings { get; } = new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment, Indent = true };
 
         /// <summary>
-        /// A filter applied on all Serilog properties. Return <c>true</c> to have the Serilog property written to the Log4Net properties or <c>false</c> to ignore the property.
-        /// The first argument is the <see cref="LogEvent"/>.
-        /// The second argument is the Serilog property name.
-        /// The default value always returns <c>true</c>, i.e. it doesn't filter out any property.
+        /// A <see cref="PropertyFilter"/> applied on all Serilog properties.
+        /// The default implementation always returns <c>true</c>, i.e. it doesn't filter out any property.
         /// </summary>
-        public Func<LogEvent, string, bool> FilterProperty { get; set; } = (logEvent, propertyName) => true;
+        /// <remarks>If an exception is thrown while executing the filter, the default filter will be applied, i.e. the Serilog property will be included in the log4net properties.</remarks>
+        public PropertyFilter FilterProperty { get; set; } = (logEvent, propertyName) => true;
 
         /// <summary>
-        /// A function controlling how all exceptions are formatted.
-        /// The default implementation calls <see cref="Exception.ToString"/>.
+        /// An <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
+        /// The default implementation calls <c>Exception.ToString()</c>.
+        /// If the formatter returns <see langref="null"/>, the exception will not be written to the log4net event.
         /// </summary>
-        public Func<Exception, string> ExceptionFormatter { get; set; } = exception => exception.ToString();
+        /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used, i.e. <c>Exception.ToString()</c>.</remarks>
+        public ExceptionFormatter FormatException { get; set; } = exception => exception.ToString();
     }
+
+    /// <summary>
+    /// Represents the method that determines whether a Serilog property must be included in the log4net properties.
+    /// </summary>
+    /// <param name="logEvent">The <see cref="LogEvent"/> associated with the Serilog property.</param>
+    /// <param name="propertyName">The Serilog property name.</param>
+    /// <returns><see langref="true"/> to include the Serilog property in the log4net properties or <see langref="false"/> to ignore the Serilog property.</returns>
+    public delegate bool PropertyFilter(LogEvent logEvent, string propertyName);
+
+    /// <summary>
+    /// Represents the method that formats an <see cref="Exception"/>.
+    /// </summary>
+    /// <param name="exception">The exception to be formatted.</param>
+    public delegate string ExceptionFormatter(Exception exception);
 }

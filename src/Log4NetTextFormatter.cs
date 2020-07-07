@@ -73,11 +73,11 @@ namespace Serilog.Formatting.Log4Net
             }
             if (_options.FilterProperty == null)
             {
-                throw new ArgumentNullException(nameof(_options.FilterProperty), "The Log4NetTextFormatterOptions.FilterProperty option can not be null.");
+                throw new ArgumentNullException(nameof(_options.FilterProperty), $"The {nameof(_options.FilterProperty)} option can not be null.");
             }
-            if (_options.ExceptionFormatter == null)
+            if (_options.FormatException == null)
             {
-                throw new ArgumentNullException(nameof(_options.ExceptionFormatter), "The Log4NetTextFormatterOptions.ExceptionFormatter option can not be null.");
+                throw new ArgumentNullException(nameof(_options.FormatException), $"The {nameof(_options.FormatException)} option can not be null.");
             }
         }
 
@@ -168,9 +168,22 @@ namespace Serilog.Formatting.Log4Net
             {
                 // https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/LoggingEvent.cs#L1609
                 WriteProperty(logEvent, writer, "log4net:HostName", MachineNamePropertyName);
-                foreach (var propertyName in properties.Select(e => e.Key).Where(e => _options.FilterProperty(logEvent, e)))
+                foreach (var propertyName in properties.Select(e => e.Key))
                 {
-                    WriteProperty(logEvent, writer, propertyName, propertyName);
+                    bool includeProperty;
+                    try
+                    {
+                        includeProperty = _options.FilterProperty(logEvent, propertyName);
+                    }
+                    catch (Exception filterException)
+                    {
+                        Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while filtering property '{propertyName}'. Including the property.\n{filterException}");
+                        includeProperty = true;
+                    }
+                    if (includeProperty)
+                    {
+                        WriteProperty(logEvent, writer, propertyName, propertyName);
+                    }
                 }
             }
             writer.WriteEndElement();
@@ -265,7 +278,16 @@ namespace Serilog.Formatting.Log4Net
             var exception = logEvent.Exception;
             if (exception != null)
             {
-                var formattedException = _options.ExceptionFormatter(exception);
+                string formattedException;
+                try
+                {
+                    formattedException = _options.FormatException(exception);
+                }
+                catch (Exception formattingException)
+                {
+                    Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
+                    formattedException = exception.ToString();
+                }
                 if (formattedException != null)
                 {
                     WriteContent(writer, "exception", formattedException);

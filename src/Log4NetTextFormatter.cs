@@ -122,7 +122,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="writer">The XML writer.</param>
         /// <param name="attributeName">The name of the XML attribute.</param>
         /// <param name="propertyName">The name of the Serilog property.</param>
-        /// <remarks>Only properties with a <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
+        /// <remarks>Only properties with a non null <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
         private static void WriteEventAttribute(LogEvent logEvent, XmlWriter writer, string attributeName, string propertyName)
         {
             if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue && scalarValue.Value != null)

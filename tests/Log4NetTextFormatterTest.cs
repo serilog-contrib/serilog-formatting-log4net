@@ -377,20 +377,15 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
-        public void ConformanceLevelIsAlwaysFragment()
+        public void ChangingConformanceLevelThrowsInvalidOperationException()
         {
             // Arrange
-            Log4NetTextFormatterOptions? options = null!;
+            static void SetConformanceLevelToDocument() => _ = new Log4NetTextFormatter(o => o.XmlWriterSettings.ConformanceLevel = ConformanceLevel.Document);
 
-            // Act
-            _ = new Log4NetTextFormatter(o =>
-            {
-                options = o;
-                o.XmlWriterSettings.ConformanceLevel = ConformanceLevel.Document;
-            });
-
-            // Assert
-            options.XmlWriterSettings.ConformanceLevel.Should().Be(ConformanceLevel.Fragment);
+            // Act + Assert
+            FluentActions.Invoking(SetConformanceLevelToDocument)
+                .Should().ThrowExactly<InvalidOperationException>()
+                .And.Message.Should().StartWith("The Log4NetTextFormatterOptions.XmlWriterSettings.ConformanceLevel must not be changed. It must be Fragment.");
         }
 
         [Fact]

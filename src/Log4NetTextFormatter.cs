@@ -146,7 +146,7 @@ namespace Serilog.Formatting.Log4Net
                 LogEventLevel.Warning => "WARN",
                 LogEventLevel.Error => "ERROR",
                 LogEventLevel.Fatal => "FATAL",
-                _ => "OFF"
+                _ => throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for Enum type '{nameof(LogEventLevel)}'.")
             };
 
         /// <summary>

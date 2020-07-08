@@ -178,7 +178,7 @@ namespace Serilog.Formatting.Log4Net
                     }
                     catch (Exception filterException)
                     {
-                        Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while filtering property '{propertyName}'. Including the property.\n{filterException}");
+                        Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while filtering property '{propertyName}'. Including the property in the log4net event.\n{filterException}");
                         includeProperty = true;
                     }
                     if (includeProperty)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -133,6 +134,37 @@ namespace Serilog.Formatting.Log4Net.Tests
             var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty("n/a", new ScalarValue(null)));
             var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void DefaultFormatProvider()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(messageTemplate: "π = {π}", properties: new LogEventProperty("π", new ScalarValue(3.14m)));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void ExplicitFormatProvider()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent(messageTemplate: "π = {π}", properties: new LogEventProperty("π", new ScalarValue(3.14m)));
+            var formatProvider = new NumberFormatInfo { NumberDecimalSeparator = "," };
+            var formatter = new Log4NetTextFormatter(options => options.FormatProvider = formatProvider);
 
             // Act
             formatter.Format(logEvent, output);

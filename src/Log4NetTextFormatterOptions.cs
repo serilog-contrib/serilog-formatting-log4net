@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Xml;
 using Serilog.Events;
 
@@ -12,6 +13,12 @@ namespace Serilog.Formatting.Log4Net
         internal Log4NetTextFormatterOptions()
         {
         }
+
+        /// <summary>
+        /// The <see cref="IFormatProvider"/> used when formatting message and properties.
+        /// <para>The default value is <see langref="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.</para>
+        /// </summary>
+        public IFormatProvider? FormatProvider { get; set; }
 
         /// <summary>
         /// The <see cref="CDataMode"/> controlling how <c>message</c> and <c>exception</c> XML elements are written.

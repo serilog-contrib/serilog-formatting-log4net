@@ -129,7 +129,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="attributeName">The name of the XML attribute.</param>
         /// <param name="propertyName">The name of the Serilog property.</param>
         /// <remarks>Only properties with a non null <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
-        private static void WriteEventAttribute(LogEvent logEvent, XmlWriter writer, string attributeName, string propertyName)
+        private void WriteEventAttribute(LogEvent logEvent, XmlWriter writer, string attributeName, string propertyName)
         {
             if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue && scalarValue.Value != null)
             {
@@ -196,11 +196,11 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <param name="value">The value to render.</param>
         /// <returns>A string representation of the <paramref name="value"/>.</returns>
-        private static string RenderValue(LogEventPropertyValue value)
+        private string RenderValue(LogEventPropertyValue value)
         {
             var valueWriter = new StringWriter();
             // The "l" format specifier switches off quoting of strings, see https://github.com/serilog/serilog/wiki/Formatting-Output#formatting-plain-text
-            value.Render(valueWriter, value is ScalarValue scalarValue && scalarValue.Value is string ? "l" : null);
+            value.Render(valueWriter, value is ScalarValue scalarValue && scalarValue.Value is string ? "l" : null, _options.FormatProvider);
             return valueWriter.ToString();
         }
 
@@ -310,7 +310,7 @@ namespace Serilog.Formatting.Log4Net
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L245-L257</remarks>
         private void WriteMessage(LogEvent logEvent, XmlWriter writer)
         {
-            var message = logEvent.RenderMessage();
+            var message = logEvent.RenderMessage(_options.FormatProvider);
             WriteContent(writer, "message", message);
         }
 

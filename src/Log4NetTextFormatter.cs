@@ -167,8 +167,8 @@ namespace Serilog.Formatting.Log4Net
             WriteStartElement(writer, "properties");
             {
                 // https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/LoggingEvent.cs#L1609
-                WriteProperty(logEvent, writer, "log4net:HostName", MachineNamePropertyName);
-                foreach (var propertyName in properties.Select(e => e.Key))
+                WriteProperty(writer, "log4net:HostName", machineNameProperty);
+                foreach (var (propertyName, propertyValue) in properties.Select(e => (e.Key, e.Value)))
                 {
                     bool includeProperty;
                     try
@@ -182,7 +182,7 @@ namespace Serilog.Formatting.Log4Net
                     }
                     if (includeProperty)
                     {
-                        WriteProperty(logEvent, writer, propertyName, propertyName);
+                        WriteProperty(writer, propertyName, propertyValue);
                     }
                 }
             }
@@ -207,50 +207,96 @@ namespace Serilog.Formatting.Log4Net
         /// Write a single Serilog property into log4net property format, handling all <see cref="LogEventPropertyValue"/> types, i.e.
         /// <see cref="ScalarValue"/>, <see cref="DictionaryValue"/>, <see cref="SequenceValue"/> and <see cref="StructureValue"/>.
         /// </summary>
-        /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
-        /// <param name="log4NetPropertyName">The log4net property name.</param>
-        /// <param name="serilogPropertyName">The Serilog property name.</param>
-        private void WriteProperty(LogEvent logEvent, XmlWriter writer, string log4NetPropertyName, string serilogPropertyName)
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="propertyValue">The property value.</param>
+        private void WriteProperty(XmlWriter writer, string propertyName, LogEventPropertyValue propertyValue)
         {
-            void WriteProperty(string name, LogEventPropertyValue value)
+            switch (propertyValue)
             {
-                if (value is ScalarValue scalarValue && scalarValue.Value == null)
-                    return;
-                WriteStartElement(writer, "data");
-                writer.WriteAttributeString("name", name);
-                writer.WriteAttributeString("value", RenderValue(value));
-                writer.WriteEndElement();
+                case ScalarValue scalarValue:
+                    WriteScalarProperty(writer, propertyName, scalarValue);
+                    break;
+                case DictionaryValue dictionaryValue:
+                    WriteDictionaryProperty(writer, propertyName, dictionaryValue);
+                    break;
+                case SequenceValue sequenceValue:
+                    WriteSequenceProperty(writer, propertyName, sequenceValue);
+                    break;
+                case StructureValue structureValue:
+                    WriteStructureProperty(writer, propertyName, structureValue);
+                    break;
             }
+        }
 
-            if (logEvent.Properties.TryGetValue(serilogPropertyName, out var propertyValue))
+        /// <summary>
+        /// Write a <see cref="ScalarValue"/> property.
+        /// </summary>
+        /// <param name="writer">The XML writer.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="scalarValue">The <see cref="ScalarValue"/> to write.</param>
+        private void WriteScalarProperty(XmlWriter writer, string propertyName, ScalarValue scalarValue)
+        {
+            if (scalarValue.Value != null)
             {
-                if (propertyValue is ScalarValue scalarValue)
-                {
-                    WriteProperty(log4NetPropertyName, scalarValue);
-                }
-                else if (propertyValue is DictionaryValue dictionaryValue)
-                {
-                    foreach (var element in dictionaryValue.Elements)
-                    {
-                        WriteProperty($"{log4NetPropertyName}.{element.Key.Value}", element.Value);
-                    }
-                }
-                else if (propertyValue is SequenceValue sequenceValue)
-                {
-                    foreach (var value in sequenceValue.Elements)
-                    {
-                        WriteProperty(log4NetPropertyName, value);
-                    }
-                }
-                else if (propertyValue is StructureValue structureValue)
-                {
-                    foreach (var property in structureValue.Properties)
-                    {
-                        WriteProperty($"{log4NetPropertyName}.{property.Name}", property.Value);
-                    }
-                }
+                WritePropertyElement(writer, propertyName, scalarValue);
             }
+        }
+
+        /// <summary>
+        /// Write a <see cref="DictionaryValue"/> property.
+        /// </summary>
+        /// <param name="writer">The XML writer.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="dictionaryValue">The <see cref="DictionaryValue"/> to write.</param>
+        private void WriteDictionaryProperty(XmlWriter writer, string propertyName, DictionaryValue dictionaryValue)
+        {
+            foreach (var element in dictionaryValue.Elements)
+            {
+                WritePropertyElement(writer, $"{propertyName}.{RenderValue(element.Key)}", element.Value);
+            }
+        }
+
+        /// <summary>
+        /// Write a <see cref="SequenceValue"/> property.
+        /// </summary>
+        /// <param name="writer">The XML writer.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="sequenceValue">The <see cref="SequenceValue"/> to write.</param>
+        private void WriteSequenceProperty(XmlWriter writer, string propertyName, SequenceValue sequenceValue)
+        {
+            foreach (var value in sequenceValue.Elements)
+            {
+                WritePropertyElement(writer, propertyName, value);
+            }
+        }
+
+        /// <summary>
+        /// Write a <see cref="StructureValue"/> property.
+        /// </summary>
+        /// <param name="writer">The XML writer.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <param name="structureValue">The <see cref="StructureValue"/> to write.</param>
+        private void WriteStructureProperty(XmlWriter writer, string propertyName, StructureValue structureValue)
+        {
+            foreach (var property in structureValue.Properties)
+            {
+                WritePropertyElement(writer, $"{propertyName}.{property.Name}", property.Value);
+            }
+        }
+
+        /// <summary>
+        /// Write the log4net <c>data</c> element with <c>name</c> and <c>value</c> attributes.
+        /// </summary>
+        /// <param name="writer">The XML writer.</param>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        private void WritePropertyElement(XmlWriter writer, string name, LogEventPropertyValue value)
+        {
+            WriteStartElement(writer, "data");
+            writer.WriteAttributeString("name", name);
+            writer.WriteAttributeString("value", RenderValue(value));
+            writer.WriteEndElement();
         }
 
         /// <summary>

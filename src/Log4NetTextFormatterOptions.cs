@@ -30,7 +30,7 @@ namespace Serilog.Formatting.Log4Net
         /// The <see cref="XmlWriterSettings"/> controlling the formatting of the XML fragments.
         /// <para>The default value sets <see cref="System.Xml.XmlWriterSettings.ConformanceLevel"/> to <see cref="ConformanceLevel.Fragment"/> and <see cref="System.Xml.XmlWriterSettings.Indent"/> to <c>true</c>.</para>
         /// </summary>
-        /// <remarks>If the <see cref="System.Xml.XmlWriterSettings.ConformanceLevel"/> is changed, it will be reset to <see cref="ConformanceLevel.Fragment"/>.</remarks>
+        /// <remarks>If the <see cref="System.Xml.XmlWriterSettings.ConformanceLevel"/> is changed, an <see cref="InvalidOperationException"/> will be thrown.</remarks>
         public XmlWriterSettings XmlWriterSettings { get; } = new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment, Indent = true };
 
         /// <summary>

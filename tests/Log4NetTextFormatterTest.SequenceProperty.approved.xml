@@ -2,7 +2,7 @@
   <log4net:properties>
     <log4net:data name="Sequence" value="1" />
     <log4net:data name="Sequence" value="two" />
-    <log4net:data name="Sequence" value="3" />
+    <log4net:data name="Sequence" value="[(1: &quot;one&quot;), (&quot;two&quot;: 2)]" />
   </log4net:properties>
   <log4net:message><![CDATA[Hello from Serilog]]></log4net:message>
 </log4net:event>

@@ -2,6 +2,7 @@
   <log4net:properties>
     <log4net:data name="Structure.1" value="one" />
     <log4net:data name="Structure.two" value="2" />
+    <log4net:data name="Structure.dictionary" value="[(1: &quot;one&quot;), (&quot;two&quot;: 2)]" />
   </log4net:properties>
   <log4net:message><![CDATA[Hello from Serilog]]></log4net:message>
 </log4net:event>

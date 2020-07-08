@@ -28,6 +28,18 @@ namespace Serilog.Formatting.Log4Net.Tests
     [UseReporter(typeof(DiffReporter))]
     public class Log4NetTextFormatterTest
     {
+        /// <summary>
+        /// Create a <see cref="DictionaryValue"/> containing two entries, mapping scalar values 1 to "one" and "two" to 2.
+        /// </summary>
+        private static DictionaryValue CreateDictionary()
+        {
+            return new DictionaryValue(new[]
+            {
+                new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("one")),
+                new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("two"), new ScalarValue(2)),
+            });
+        }
+
         private static LogEvent CreateLogEvent(LogEventLevel level = Events.LogEventLevel.Information, string messageTemplate = "Hello from Serilog", Exception? exception = null, params LogEventProperty[] properties)
         {
             return new LogEvent(
@@ -377,7 +389,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         {
             // Arrange
             var output = new StringWriter();
-            var values = new[] { new ScalarValue(1), new ScalarValue("two"), new ScalarValue(3m) };
+            var values = new LogEventPropertyValue[] { new ScalarValue(1), new ScalarValue("two"), CreateDictionary() };
             var logEvent = CreateLogEvent(properties: new LogEventProperty("Sequence", new SequenceValue(values)));
             var formatter = new Log4NetTextFormatter();
 
@@ -397,6 +409,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             {
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("one")),
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("two"), new ScalarValue(2)),
+                new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("dictionary"), CreateDictionary()),
             };
             var logEvent = CreateLogEvent(properties: new LogEventProperty("Dictionary", new DictionaryValue(values)));
             var formatter = new Log4NetTextFormatter();
@@ -417,6 +430,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             {
                 new LogEventProperty("1", new ScalarValue("one")),
                 new LogEventProperty("two", new ScalarValue(2)),
+                new LogEventProperty("dictionary", CreateDictionary()),
             };
             var logEvent = CreateLogEvent(properties: new LogEventProperty("Structure", new StructureValue(values)));
             var formatter = new Log4NetTextFormatter();

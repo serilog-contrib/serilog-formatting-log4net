@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -109,7 +110,12 @@ namespace Serilog.Formatting.Log4Net
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
             WriteEventAttribute(logEvent, writer, "domain", ProcessNamePropertyName);
             WriteEventAttribute(logEvent, writer, "username", UserNamePropertyName);
-            WriteProperties(logEvent, writer);
+            var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key)).ToList();
+            var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue scalarValue && scalarValue.Value != null;
+            if (properties.Any() || hasMachineNameProperty)
+            {
+                WriteProperties(logEvent, writer, properties, machineNameProperty);
+            }
             WriteMessage(logEvent, writer);
             WriteException(logEvent, writer);
             writer.WriteEndElement();
@@ -150,20 +156,15 @@ namespace Serilog.Formatting.Log4Net
             };
 
         /// <summary>
-        /// Write the Serilog <see cref="LogEvent.Properties"/> into the <c>properties</c> XML element.
-        /// Only properties without a special log4net equivalent are written.
+        /// Write the Serilog <paramref name="properties"/> into the <c>properties</c> XML element.
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
+        /// <param name="properties">The collection of properties to write.</param>
+        /// <param name="machineNameProperty">The machine name property to write or <see langref="null"/> if doesn't exist.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L262-L286</remarks>
-        private void WriteProperties(LogEvent logEvent, XmlWriter writer)
+        private void WriteProperties(LogEvent logEvent, XmlWriter writer, IEnumerable<KeyValuePair<string, LogEventPropertyValue>> properties, LogEventPropertyValue? machineNameProperty)
         {
-            var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key)).ToList();
-            var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue scalarValue && scalarValue.Value != null;
-            if (properties.Count == 0 && !hasMachineNameProperty)
-            {
-                return;
-            }
             WriteStartElement(writer, "properties");
             {
                 // https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/LoggingEvent.cs#L1609
@@ -210,7 +211,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="writer">The XML writer.</param>
         /// <param name="propertyName">The property name.</param>
         /// <param name="propertyValue">The property value.</param>
-        private void WriteProperty(XmlWriter writer, string propertyName, LogEventPropertyValue propertyValue)
+        private void WriteProperty(XmlWriter writer, string propertyName, LogEventPropertyValue? propertyValue)
         {
             switch (propertyValue)
             {

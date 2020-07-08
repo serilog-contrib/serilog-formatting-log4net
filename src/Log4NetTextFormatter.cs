@@ -237,10 +237,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="scalarValue">The <see cref="ScalarValue"/> to write.</param>
         private void WriteScalarProperty(XmlWriter writer, string propertyName, ScalarValue scalarValue)
         {
-            if (scalarValue.Value != null)
-            {
-                WritePropertyElement(writer, propertyName, scalarValue);
-            }
+            WritePropertyElement(writer, propertyName, scalarValue);
         }
 
         /// <summary>
@@ -295,7 +292,11 @@ namespace Serilog.Formatting.Log4Net
         {
             WriteStartElement(writer, "data");
             writer.WriteAttributeString("name", name);
-            writer.WriteAttributeString("value", RenderValue(value));
+            var isNullValue = value is ScalarValue scalarValue && scalarValue.Value == null;
+            if (!isNullValue)
+            {
+                writer.WriteAttributeString("value", RenderValue(value));
+            }
             writer.WriteEndElement();
         }
 

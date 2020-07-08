@@ -15,35 +15,35 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// The <see cref="CDataMode"/> controlling how <c>message</c> and <c>exception</c> XML elements are written.
-        /// The default value is <see cref="Log4Net.CDataMode.Always"/>.
+        /// <para>The default value is <see cref="Log4Net.CDataMode.Always"/>.</para>
         /// </summary>
         public CDataMode CDataMode { get; set; } = CDataMode.Always;
 
         /// <summary>
         /// The XML namespace used on log events. Set to <c>null</c> to remove namespaces.
-        /// The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.
+        /// <para>The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.</para>
         /// </summary>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L49</remarks>
         public XmlQualifiedName? Log4NetXmlNamespace { get; set; } = new XmlQualifiedName("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
 
         /// <summary>
         /// The <see cref="XmlWriterSettings"/> controlling the formatting of the XML fragments.
-        /// The default value sets <see cref="System.Xml.XmlWriterSettings.ConformanceLevel"/> to <see cref="ConformanceLevel.Fragment"/> and <see cref="System.Xml.XmlWriterSettings.Indent"/> to <c>true</c>.
+        /// <para>The default value sets <see cref="System.Xml.XmlWriterSettings.ConformanceLevel"/> to <see cref="ConformanceLevel.Fragment"/> and <see cref="System.Xml.XmlWriterSettings.Indent"/> to <c>true</c>.</para>
         /// </summary>
         /// <remarks>If the <see cref="System.Xml.XmlWriterSettings.ConformanceLevel"/> is changed, it will be reset to <see cref="ConformanceLevel.Fragment"/>.</remarks>
         public XmlWriterSettings XmlWriterSettings { get; } = new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment, Indent = true };
 
         /// <summary>
         /// A <see cref="PropertyFilter"/> applied on all Serilog properties.
-        /// The default implementation always returns <c>true</c>, i.e. it doesn't filter out any property.
+        /// <para>The default implementation always returns <c>true</c>, i.e. it doesn't filter out any property.</para>
         /// </summary>
         /// <remarks>If an exception is thrown while executing the filter, the default filter will be applied, i.e. the Serilog property will be included in the log4net properties.</remarks>
         public PropertyFilter FilterProperty { get; set; } = (logEvent, propertyName) => true;
 
         /// <summary>
         /// An <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
-        /// The default implementation calls <c>Exception.ToString()</c>.
-        /// If the formatter returns <see langref="null"/>, the exception will not be written to the log4net event.
+        /// <para>The default implementation calls <c>Exception.ToString()</c>.</para>
+        /// <para>If the formatter returns <see langref="null"/>, the exception will not be written to the log4net event.</para>
         /// </summary>
         /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used, i.e. <c>Exception.ToString()</c>.</remarks>
         public ExceptionFormatter FormatException { get; set; } = exception => exception.ToString();

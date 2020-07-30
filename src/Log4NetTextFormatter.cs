@@ -63,23 +63,12 @@ namespace Serilog.Formatting.Log4Net
         /// <summary>
         /// Initialize a new instance of the <see cref="Log4NetTextFormatter"/> class.
         /// </summary>
-        /// <param name="configureOptions">An optional callback to configure the <see cref="Log4NetTextFormatterOptions"/> used to write the XML fragments.</param>
-        public Log4NetTextFormatter(Action<Log4NetTextFormatterOptions>? configureOptions)
+        /// <param name="configureOptions">An optional callback to configure the options used to write the XML fragments.</param>
+        public Log4NetTextFormatter(Action<Log4NetTextFormatterOptionsBuilder>? configureOptions)
         {
-            _options = new Log4NetTextFormatterOptions();
-            configureOptions?.Invoke(_options);
-            if (_options.XmlWriterSettings.ConformanceLevel != ConformanceLevel.Fragment)
-            {
-                throw new InvalidOperationException($"The {nameof(Log4NetTextFormatterOptions)}.XmlWriterSettings.ConformanceLevel must not be changed. It must be {ConformanceLevel.Fragment}.");
-            }
-            if (_options.FilterProperty == null)
-            {
-                throw new ArgumentNullException(nameof(_options.FilterProperty), $"The {nameof(_options.FilterProperty)} option can not be null.");
-            }
-            if (_options.FormatException == null)
-            {
-                throw new ArgumentNullException(nameof(_options.FormatException), $"The {nameof(_options.FormatException)} option can not be null.");
-            }
+            var optionsBuilder = new Log4NetTextFormatterOptionsBuilder();
+            configureOptions?.Invoke(optionsBuilder);
+            _options = optionsBuilder.Build();
         }
 
         /// <summary>

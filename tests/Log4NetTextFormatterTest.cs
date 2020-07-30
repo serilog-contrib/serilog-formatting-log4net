@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Xml;
 using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
@@ -103,7 +102,64 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: needsEscaping ? ">> Hello from Serilog <<" : "Hello from Serilog");
-            var formatter = new Log4NetTextFormatter(options => options.CDataMode = mode);
+            var formatter = new Log4NetTextFormatter(options => options.UseCDataMode(mode));
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Theory]
+        [InlineData(Log4Net.LineEnding.None)]
+        [InlineData(Log4Net.LineEnding.LineFeed)]
+        [InlineData(Log4Net.LineEnding.CarriageReturn)]
+        [InlineData(Log4Net.LineEnding.CarriageReturn | Log4Net.LineEnding.LineFeed)]
+        public void LineEnding(LineEnding lineEnding)
+        {
+            NamerFactory.AdditionalInformation = lineEnding.ToString();
+
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent();
+            var formatter = new Log4NetTextFormatter(options => options.UseLineEnding(lineEnding));
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Theory]
+        [InlineData(Indentation.Space, 2)]
+        [InlineData(Indentation.Space, 4)]
+        [InlineData(Indentation.Tab, 2)]
+        [InlineData(Indentation.Tab, 4)]
+        public void IndentationSettings(Indentation indentation, byte size)
+        {
+            NamerFactory.AdditionalInformation = indentation + "." + size;
+
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent();
+            var formatter = new Log4NetTextFormatter(options => options.UseIndentationSettings(new IndentationSettings(indentation, size)));
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void NoIndentation()
+        {
+            // Arrange
+            var output = new StringWriter();
+            var logEvent = CreateLogEvent();
+            var formatter = new Log4NetTextFormatter(options => options.UseNoIndentation());
 
             // Act
             formatter.Format(logEvent, output);
@@ -118,7 +174,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent();
-            var formatter = new Log4NetTextFormatter(options => options.Log4NetXmlNamespace = null);
+            var formatter = new Log4NetTextFormatter(options => options.UseLog4NetXmlNamespace(null));
 
             // Act
             formatter.Format(logEvent, output);
@@ -164,7 +220,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: "π = {π}", properties: new LogEventProperty("π", new ScalarValue(3.14m)));
             var formatProvider = new NumberFormatInfo { NumberDecimalSeparator = "," };
-            var formatter = new Log4NetTextFormatter(options => options.FormatProvider = formatProvider);
+            var formatter = new Log4NetTextFormatter(options => options.UseFormatProvider(formatProvider));
 
             // Act
             formatter.Format(logEvent, output);
@@ -218,7 +274,7 @@ namespace Serilog.Formatting.Log4Net.Tests
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
             });
-            var formatter = new Log4NetTextFormatter(options => options.FilterProperty = (_, propertyName) => propertyName != "one");
+            var formatter = new Log4NetTextFormatter(options => options.UseFilterProperty((_, propertyName) => propertyName != "one"));
 
             // Act
             formatter.Format(logEvent, output);
@@ -236,12 +292,12 @@ namespace Serilog.Formatting.Log4Net.Tests
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
             });
-            var formatter = new Log4NetTextFormatter(options => options.FilterProperty = (_, propertyName) =>
+            var formatter = new Log4NetTextFormatter(options => options.UseFilterProperty((_, propertyName) =>
             {
                 if (propertyName == "one")
                     return true;
                 throw new InvalidOperationException($"Can't handle property '{propertyName}'.");
-            });
+            }));
 
             // Act
             formatter.Format(logEvent, output);
@@ -287,7 +343,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.FormatException = e => $"Type = {e.GetType().FullName}{options.XmlWriterSettings.NewLineChars}Message = {e.Message}");
+            var formatter = new Log4NetTextFormatter(options => options.UseFormatException(e => $"Type = {e.GetType().FullName}\nMessage = {e.Message}"));
 
             // Act
             formatter.Format(logEvent, output);
@@ -302,7 +358,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.FormatException = e => null!);
+            var formatter = new Log4NetTextFormatter(options => options.UseFormatException(e => null!));
 
             // Act
             formatter.Format(logEvent, output);
@@ -317,7 +373,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.FormatException = e => throw new InvalidOperationException("💥 Boom 💥"));
+            var formatter = new Log4NetTextFormatter(options => options.UseFormatException(e => throw new InvalidOperationException("💥 Boom 💥")));
 
             // Act
             formatter.Format(logEvent, output);
@@ -472,42 +528,6 @@ namespace Serilog.Formatting.Log4Net.Tests
 
             // Assert
             Approvals.VerifyWithExtension(output.ToString(), "xml");
-        }
-
-        [Fact]
-        public void ChangingConformanceLevelThrowsInvalidOperationException()
-        {
-            // Arrange
-            static void SetConformanceLevelToDocument() => _ = new Log4NetTextFormatter(o => o.XmlWriterSettings.ConformanceLevel = ConformanceLevel.Document);
-
-            // Act + Assert
-            FluentActions.Invoking(SetConformanceLevelToDocument)
-                .Should().ThrowExactly<InvalidOperationException>()
-                .And.Message.Should().StartWith("The Log4NetTextFormatterOptions.XmlWriterSettings.ConformanceLevel must not be changed. It must be Fragment.");
-        }
-
-        [Fact]
-        public void SettingFilterPropertyToNullThrowsArgumentNullException()
-        {
-            // Arrange
-            static void SetFilterPropertyToNull() => _ = new Log4NetTextFormatter(o => o.FilterProperty = null!);
-
-            // Act + Assert
-            FluentActions.Invoking(SetFilterPropertyToNull)
-                .Should().ThrowExactly<ArgumentNullException>()
-                .And.Message.Should().StartWith("The FilterProperty option can not be null.");
-        }
-
-        [Fact]
-        public void SettingExceptionFormatterToNullThrowsArgumentNullException()
-        {
-            // Arrange
-            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatter(o => o.FormatException = null!);
-
-            // Act + Assert
-            FluentActions.Invoking(SetExceptionFormatterToNull).Should()
-                .ThrowExactly<ArgumentNullException>()
-                .And.Message.Should().StartWith("The FormatException option can not be null.");
         }
     }
 }

@@ -132,17 +132,16 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="level">The serilog level.</param>
         /// <returns>The equivalent log4net level.</returns>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/Level.cs#L509-L603</remarks>
-        private static string LogLevel(LogEventLevel level) =>
-            level switch
-            {
-                LogEventLevel.Verbose => "VERBOSE",
-                LogEventLevel.Debug => "DEBUG",
-                LogEventLevel.Information => "INFO",
-                LogEventLevel.Warning => "WARN",
-                LogEventLevel.Error => "ERROR",
-                LogEventLevel.Fatal => "FATAL",
-                _ => throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for Enum type '{nameof(LogEventLevel)}'.")
-            };
+        private static string LogLevel(LogEventLevel level) => level switch
+        {
+            LogEventLevel.Verbose => "VERBOSE",
+            LogEventLevel.Debug => "DEBUG",
+            LogEventLevel.Information => "INFO",
+            LogEventLevel.Warning => "WARN",
+            LogEventLevel.Error => "ERROR",
+            LogEventLevel.Fatal => "FATAL",
+            _ => throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for Enum type '{nameof(LogEventLevel)}'.")
+        };
 
         /// <summary>
         /// Write the Serilog <paramref name="properties"/> into the <c>properties</c> XML element.
@@ -313,22 +312,23 @@ namespace Serilog.Formatting.Log4Net
         private void WriteException(LogEvent logEvent, XmlWriter writer)
         {
             var exception = logEvent.Exception;
-            if (exception != null)
+            if (exception == null)
             {
-                string formattedException;
-                try
-                {
-                    formattedException = _options.FormatException(exception);
-                }
-                catch (Exception formattingException)
-                {
-                    Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
-                    formattedException = exception.ToString();
-                }
-                if (formattedException != null)
-                {
-                    WriteContent(writer, "exception", formattedException);
-                }
+                return;
+            }
+            string formattedException;
+            try
+            {
+                formattedException = _options.FormatException(exception);
+            }
+            catch (Exception formattingException)
+            {
+                Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
+                formattedException = exception.ToString();
+            }
+            if (formattedException != null)
+            {
+                WriteContent(writer, "exception", formattedException);
             }
         }
 

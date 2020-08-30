@@ -21,12 +21,17 @@ namespace Serilog.Formatting.Log4Net
             {
                 throw new ArgumentOutOfRangeException(nameof(size), size, $"The value of argument '{nameof(size)}' must be greater than 0.");
             }
-            _indentationString = indentation switch
+            switch (indentation)
             {
-                Indentation.Space => new string(c: ' ', size),
-                Indentation.Tab => new string(c: '\t', size),
-                _ => throw new ArgumentOutOfRangeException(nameof(indentation), indentation, $"The value of argument '{nameof(indentation)}' ({indentation}) is invalid for enum type '{nameof(Indentation)}'.")
-            };
+                case Indentation.Space:
+                    _indentationString = new string(c: ' ', size);
+                    break;
+                case Indentation.Tab:
+                    _indentationString = new string(c: '\t', size);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(indentation), indentation, $"The value of argument '{nameof(indentation)}' ({indentation}) is invalid for enum type '{nameof(Indentation)}'.");
+            }
         }
 
         /// <summary>

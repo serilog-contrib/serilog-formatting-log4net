@@ -132,16 +132,26 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="level">The serilog level.</param>
         /// <returns>The equivalent log4net level.</returns>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/Level.cs#L509-L603</remarks>
-        private static string LogLevel(LogEventLevel level) => level switch
+        private static string LogLevel(LogEventLevel level)
         {
-            LogEventLevel.Verbose => "VERBOSE",
-            LogEventLevel.Debug => "DEBUG",
-            LogEventLevel.Information => "INFO",
-            LogEventLevel.Warning => "WARN",
-            LogEventLevel.Error => "ERROR",
-            LogEventLevel.Fatal => "FATAL",
-            _ => throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for enum type '{nameof(LogEventLevel)}'.")
-        };
+            switch (level)
+            {
+                case LogEventLevel.Verbose:
+                    return "VERBOSE";
+                case LogEventLevel.Debug:
+                    return "DEBUG";
+                case LogEventLevel.Information:
+                    return "INFO";
+                case LogEventLevel.Warning:
+                    return "WARN";
+                case LogEventLevel.Error:
+                    return "ERROR";
+                case LogEventLevel.Fatal:
+                    return "FATAL";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for enum type '{nameof(LogEventLevel)}'.");
+            }
+        }
 
         /// <summary>
         /// Write the Serilog <paramref name="properties"/> into the <c>properties</c> XML element.

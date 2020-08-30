@@ -34,13 +34,21 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <param name="lineEnding">The <see cref="LineEnding"/> to convert to a string.</param>
         /// <returns>A string representation of the <see cref="LineEnding"/>.</returns>
-        public static string ToCharacters(this LineEnding lineEnding) => lineEnding switch
+        public static string ToCharacters(this LineEnding lineEnding)
         {
-            LineEnding.None => "",
-            LineEnding.LineFeed => "\n",
-            LineEnding.CarriageReturn => "\r",
-            LineEnding.CarriageReturn | LineEnding.LineFeed => "\r\n",
-            _ => throw new ArgumentOutOfRangeException(nameof(lineEnding), lineEnding, $"The value of argument '{nameof(lineEnding)}' ({lineEnding}) is invalid for enum type '{nameof(LineEnding)}'.")
-        };
+            switch (lineEnding)
+            {
+                case LineEnding.None:
+                    return "";
+                case LineEnding.LineFeed:
+                    return "\n";
+                case LineEnding.CarriageReturn:
+                    return "\r";
+                case LineEnding.CarriageReturn | LineEnding.LineFeed:
+                    return "\r\n";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lineEnding), lineEnding, $"The value of argument '{nameof(lineEnding)}' ({lineEnding}) is invalid for enum type '{nameof(LineEnding)}'.");
+            }
+        }
     }
 }

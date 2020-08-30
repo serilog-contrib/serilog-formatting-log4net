@@ -156,17 +156,10 @@ namespace Serilog.Formatting.Log4Net
 
         private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
         {
-            var indent = !(indentationSettings is null);
-            var indentChars = indentationSettings?.Indentation switch
-            {
-                Indentation.Space => new string(c: ' ', indentationSettings.Size),
-                Indentation.Tab => new string(c: '\t', indentationSettings.Size),
-                _ => "",
-            };
             return new XmlWriterSettings
             {
-                Indent = indent,
-                IndentChars = indentChars,
+                Indent = !(indentationSettings is null),
+                IndentChars = indentationSettings?.ToString() ?? "",
                 NewLineChars = lineEnding.ToCharacters(),
                 ConformanceLevel = ConformanceLevel.Fragment,
             };

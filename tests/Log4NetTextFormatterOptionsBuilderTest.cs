@@ -64,7 +64,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void UseIndentationSettings()
         {
             // Arrange
-            var indentationSettings = new IndentationSettings(indentation: default, size: default);
+            var indentationSettings = new IndentationSettings(indentation: default, size: 1);
 
             // Act
             var builder = new Log4NetTextFormatterOptionsBuilder().UseIndentationSettings(indentationSettings);

@@ -9,13 +9,31 @@
 
   <ItemGroup>
     <PackageReference Include="ApprovalTests" Version="5.2.5" />
-    <PackageReference Include="coverlet.collector" Version="1.3.0" />
+    <PackageReference Include="coverlet.msbuild" Version="2.9.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
+    <PackageReference Include="ReportGenerator" Version="4.6.5" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
+
+  <PropertyGroup Label="Coverage">
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutput>../coverage/</CoverletOutput>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <CoverageReportDirectory>$(CoverletOutput)report</CoverageReportDirectory>
+  </PropertyGroup>
+
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) != 'true'">
+    <ReportGenerator ReportFiles="$(CoverletOutput)*.*" TargetDirectory="$(CoverageReportDirectory)" />
+    <PropertyGroup>
+      <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
+      <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>
+      <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">explorer</OpenCommand>
+    </PropertyGroup>
+    <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)/index.html&quot;" Condition="$(OpenCommand) != ''" />
+  </Target>
 
   <ItemGroup>
     <ProjectReference Include="..\src\Serilog.Formatting.Log4Net.csproj" />

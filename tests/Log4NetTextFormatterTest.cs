@@ -85,7 +85,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Act + Assert
             FluentActions.Invoking(() => formatter.Format(logEvent, output))
                 .Should().ThrowExactly<ArgumentOutOfRangeException>()
-                .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for Enum type 'LogEventLevel'.");
+                .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'.");
         }
 
         [Theory]

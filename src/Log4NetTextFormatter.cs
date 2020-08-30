@@ -24,7 +24,7 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         private static readonly string[] SpecialProperties = {
             Constants.SourceContextPropertyName, OutputProperties.MessagePropertyName,
-            ThreadIdPropertyName, UserNamePropertyName, MachineNamePropertyName, ProcessNamePropertyName
+            ThreadIdPropertyName, UserNamePropertyName, MachineNamePropertyName
         };
 
         /// <summary>
@@ -44,12 +44,6 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <remarks>https://github.com/serilog/serilog-enrichers-environment/blob/v2.1.3/src/Serilog.Enrichers.Environment/Enrichers/MachineNameEnricher.cs#L36</remarks>
         private const string MachineNamePropertyName = "MachineName";
-
-        /// <summary>
-        /// The name of the process name property, set by [Serilog.Enrichers.Process](https://www.nuget.org/packages/Serilog.Enrichers.Process/)
-        /// </summary>
-        /// <remarks>https://github.com/serilog/serilog-enrichers-process/blob/v2.0.1/src/Serilog.Enrichers.Process/Enrichers/ProcessNameEnricher.cs#L30</remarks>
-        private const string ProcessNamePropertyName = "ProcessName";
 
         private readonly Log4NetTextFormatterOptions _options;
 
@@ -97,8 +91,7 @@ namespace Serilog.Formatting.Log4Net
             writer.WriteAttributeString("timestamp", XmlConvert.ToString(logEvent.Timestamp));
             writer.WriteAttributeString("level", LogLevel(logEvent.Level));
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
-            WriteEventAttribute(logEvent, writer, "domain", ProcessNamePropertyName);
-            WriteEventAttribute(logEvent, writer, "username", UserNamePropertyName);
+            WriteDomainAndUserName(logEvent, writer);
             var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key)).ToList();
             var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue scalarValue && scalarValue.Value != null;
             if (properties.Any() || hasMachineNameProperty)
@@ -108,6 +101,29 @@ namespace Serilog.Formatting.Log4Net
             WriteMessage(logEvent, writer);
             WriteException(logEvent, writer);
             writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Write the <c>domain</c> and <c>username</c> XML attributes if found in the <c>EnvironmentUserName</c> property.
+        /// </summary>
+        /// <param name="logEvent">The log event.</param>
+        /// <param name="writer">The XML writer.</param>
+        private static void WriteDomainAndUserName(LogEvent logEvent, XmlWriter writer)
+        {
+            if (logEvent.Properties.TryGetValue(UserNamePropertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue && scalarValue.Value is string userNameProperty)
+            {
+                // See https://github.com/serilog/serilog-enrichers-environment/blob/3fc7cf78c5f34816633000ae74d846033498e44b/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L53
+                var parts = userNameProperty.Split('\\');
+                var (domain, userName) = parts.Length >= 2 ? (parts[0], string.Join(@"\", parts.Skip(1))) : (null, parts[0]);
+                if (domain != null)
+                {
+                    writer.WriteAttributeString("domain", domain);
+                }
+                if (userName != null)
+                {
+                    writer.WriteAttributeString("username", userName);
+                }
+            }
         }
 
         /// <summary>

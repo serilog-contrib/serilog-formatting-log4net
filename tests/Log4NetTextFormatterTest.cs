@@ -7,6 +7,7 @@ using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
 using FluentAssertions;
+using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Parsing;
 using Xunit;
@@ -382,12 +383,16 @@ namespace Serilog.Formatting.Log4Net.Tests
             Approvals.VerifyWithExtension(output.ToString(), "xml");
         }
 
-        [Fact]
-        public void ThreadId()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(1)]
+        public void ThreadId(int? threadId)
         {
+            NamerFactory.AdditionalInformation = threadId?.ToString() ?? "_null";
+
             // Arrange
             var output = new StringWriter();
-            var logEvent = CreateLogEvent(properties: new LogEventProperty("ThreadId", new ScalarValue("the-thread-id")));
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(ThreadIdEnricher.ThreadIdPropertyName, new ScalarValue(threadId)));
             var formatter = new Log4NetTextFormatter();
 
             // Act
@@ -397,12 +402,19 @@ namespace Serilog.Formatting.Log4Net.Tests
             Approvals.VerifyWithExtension(output.ToString(), "xml");
         }
 
-        [Fact]
-        public void ThreadIdNull()
+        [Theory]
+        [InlineData(null)]
+        [InlineData(@"")]
+        [InlineData(@"TheUser")]
+        [InlineData(@"TheDomain\TheUser")]
+        [InlineData(@"TheDomain\TheUser\Name")]
+        public void DomainAndUserName(string? environmentUserName)
         {
+            NamerFactory.AdditionalInformation = environmentUserName == null ? "_null" : environmentUserName.Length == 0 ? "_empty" : environmentUserName.Replace(@"\", "_");
+
             // Arrange
             var output = new StringWriter();
-            var logEvent = CreateLogEvent(properties: new LogEventProperty("ThreadId", new ScalarValue(null)));
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(EnvironmentUserNameEnricher.EnvironmentUserNamePropertyName, new ScalarValue(environmentUserName)));
             var formatter = new Log4NetTextFormatter();
 
             // Act
@@ -412,57 +424,16 @@ namespace Serilog.Formatting.Log4Net.Tests
             Approvals.VerifyWithExtension(output.ToString(), "xml");
         }
 
-        [Fact]
-        public void UserName()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("TheMachineName")]
+        public void MachineName(string? machineName)
         {
+            NamerFactory.AdditionalInformation = machineName ?? "_null";
+
             // Arrange
             var output = new StringWriter();
-            var logEvent = CreateLogEvent(properties: new LogEventProperty("EnvironmentUserName", new ScalarValue("the-user-name")));
-            var formatter = new Log4NetTextFormatter();
-
-            // Act
-            formatter.Format(logEvent, output);
-
-            // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
-        }
-
-        [Fact]
-        public void UserNameNull()
-        {
-            // Arrange
-            var output = new StringWriter();
-            var logEvent = CreateLogEvent(properties: new LogEventProperty("EnvironmentUserName", new ScalarValue(null)));
-            var formatter = new Log4NetTextFormatter();
-
-            // Act
-            formatter.Format(logEvent, output);
-
-            // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
-        }
-
-        [Fact]
-        public void MachineName()
-        {
-            // Arrange
-            var output = new StringWriter();
-            var logEvent = CreateLogEvent(properties: new LogEventProperty("MachineName", new ScalarValue("the-machine-name")));
-            var formatter = new Log4NetTextFormatter();
-
-            // Act
-            formatter.Format(logEvent, output);
-
-            // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
-        }
-
-        [Fact]
-        public void MachineNameNull()
-        {
-            // Arrange
-            var output = new StringWriter();
-            var logEvent = CreateLogEvent(properties: new LogEventProperty("MachineName", new ScalarValue(null)));
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new ScalarValue(machineName)));
             var formatter = new Log4NetTextFormatter();
 
             // Act

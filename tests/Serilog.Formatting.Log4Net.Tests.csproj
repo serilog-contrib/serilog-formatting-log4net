@@ -42,6 +42,12 @@
     <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)/index.html&quot;" Condition="$(OpenCommand) != ''" />
   </Target>
 
+  <Target Name="UploadCoverageToCodecov" AfterTargets="CollectCoverletReport" Condition="$(ContinuousIntegrationBuild) == 'true'">
+    <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install Codecov.Tool` -->
+    <Exec Command="dotnet tool restore" />
+    <Exec Command="dotnet codecov --file &quot;@(CoverletReport, '&quot; &quot;')&quot;" />
+  </Target>
+
   <ItemGroup>
     <ProjectReference Include="..\src\Serilog.Formatting.Log4Net.csproj" />
   </ItemGroup>

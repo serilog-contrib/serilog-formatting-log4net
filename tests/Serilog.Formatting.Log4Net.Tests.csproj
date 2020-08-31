@@ -22,16 +22,23 @@
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutput>../coverage/</CoverletOutput>
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>
-    <CoverageReportDirectory>$(CoverletOutput)report</CoverageReportDirectory>
   </PropertyGroup>
 
-  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) != 'true'">
-    <ReportGenerator ReportFiles="$(CoverletOutput)*.*" TargetDirectory="$(CoverageReportDirectory)" />
+  <!-- Remove this target once https://github.com/coverlet-coverage/coverlet/pull/932 is merged and a new version of coverlet.msbuild is released -->
+  <Target Name="CollectCoverletReport" AfterTargets="GenerateCoverageResultAfterTest">
+    <ItemGroup>
+      <CoverletReport Include="$(CoverletOutput)*.*" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="CollectCoverletReport" Condition="$(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
+      <CoverageReportDirectory>$(CoverletOutput)report</CoverageReportDirectory>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">explorer</OpenCommand>
     </PropertyGroup>
+    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
     <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)/index.html&quot;" Condition="$(OpenCommand) != ''" />
   </Target>
 

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/global",
   "sdk": {
     "version": "3.1.300",
     "allowPrerelease": false,

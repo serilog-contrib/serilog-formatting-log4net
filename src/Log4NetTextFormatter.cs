@@ -150,23 +150,16 @@ namespace Serilog.Formatting.Log4Net
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/Level.cs#L509-L603</remarks>
         private static string LogLevel(LogEventLevel level)
         {
-            switch (level)
+            return level switch
             {
-                case LogEventLevel.Verbose:
-                    return "VERBOSE";
-                case LogEventLevel.Debug:
-                    return "DEBUG";
-                case LogEventLevel.Information:
-                    return "INFO";
-                case LogEventLevel.Warning:
-                    return "WARN";
-                case LogEventLevel.Error:
-                    return "ERROR";
-                case LogEventLevel.Fatal:
-                    return "FATAL";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for enum type '{nameof(LogEventLevel)}'.");
-            }
+                LogEventLevel.Verbose => "VERBOSE",
+                LogEventLevel.Debug => "DEBUG",
+                LogEventLevel.Information => "INFO",
+                LogEventLevel.Warning => "WARN",
+                LogEventLevel.Error => "ERROR",
+                LogEventLevel.Fatal => "FATAL",
+                _ => throw new ArgumentOutOfRangeException(nameof(level), level, $"The value of argument '{nameof(level)}' ({level}) is invalid for enum type '{nameof(LogEventLevel)}'.")
+            };
         }
 
         /// <summary>

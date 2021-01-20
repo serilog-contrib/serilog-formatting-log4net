@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="ApprovalTests" Version="5.4.5" />
-    <PackageReference Include="coverlet.msbuild" Version="2.9.0" />
+    <PackageReference Include="coverlet.msbuild" Version="3.0.1" PrivateAssets="all" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
@@ -26,14 +26,7 @@
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>
   </PropertyGroup>
 
-  <!-- Remove this target once https://github.com/coverlet-coverage/coverlet/pull/932 is merged and a new version of coverlet.msbuild is released -->
-  <Target Name="CollectCoverletReport" AfterTargets="GenerateCoverageResultAfterTest">
-    <ItemGroup>
-      <CoverletReport Include="$(CoverletOutput)*.*" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GenerateHtmlCoverageReport" AfterTargets="CollectCoverletReport" Condition="$(ContinuousIntegrationBuild) != 'true'">
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
       <CoverageReportDirectory>$(CoverletOutput)report</CoverageReportDirectory>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
@@ -44,7 +37,7 @@
     <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)/index.html&quot;" Condition="$(OpenCommand) != ''" />
   </Target>
 
-  <Target Name="UploadCoverageToCodecov" AfterTargets="CollectCoverletReport" Condition="$(ContinuousIntegrationBuild) == 'true'">
+  <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
     <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install Codecov.Tool` -->
     <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet codecov --file &quot;@(CoverletReport, '&quot; &quot;')&quot;" />

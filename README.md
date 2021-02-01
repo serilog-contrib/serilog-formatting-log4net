@@ -114,11 +114,10 @@ Include the domain and user name in log4net events by using [Serilog.Enrichers.E
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithEnvironmentUserName();
 ```
 
-#### Machine Name
+#### Machine Name
 
 Include the machine name in log4net events by using [Serilog.Enrichers.Environment](https://www.nuget.org/packages/Serilog.Enrichers.Environment/):
 
 ```c#
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithMachineName();
 ```
-

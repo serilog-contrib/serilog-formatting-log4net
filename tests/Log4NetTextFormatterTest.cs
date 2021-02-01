@@ -344,7 +344,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.UseFormatException(e => $"Type = {e.GetType().FullName}\nMessage = {e.Message}"));
+            var formatter = new Log4NetTextFormatter(options => options.UseExceptionFormatter(e => $"Type = {e.GetType().FullName}\nMessage = {e.Message}"));
 
             // Act
             formatter.Format(logEvent, output);
@@ -359,7 +359,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.UseFormatException(e => null!));
+            var formatter = new Log4NetTextFormatter(options => options.UseExceptionFormatter(e => null!));
 
             // Act
             formatter.Format(logEvent, output);
@@ -374,7 +374,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
-            var formatter = new Log4NetTextFormatter(options => options.UseFormatException(e => throw new InvalidOperationException("💥 Boom 💥")));
+            var formatter = new Log4NetTextFormatter(options => options.UseExceptionFormatter(e => throw new InvalidOperationException("💥 Boom 💥")));
 
             // Act
             formatter.Format(logEvent, output);

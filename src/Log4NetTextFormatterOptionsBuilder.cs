@@ -145,7 +145,7 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used, i.e. <c>Exception.ToString()</c>.</remarks>
         /// <returns>The builder in order to fluently chain all options.</returns>
-        public Log4NetTextFormatterOptionsBuilder UseFormatException(ExceptionFormatter formatException)
+        public Log4NetTextFormatterOptionsBuilder UseExceptionFormatter(ExceptionFormatter formatException)
         {
             FormatException = formatException ?? throw new ArgumentNullException(nameof(formatException), $"The {nameof(FormatException)} option can not be null.");
             return this;

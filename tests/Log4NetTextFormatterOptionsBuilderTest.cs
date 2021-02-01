@@ -109,13 +109,13 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
-        public void UseFormatException()
+        public void UseExceptionFormatter()
         {
             // Arrange
             ExceptionFormatter formatException = exception => throw new NotImplementedException();
 
             // Act
-            var builder = new Log4NetTextFormatterOptionsBuilder().UseFormatException(formatException);
+            var builder = new Log4NetTextFormatterOptionsBuilder().UseExceptionFormatter(formatException);
 
             // Assert
             builder.FormatException.Should().BeSameAs(formatException);
@@ -125,7 +125,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void SettingExceptionFormatterToNullThrowsArgumentNullException()
         {
             // Arrange
-            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatterOptionsBuilder().UseFormatException(null!);
+            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatterOptionsBuilder().UseExceptionFormatter(null!);
 
             // Act + Assert
             FluentActions.Invoking(SetExceptionFormatterToNull).Should()

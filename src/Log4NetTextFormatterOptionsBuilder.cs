@@ -132,7 +132,7 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <remarks>If an exception is thrown while executing the filter, the default filter will be applied, i.e. the Serilog property will be included in the log4net properties.</remarks>
         /// <returns>The builder in order to fluently chain all options.</returns>
-        public Log4NetTextFormatterOptionsBuilder UseFilterProperty(PropertyFilter filterProperty)
+        public Log4NetTextFormatterOptionsBuilder UsePropertyFilter(PropertyFilter filterProperty)
         {
             FilterProperty = filterProperty ?? throw new ArgumentNullException(nameof(filterProperty), $"The {nameof(FilterProperty)} option can not be null.");
             return this;

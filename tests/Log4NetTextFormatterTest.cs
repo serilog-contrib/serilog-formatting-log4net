@@ -275,7 +275,7 @@ namespace Serilog.Formatting.Log4Net.Tests
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
             });
-            var formatter = new Log4NetTextFormatter(options => options.UseFilterProperty((_, propertyName) => propertyName != "one"));
+            var formatter = new Log4NetTextFormatter(options => options.UsePropertyFilter((_, propertyName) => propertyName != "one"));
 
             // Act
             formatter.Format(logEvent, output);
@@ -293,7 +293,7 @@ namespace Serilog.Formatting.Log4Net.Tests
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
             });
-            var formatter = new Log4NetTextFormatter(options => options.UseFilterProperty((_, propertyName) =>
+            var formatter = new Log4NetTextFormatter(options => options.UsePropertyFilter((_, propertyName) =>
             {
                 if (propertyName == "one")
                     return true;

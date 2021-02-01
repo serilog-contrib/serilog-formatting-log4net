@@ -84,26 +84,26 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
-        public void UseFilterProperty()
+        public void UsePropertyFilter()
         {
             // Arrange
             PropertyFilter filterProperty = (logEvent, propertyName) => throw new NotImplementedException();
 
             // Act
-            var builder = new Log4NetTextFormatterOptionsBuilder().UseFilterProperty(filterProperty);
+            var builder = new Log4NetTextFormatterOptionsBuilder().UsePropertyFilter(filterProperty);
 
             // Assert
             builder.FilterProperty.Should().BeSameAs(filterProperty);
         }
 
         [Fact]
-        public void SettingFilterPropertyToNullThrowsArgumentNullException()
+        public void SettingPropertyFilterToNullThrowsArgumentNullException()
         {
             // Arrange
-            static void SetFilterPropertyToNull() => _ = new Log4NetTextFormatterOptionsBuilder().UseFilterProperty(null!);
+            static void SetPropertyFilterToNull() => _ = new Log4NetTextFormatterOptionsBuilder().UsePropertyFilter(null!);
 
             // Act + Assert
-            FluentActions.Invoking(SetFilterPropertyToNull)
+            FluentActions.Invoking(SetPropertyFilterToNull)
                 .Should().ThrowExactly<ArgumentNullException>()
                 .And.Message.Should().StartWith("The FilterProperty option can not be null.");
         }

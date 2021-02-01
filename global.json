@@ -3,6 +3,6 @@
   "sdk": {
     "version": "3.1.405",
     "allowPrerelease": false,
-    "rollForward": "latestMinor"
+    "rollForward": "latestMajor"
   }
 }

@@ -21,20 +21,24 @@
   </ItemGroup>
 
   <PropertyGroup Label="Coverage">
+    <!-- Automatically collect coverage when running `dotnet test` -->
     <CollectCoverage>true</CollectCoverage>
-    <CoverletOutput>../coverage/</CoverletOutput>
+    <!-- Tweak the default coverlet output directory to be `coverage` inside the `tests` directory -->
+    <CoverletOutput>$([MSBuild]::EnsureTrailingSlash($([System.IO.Path]::Combine($(MSBuildProjectDirectory),'coverage'))))</CoverletOutput>
+    <!-- The default output format is `json` which is not supported by ReportGenerator -->
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>
   </PropertyGroup>
 
   <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
-      <CoverageReportDirectory>$(CoverletOutput)report</CoverageReportDirectory>
+      <CoverageReportDirectory>$([MSBuild]::EnsureTrailingSlash('$(CoverletOutput)report'))</CoverageReportDirectory>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">explorer</OpenCommand>
     </PropertyGroup>
     <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
-    <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)/index.html&quot;" Condition="$(OpenCommand) != ''" />
+    <!-- executing "explorer path\to\index.html" returns exit code 1, so we ignore it -->
+    <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)index.html&quot;" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
   <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">

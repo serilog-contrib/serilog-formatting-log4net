@@ -38,7 +38,7 @@
     </PropertyGroup>
     <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
     <!-- executing "explorer path\to\index.html" returns exit code 1, so we ignore it -->
-    <Exec Command="$(OpenCommand) &quot;$(CoverageReportDirectory)index.html&quot;" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
+    <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
   <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">

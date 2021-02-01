@@ -1,0 +1,16 @@
+name: Continuous Integration
+
+on: push
+
+env:
+  ContinuousIntegrationBuild: true
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - run: dotnet test

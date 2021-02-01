@@ -2,11 +2,41 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Compilation">
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <PropertyGroup Label="Packaging">
+    <DebugType>embedded</DebugType>
+    <EmbedAllSources>true</EmbedAllSources>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Publishing">
+    <Authors>Cédric Luthi</Authors>
+    <Copyright>Copyright © Cédric Luthi</Copyright>
+    <Description>Format Serilog events in log4net compatible XML format</Description>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Serilog log4net</PackageTags>
+    <PackageProjectUrl>https://github.com/0xced/serilog-formatting-log4net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/0xced/serilog-formatting-log4net</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Versioning">
+    <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../resources/icon.png">
+      <Pack>true</Pack>
+      <PackagePath />
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />

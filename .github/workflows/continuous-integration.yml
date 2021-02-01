@@ -3,6 +3,7 @@ name: Continuous Integration
 on: push
 
 env:
+  Configuration: Release
   ContinuousIntegrationBuild: true
 
 jobs:
@@ -12,5 +13,12 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - run: dotnet test
+      - uses: actions/checkout@v2
+      - run: dotnet test --verbosity normal
+  publish:
+    runs-on: macos-latest
+    needs: test
+    if: github.ref == 'refs/heads/deploy'
+    steps:
+      - run: dotnet pack --no-build --verbosity normal
+      - run: dotnet nuget push "**/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

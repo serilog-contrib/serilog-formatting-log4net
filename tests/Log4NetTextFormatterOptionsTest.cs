@@ -27,12 +27,13 @@ namespace Serilog.Formatting.Log4Net.Tests
             XmlWriterSettings xmlWriterSettings = null!;
             var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, (PropertyFilter)FilterProperty, (ExceptionFormatter)FormatException};
 
-            // Act + Assert
-            var exception = FluentActions.Invoking(() => Log4NetTextFormatterOptionsConstructor.Invoke(parameters))
-                .Should()
-                .ThrowExactly<TargetInvocationException>().Which.InnerException.Should()
-                .BeOfType<ArgumentNullException>().Subject;
-            exception.ParamName.Should().Be("xmlWriterSettings");
+            // Act
+            Action action = () => Log4NetTextFormatterOptionsConstructor.Invoke(parameters);
+
+            // Assert
+            action.Should().ThrowExactly<TargetInvocationException>()
+                .Which.InnerException.Should().BeOfType<ArgumentNullException>()
+                .Which.ParamName.Should().Be("xmlWriterSettings");
         }
 
         [Fact]
@@ -46,12 +47,13 @@ namespace Serilog.Formatting.Log4Net.Tests
             PropertyFilter filterProperty = null!;
             var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, filterProperty, (ExceptionFormatter)FormatException};
 
-            // Act + Assert
-            var exception = FluentActions.Invoking(() => Log4NetTextFormatterOptionsConstructor.Invoke(parameters))
-                .Should()
-                .ThrowExactly<TargetInvocationException>().Which.InnerException.Should()
-                .BeOfType<ArgumentNullException>().Subject;
-            exception.ParamName.Should().Be("filterProperty");
+            // Act
+            Action action = () => Log4NetTextFormatterOptionsConstructor.Invoke(parameters);
+
+            // Assert
+            action.Should().ThrowExactly<TargetInvocationException>()
+                .Which.InnerException.Should().BeOfType<ArgumentNullException>()
+                .Which.ParamName.Should().Be("filterProperty");
         }
 
         [Fact]
@@ -65,12 +67,13 @@ namespace Serilog.Formatting.Log4Net.Tests
             ExceptionFormatter formatException = null!;
             var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, (PropertyFilter)FilterProperty, formatException};
 
-            // Act + Assert
-            var exception = FluentActions.Invoking(() => Log4NetTextFormatterOptionsConstructor.Invoke(parameters))
-                .Should()
-                .ThrowExactly<TargetInvocationException>().Which.InnerException.Should()
-                .BeOfType<ArgumentNullException>().Subject;
-            exception.ParamName.Should().Be("formatException");
+            // Act
+            Action action = () => Log4NetTextFormatterOptionsConstructor.Invoke(parameters);
+
+            // Assert
+            action.Should().ThrowExactly<TargetInvocationException>()
+                .Which.InnerException.Should().BeOfType<ArgumentNullException>()
+                .Which.ParamName.Should().Be("formatException");
         }
     }
 }

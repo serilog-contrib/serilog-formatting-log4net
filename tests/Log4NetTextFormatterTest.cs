@@ -106,13 +106,14 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void InvalidLogEventLevelThrowsArgumentOutOfRangeException()
         {
             // Arrange
-            using var output = new StringWriter();
             var logEvent = CreateLogEvent((LogEventLevel)(-1));
             var formatter = new Log4NetTextFormatter();
 
-            // Act + Assert
-            FluentActions.Invoking(() => formatter.Format(logEvent, output))
-                .Should().ThrowExactly<ArgumentOutOfRangeException>()
+            // Act
+            Action action = () => formatter.Format(logEvent, TextWriter.Null);
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentOutOfRangeException>()
                 .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'.");
         }
 

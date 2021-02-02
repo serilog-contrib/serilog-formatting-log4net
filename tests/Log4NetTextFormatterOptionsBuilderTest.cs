@@ -99,13 +99,12 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Fact]
         public void SettingPropertyFilterToNullThrowsArgumentNullException()
         {
-            // Arrange
-            static void SetPropertyFilterToNull() => _ = new Log4NetTextFormatterOptionsBuilder().UsePropertyFilter(null!);
+            // Act
+            Func<Log4NetTextFormatterOptionsBuilder> action = () => new Log4NetTextFormatterOptionsBuilder().UsePropertyFilter(null!);
 
-            // Act + Assert
-            FluentActions.Invoking(SetPropertyFilterToNull)
-                .Should().ThrowExactly<ArgumentNullException>()
-                .And.Message.Should().StartWith("The FilterProperty option can not be null.");
+            // Assert
+            action.Should().ThrowExactly<ArgumentNullException>()
+                .Which.Message.Should().StartWith("The FilterProperty option can not be null.");
         }
 
         [Fact]
@@ -124,13 +123,12 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Fact]
         public void SettingExceptionFormatterToNullThrowsArgumentNullException()
         {
-            // Arrange
-            static void SetExceptionFormatterToNull() => _ = new Log4NetTextFormatterOptionsBuilder().UseExceptionFormatter(null!);
+            // Act
+            Func<Log4NetTextFormatterOptionsBuilder> action = () => new Log4NetTextFormatterOptionsBuilder().UseExceptionFormatter(null!);
 
-            // Act + Assert
-            FluentActions.Invoking(SetExceptionFormatterToNull).Should()
-                .ThrowExactly<ArgumentNullException>()
-                .And.Message.Should().StartWith("The FormatException option can not be null.");
+            // Assert
+            action.Should().ThrowExactly<ArgumentNullException>()
+                .Which.Message.Should().StartWith("The FormatException option can not be null.");
         }
     }
 }

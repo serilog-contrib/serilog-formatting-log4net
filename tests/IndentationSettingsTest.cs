@@ -26,17 +26,23 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Fact]
         public void InvalidIndentation()
         {
-            FluentActions.Invoking(() => new IndentationSettings((Indentation)(-1), size: 1))
-                .Should().ThrowExactly<ArgumentOutOfRangeException>()
-                .And.Message.Should().StartWith("The value of argument 'indentation' (-1) is invalid for enum type 'Indentation'.");
+            // Act
+            Func<IndentationSettings> action = () => new IndentationSettings((Indentation)(-1), size: 1);
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentOutOfRangeException>()
+                .Which.Message.Should().StartWith("The value of argument 'indentation' (-1) is invalid for enum type 'Indentation'.");
         }
 
         [Fact]
         public void InvalidSize()
         {
-            FluentActions.Invoking(() => new IndentationSettings(indentation: default, size: 0))
-                .Should().ThrowExactly<ArgumentOutOfRangeException>()
-                .And.Message.Should().StartWith("The value of argument 'size' must be greater than 0.");
+            // Act
+            Func<IndentationSettings> action = () => new IndentationSettings(indentation: default, size: 0);
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentOutOfRangeException>()
+                .Which.Message.Should().StartWith("The value of argument 'size' must be greater than 0.");
         }
     }
 }

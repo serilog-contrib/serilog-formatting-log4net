@@ -33,10 +33,10 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Fact]
         public void InvalidLineEnding()
         {
-            FluentActions.Invoking(() => ((LineEnding)4).ToCharacters())
-                .Should().ThrowExactly<ArgumentOutOfRangeException>()
-                .And.Message.Should().StartWith("The value of argument 'lineEnding' (4) is invalid for enum type 'LineEnding'.");
+            Func<string> action = () => ((LineEnding)4).ToCharacters();
 
+            action.Should().ThrowExactly<ArgumentOutOfRangeException>()
+                .Which.Message.Should().StartWith("The value of argument 'lineEnding' (4) is invalid for enum type 'LineEnding'.");
         }
     }
 }

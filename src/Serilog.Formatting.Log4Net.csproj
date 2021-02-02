@@ -32,6 +32,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Restoring">
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <NuGetLockFilePath>../packages.lock.json</NuGetLockFilePath>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreLockedMode Condition="$(ContinuousIntegrationBuild) == 'true'">true</RestoreLockedMode>

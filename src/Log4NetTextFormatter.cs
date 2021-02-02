@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -72,6 +73,8 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="output">The output.</param>
         public void Format(LogEvent logEvent, TextWriter output)
         {
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
+            if (output == null) throw new ArgumentNullException(nameof(output));
             using var writer = XmlWriter.Create(output, _options.XmlWriterSettings);
             WriteEvent(logEvent, writer);
             writer.Flush();
@@ -170,6 +173,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="properties">The collection of properties to write.</param>
         /// <param name="machineNameProperty">The machine name property to write or <see langref="null"/> if doesn't exist.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L262-L286</remarks>
+        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
         private void WriteProperties(LogEvent logEvent, XmlWriter writer, IEnumerable<KeyValuePair<string, LogEventPropertyValue>> properties, LogEventPropertyValue? machineNameProperty)
         {
             WriteStartElement(writer, "properties");
@@ -205,7 +209,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>A string representation of the <paramref name="value"/>.</returns>
         private string RenderValue(LogEventPropertyValue value)
         {
-            var valueWriter = new StringWriter();
+            using var valueWriter = new StringWriter();
             // The "l" format specifier switches off quoting of strings, see https://github.com/serilog/serilog/wiki/Formatting-Output#formatting-plain-text
             value.Render(valueWriter, value is ScalarValue scalarValue && scalarValue.Value is string ? "l" : null, _options.FormatProvider);
             return valueWriter.ToString();
@@ -328,6 +332,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L288-L295</remarks>
+        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
         private void WriteException(LogEvent logEvent, XmlWriter writer)
         {
             var exception = logEvent.Exception;

@@ -7,6 +7,8 @@
   <PropertyGroup Label="Compiling">
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 

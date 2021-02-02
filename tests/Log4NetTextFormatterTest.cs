@@ -52,6 +52,33 @@ namespace Serilog.Formatting.Log4Net.Tests
             );
         }
 
+        [Fact]
+        public void NullLogEventThrowsArgumentNullException()
+        {
+            // Arrange
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            Action action = () => formatter.Format(null!, TextWriter.Null);
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("logEvent");
+        }
+
+        [Fact]
+        public void NullOutputThrowsArgumentNullException()
+        {
+            // Arrange
+            var logEvent = CreateLogEvent();
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            Action action = () => formatter.Format(logEvent, null!);
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("output");
+        }
+
         [Theory]
         [InlineData(Events.LogEventLevel.Verbose)]
         [InlineData(Events.LogEventLevel.Debug)]

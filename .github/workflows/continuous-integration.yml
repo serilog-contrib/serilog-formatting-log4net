@@ -12,6 +12,7 @@ jobs:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
+    name: Run tests and create NuGet package
     steps:
       - uses: actions/checkout@v2
         with:
@@ -19,10 +20,11 @@ jobs:
       - run: dotnet restore --verbosity normal
       - run: dotnet build --verbosity normal
       - run: dotnet test --no-build --verbosity normal
+      - run: dotnet pack --no-build --verbosity normal
   publish:
     runs-on: macos-latest
     needs: test
     if: github.ref == 'refs/heads/deploy'
+    name: Publish NuGet package
     steps:
-      - run: dotnet pack --no-build --verbosity normal
       - run: dotnet nuget push "**/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

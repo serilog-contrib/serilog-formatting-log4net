@@ -16,7 +16,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - run: dotnet test --verbosity normal
+      - run: dotnet restore --verbosity normal
+      - run: dotnet build --verbosity normal
+      - run: dotnet test --no-build --verbosity normal
   publish:
     runs-on: macos-latest
     needs: test

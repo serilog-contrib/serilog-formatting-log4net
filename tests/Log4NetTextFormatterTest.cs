@@ -91,7 +91,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = level.ToString();
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(level);
             var formatter = new Log4NetTextFormatter();
 
@@ -106,7 +106,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void InvalidLogEventLevelThrowsArgumentOutOfRangeException()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent((LogEventLevel)(-1));
             var formatter = new Log4NetTextFormatter();
 
@@ -128,7 +128,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = mode + "." + (needsEscaping ? "NeedsEscaping" : "DoesntNeedEscaping");
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: needsEscaping ? ">> Hello from Serilog <<" : "Hello from Serilog");
             var formatter = new Log4NetTextFormatter(options => options.UseCDataMode(mode));
 
@@ -149,7 +149,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = lineEnding.ToString();
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent();
             var formatter = new Log4NetTextFormatter(options => options.UseLineEnding(lineEnding));
 
@@ -170,7 +170,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = indentation + "." + size;
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent();
             var formatter = new Log4NetTextFormatter(options => options.UseIndentationSettings(new IndentationSettings(indentation, size)));
 
@@ -185,7 +185,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void NoIndentation()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent();
             var formatter = new Log4NetTextFormatter(options => options.UseNoIndentation());
 
@@ -200,7 +200,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void NoNamespace()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent();
             var formatter = new Log4NetTextFormatter(options => options.UseLog4NetXmlNamespace(null));
 
@@ -215,7 +215,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void NullProperty()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty("n/a", new ScalarValue(null)));
             var formatter = new Log4NetTextFormatter();
 
@@ -230,7 +230,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void DefaultFormatProvider()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: "π = {π}", properties: new LogEventProperty("π", new ScalarValue(3.14m)));
             var formatter = new Log4NetTextFormatter();
 
@@ -245,7 +245,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void ExplicitFormatProvider()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: "π = {π}", properties: new LogEventProperty("π", new ScalarValue(3.14m)));
             var formatProvider = new NumberFormatInfo { NumberDecimalSeparator = "," };
             var formatter = new Log4NetTextFormatter(options => options.UseFormatProvider(formatProvider));
@@ -261,7 +261,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void TwoProperties()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new[]{
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
@@ -279,7 +279,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void TwoPropertiesOneNull()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new[]{
                 new LogEventProperty("n/a", new ScalarValue(null)),
                 new LogEventProperty("one", new ScalarValue(1)),
@@ -297,7 +297,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void FilterProperty()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new[]{
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
@@ -315,7 +315,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void FilterPropertyThrowing()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new[]{
                 new LogEventProperty("one", new ScalarValue(1)),
                 new LogEventProperty("two", new ScalarValue(2)),
@@ -338,7 +338,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void TwoEvents()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent();
             var formatter = new Log4NetTextFormatter();
 
@@ -354,7 +354,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void Exception()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred").SetStackTrace(@"  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"));
             var formatter = new Log4NetTextFormatter();
 
@@ -369,7 +369,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void ExceptionFormatter()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
             var formatter = new Log4NetTextFormatter(options => options.UseExceptionFormatter(e => $"Type = {e.GetType().FullName}\nMessage = {e.Message}"));
 
@@ -384,7 +384,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void ExceptionFormatterReturningNull()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
             var formatter = new Log4NetTextFormatter(options => options.UseExceptionFormatter(e => null!));
 
@@ -399,7 +399,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void ExceptionFormatterThrowing()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(exception: new Exception("An error occurred"));
             var formatter = new Log4NetTextFormatter(options => options.UseExceptionFormatter(e => throw new InvalidOperationException("💥 Boom 💥")));
 
@@ -418,7 +418,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = threadId?.ToString() ?? "_null";
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(ThreadIdEnricher.ThreadIdPropertyName, new ScalarValue(threadId)));
             var formatter = new Log4NetTextFormatter();
 
@@ -440,7 +440,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = environmentUserName == null ? "_null" : environmentUserName.Length == 0 ? "_empty" : environmentUserName.Replace(@"\", "_");
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(EnvironmentUserNameEnricher.EnvironmentUserNamePropertyName, new ScalarValue(environmentUserName)));
             var formatter = new Log4NetTextFormatter();
 
@@ -459,7 +459,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             NamerFactory.AdditionalInformation = machineName ?? "_null";
 
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new ScalarValue(machineName)));
             var formatter = new Log4NetTextFormatter();
 
@@ -474,7 +474,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void SequenceProperty()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var values = new LogEventPropertyValue[] { new ScalarValue(1), new ScalarValue("two"), CreateDictionary() };
             var logEvent = CreateLogEvent(properties: new LogEventProperty("Sequence", new SequenceValue(values)));
             var formatter = new Log4NetTextFormatter();
@@ -490,7 +490,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void DictionaryProperty()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var values = new[]
             {
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("one")),
@@ -511,7 +511,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void StructureProperty()
         {
             // Arrange
-            var output = new StringWriter();
+            using var output = new StringWriter();
             var values = new[]
             {
                 new LogEventProperty("1", new ScalarValue("one")),

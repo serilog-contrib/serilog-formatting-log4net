@@ -16,7 +16,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Label="Publishing">
+  <PropertyGroup Label="Packaging Metadata">
     <Authors>Cédric Luthi</Authors>
     <Copyright>Copyright © Cédric Luthi</Copyright>
     <Description>Format Serilog events in log4net compatible XML format</Description>
@@ -26,6 +26,13 @@
     <PackageProjectUrl>https://github.com/0xced/serilog-formatting-log4net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/0xced/serilog-formatting-log4net</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup Label="Packaging Metadata">
+    <None Include="../resources/icon.png" Visible="false">
+      <Pack>true</Pack>
+      <PackagePath />
+    </None>
+  </ItemGroup>
 
   <PropertyGroup Label="Versioning">
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
@@ -37,13 +44,6 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreLockedMode Condition="$(ContinuousIntegrationBuild) == 'true'">true</RestoreLockedMode>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="../resources/icon.png">
-      <Pack>true</Pack>
-      <PackagePath />
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />

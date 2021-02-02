@@ -13,6 +13,7 @@ namespace Serilog.Formatting.Log4Net
             FormatProvider = formatProvider;
             CDataMode = cDataMode;
             Log4NetXmlNamespace = log4NetXmlNamespace;
+            // ReSharper disable once ConstantConditionalAccessQualifier
             XmlWriterSettings = xmlWriterSettings?.Clone() ?? throw new ArgumentNullException(nameof(xmlWriterSettings));
             FilterProperty = filterProperty ?? throw new ArgumentNullException(nameof(filterProperty));
             FormatException = formatException ?? throw new ArgumentNullException(nameof(formatException));

@@ -38,9 +38,19 @@ jobs:
   publish-prerelease:
     runs-on: macos-latest
     needs: package
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/deploy'
     name: Publish package on github.com
     steps:
-      - run: echo version -- ${{ needs.package.outputs.version }} --
-      - run: echo dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
-      - run: echo dotnet nuget push "**/*.nupkg" --source github
+      - name: Create tag
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ needs.package.outputs.version }}",
+              sha: context.sha
+            })
+      - run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
+      - run: dotnet nuget push "**/*.nupkg" --source github

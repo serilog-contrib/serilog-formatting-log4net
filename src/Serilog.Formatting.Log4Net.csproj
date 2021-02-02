@@ -58,4 +58,8 @@
     <Exec Command="dotnet validate package local $(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg" />
   </Target>
 
+  <Target Name="PrintPackageVersionForGitHubActions" AfterTargets="Pack">
+    <Message Importance="high" Text="::set-output name=version::$(PackageVersion)" />
+  </Target>
+
 </Project>

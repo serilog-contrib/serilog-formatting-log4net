@@ -38,8 +38,9 @@ jobs:
   publish-prerelease:
     runs-on: macos-latest
     needs: package
-    if: github.ref == 'refs/heads/deploy'
+    if: github.ref == 'refs/heads/main'
     name: Publish package on github.com
     steps:
-      - run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
-      - run: dotnet nuget push "**/*.nupkg" --source github
+      - run: echo version -- ${{ needs.package.outputs.version }} --
+      - run: echo dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
+      - run: echo dotnet nuget push "**/*.nupkg" --source github

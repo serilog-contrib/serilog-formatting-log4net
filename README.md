@@ -1,6 +1,6 @@
 **Serilog.Formatting.Log4Net** is an add-on for [Serilog](https://serilog.net/) to format log events as [log4net](https://logging.apache.org/log4net/) compatible XML format.
 
-[![NuGet Package](https://img.shields.io/nuget/v/Serilog.Formatting.Log4Net.svg)](https://www.nuget.org/packages/Serilog.Formatting.Log4Net/) [![Codecov](https://img.shields.io/codecov/c/github/0xced/serilog-formatting-log4net)](https://codecov.io/gh/0xced/serilog-formatting-log4net)
+[![NuGet](https://img.shields.io/nuget/v/Serilog.Formatting.Log4Net.svg?label=NuGet&logo=NuGet)](https://www.nuget.org/packages/Serilog.Formatting.Log4Net/) [![Continuous Integration](https://img.shields.io/github/workflow/status/0xced/serilog-formatting-log4net/Continuous%20Integration?label=Continuous%20Integration&logo=GitHub)](https://github.com/0xced/serilog-formatting-log4net/actions?query=workflow%3A%22Continuous+Integration%22) [![Coverage](https://img.shields.io/codecov/c/github/0xced/serilog-formatting-log4net?label=Coverage&logo=Codecov&logoColor=f5f5f5)](https://codecov.io/gh/0xced/serilog-formatting-log4net)
 
 ## Getting started
 

@@ -30,6 +30,7 @@ jobs:
         id: dotnet-pack
       - uses: actions/upload-artifact@v2
         with:
+          name: nuget-package-${{ matrix.os }}
           path: "**/*.nupkg"
   publish-release:
     runs-on: macos-latest

@@ -55,11 +55,12 @@
 
   <Target Name="ValidateNuGetPackage" AfterTargets="Pack">
     <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet validate package local $(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg" />
+    <Exec Command="dotnet validate package local @(NuGetPackOutput)" Condition="%(NuGetPackOutput.extension) == '.nupkg'" />
   </Target>
 
   <Target Name="PrintPackageVersionForGitHubActions" AfterTargets="Pack">
     <Message Importance="high" Text="::set-output name=version::$(PackageVersion)" />
+    <Message Importance="high" Text="::set-output name=nupkg-filename::$(PackageId).$(PackageVersion).nupkg" />
   </Target>
 
 </Project>

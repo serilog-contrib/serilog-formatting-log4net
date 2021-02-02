@@ -31,6 +31,12 @@
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
+  <PropertyGroup Label="Restoring">
+    <NuGetLockFilePath>../packages.lock.json</NuGetLockFilePath>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="$(ContinuousIntegrationBuild) == 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="../resources/icon.png">
       <Pack>true</Pack>

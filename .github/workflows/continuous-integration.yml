@@ -51,7 +51,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ needs.package.outputs.version }}
           release_name: Version ${{ needs.package.outputs.version }}
           body: ""
           draft: false

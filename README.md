@@ -2,6 +2,8 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Serilog.Formatting.Log4Net.svg?label=NuGet&logo=NuGet)](https://www.nuget.org/packages/Serilog.Formatting.Log4Net/) [![Continuous Integration](https://img.shields.io/github/workflow/status/0xced/serilog-formatting-log4net/Continuous%20Integration?label=Continuous%20Integration&logo=GitHub)](https://github.com/0xced/serilog-formatting-log4net/actions?query=workflow%3A%22Continuous+Integration%22) [![Coverage](https://img.shields.io/codecov/c/github/0xced/serilog-formatting-log4net?label=Coverage&logo=Codecov&logoColor=f5f5f5)](https://codecov.io/gh/0xced/serilog-formatting-log4net)
 
+You can use [Log4View](https://www.log4view.com) to look at log files produced with this formatter.
+
 ## Getting started
 
 **Serilog.Formatting.Log4Net** provides the `Log4NetTextFormatter` class which implements Serilog's [ITextFormatter](https://github.com/serilog/serilog/blob/v2.0.0/src/Serilog/Formatting/ITextFormatter.cs#L20-L31) interface.
@@ -67,6 +69,28 @@ You can remove the `log4net` XML namespace by setting the `Log4NetXmlNamespace` 
 new Log4NetTextFormatter(c => c.UseLog4NetXmlNamespace(null))
 ```
 
+#### Line ending
+
+By default, Log4NetTextFormatter uses the line feed (LF) character for line ending between XML elements. You can choose to use CRLF if you need to:
+
+```c#
+new Log4NetTextFormatter(c => c.UseLineEnding(LineEnding.CarriageReturn | LineEnding.LineFeed))
+```
+
+#### Indentation
+
+By default, Log4NetTextFormatter indents XML elements with two spaces. You can configure it to use either spaces or tabs. For example, indent XML elements with one tab:
+
+```c#
+new Log4NetTextFormatter(c => c.UseIndentationSettings(new IndentationSettings(Indentation.Tab, 1)))
+```
+
+Or you can use no indentation at all, having log4net events written on a single line:
+
+```c#
+new Log4NetTextFormatter(c => c.UseNoIndentation())
+```
+
 #### Format provider
 
 By default, Log4NetTextFormatter uses the invariant culture (Serilog's default) when formatting Serilog properties that implement the `IFormattable` interface. It can be configured to use culture-specific formatting information. For example, to use the Swiss French culture:
@@ -88,7 +112,7 @@ new Log4NetTextFormatter(c => c.UsePropertyFilter((_, name) => name != "MySecret
 You can also combine options, for example, both removing namespaces and using Ben.Demystifier for exception formatting:
 
 ```c#
-new Log4NetTextFormatter(c => c
+var formatter = new Log4NetTextFormatter(c => c
     .UseLog4NetXmlNamespace(null)
     .UseExceptionFormatter(exception => exception.ToStringDemystified())
 );
@@ -96,7 +120,7 @@ new Log4NetTextFormatter(c => c
 
 ## Enrichers
 
-The log4Net XML format defines some special attributes which are not included by default in Serilog events. They can be added by using the appropriate Serilog enrichers.
+The log4Net XML format defines some special attributes which are not included by default in Serilog events. They can be added by using the appropriate Serilog [enrichers](https://github.com/serilog/serilog/wiki/Enrichment).
 
 #### Thread Id
 
@@ -121,3 +145,20 @@ Include the machine name in log4net events by using [Serilog.Enrichers.Environme
 ```c#
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithMachineName();
 ```
+
+Combining these three enrichers wil produce a log event like this, including `thread`, `domain` and `username` attributes plus a `log4net:HostName` property containing the machine name:
+
+```xml
+<event timestamp="2020-06-28T10:07:33.314159+02:00" level="INFO" thread="1" domain="TheDomainName" username="TheUserName">
+  <properties>
+    <data name="log4net:HostName" value="TheMachineName" />
+  </properties>
+  <message>The message</message>
+</event>
+```
+
+## Related projects
+
+The [Serilog.Sinks.Log4Net](https://github.com/serilog/serilog-sinks-log4net) project is similar but depends on the log4net NuGet package whereas Serilog.Formatting.Log4Net does not. Also, Serilog.Sinks.Log4Net is a sink so you have to configure log4net in addition to configuring Serilog.
+
+The [Serilog.Sinks.Udp](https://github.com/FantasticFiasco/serilog-sinks-udp) project also provides a [Log4Net formatter](https://github.com/FantasticFiasco/serilog-sinks-udp/blob/v7.1.0/src/Serilog.Sinks.Udp/Sinks/Udp/TextFormatters/Log4netTextFormatter.cs) but it writes XML *manually* (without using an [XmlWriter](https://docs.microsoft.com/en-us/dotnet/api/System.Xml.XmlWriter)), completely ignores Serilog properties, is not configurable at all (indentation, newlines, namespaces etc.) and is not documented.

@@ -30,8 +30,9 @@ jobs:
       - run: dotnet pack --output . --no-build --verbosity normal
         id: dotnet-pack
       - uses: actions/upload-artifact@v2
+        if: matrix.os == 'macos-latest'
         with:
-          name: nuget-package-${{ matrix.os }}
+          name: nuget-package
           path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
   publish:
     runs-on: macos-latest
@@ -47,5 +48,5 @@ jobs:
           tag: ${{ needs.package.outputs.version }}
       - uses: actions/download-artifact@v2
         with:
-          name: nuget-package-macos-latest
+          name: nuget-package
       - run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

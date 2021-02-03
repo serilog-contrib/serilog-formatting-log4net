@@ -7,6 +7,7 @@ using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
 using FluentAssertions;
+using Serilog.Core;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -218,6 +219,21 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty("n/a", new ScalarValue(null)));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void LoggerName()
+        {
+            // Arrange
+            using var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(Constants.SourceContextPropertyName, new ScalarValue("Namespace.Component.Class")));
             var formatter = new Log4NetTextFormatter();
 
             // Act

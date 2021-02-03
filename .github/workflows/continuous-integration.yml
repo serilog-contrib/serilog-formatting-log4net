@@ -53,6 +53,6 @@ jobs:
         with:
           tag_name: ${{ needs.package.outputs.version }}
           release_name: Version ${{ needs.package.outputs.version }}
-          body: ""
+          body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: github.ref == 'refs/heads/prerelease'

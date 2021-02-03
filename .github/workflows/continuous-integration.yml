@@ -54,8 +54,7 @@ jobs:
         with:
           repo-token: ${{ github.token }}
           tag: ${{ needs.package.outputs.version }}
-      - run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
       - uses: actions/download-artifact@v2
         with:
           name: nuget-package-macos-latest
-      - run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source github
+      - run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

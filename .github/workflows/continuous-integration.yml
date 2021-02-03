@@ -40,12 +40,6 @@ jobs:
     if: github.ref == 'refs/heads/prerelease' || startsWith(github.ref, 'refs/tags')
     name: Publish NuGet package
     steps:
-      - name: Create Tag
-        if: github.ref == 'refs/heads/prerelease'
-        uses: tvdias/github-tagger@v0.0.2
-        with:
-          repo-token: ${{ github.token }}
-          tag: ${{ needs.package.outputs.version }}
       - uses: actions/download-artifact@v2
         with:
           name: nuget-package
@@ -57,8 +51,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.package.outputs.version }}
-          release_name: Release ${{ needs.package.outputs.version }}
+          tag_name: ${{ github.ref }}
+          release_name: Version ${{ needs.package.outputs.version }}
           body: ""
           draft: false
           prerelease: github.ref == 'refs/heads/prerelease'

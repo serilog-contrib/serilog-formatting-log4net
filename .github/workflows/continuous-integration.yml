@@ -46,7 +46,7 @@ jobs:
   publish:
     runs-on: macos-latest
     needs: package
-    if: github.ref == 'refs/heads/prerelease' || startsWith(github.ref, 'refs/tags')
+    if: startsWith(github.ref, 'refs/tags/')
     name: Publish NuGet package and create GitHub release
     steps:
       - name: Download NuGet package artifact

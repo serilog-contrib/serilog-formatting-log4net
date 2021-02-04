@@ -55,4 +55,4 @@ jobs:
           release_name: Version ${{ needs.package.outputs.version }}
           body: ${{ github.event.head_commit.message }}
           draft: false
-          prerelease: github.ref == 'refs/heads/prerelease'
+          prerelease: ${{ github.ref }} == 'refs/heads/prerelease'

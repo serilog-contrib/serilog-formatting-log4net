@@ -17,19 +17,26 @@ jobs:
       version: ${{ steps.dotnet-pack.outputs.version }}
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout git repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/cache@v2
+      - name: Retrieve cached NuGet packages
+        uses: actions/cache@v2
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-      - run: dotnet restore --verbosity normal
-      - run: dotnet build --verbosity normal
-      - run: dotnet test --no-build --verbosity normal
-      - run: dotnet pack --output . --no-build --verbosity normal
+      - name: Restore NuGet packages
+        run: dotnet restore --verbosity normal
+      - name: Build solution
+        run: dotnet build --verbosity normal
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+      - name: Create NuGet package
+        run: dotnet pack --output . --no-build --verbosity normal
         id: dotnet-pack
-      - uses: actions/upload-artifact@v2
+      - name: Upload NuGet package artifact
+        uses: actions/upload-artifact@v2
         if: matrix.os == 'macos-latest'
         with:
           name: nuget-package
@@ -38,15 +45,19 @@ jobs:
     runs-on: macos-latest
     needs: package
     if: github.ref == 'refs/heads/prerelease' || startsWith(github.ref, 'refs/tags')
-    name: Publish NuGet package
+    name: Publish NuGet package and create GitHub release
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Download NuGet package artifact
+        uses: actions/download-artifact@v2
         with:
           name: nuget-package
-      - run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"
-      - run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
-      - run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source github
-      - name: Create Release
+      - name: Add GitHub package registry source
+        run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
+      - name: Publish NuGet package on nuget.org
+        run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"
+      - name: Publish NuGet package on github.com
+        run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source github
+      - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

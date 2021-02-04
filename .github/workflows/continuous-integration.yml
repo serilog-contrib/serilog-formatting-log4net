@@ -5,6 +5,8 @@ on: push
 env:
   Configuration: Release
   ContinuousIntegrationBuild: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
 
 jobs:
   package:

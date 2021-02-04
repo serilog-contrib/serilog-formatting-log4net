@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: matrix.os == 'macos-latest'
         with:
-          name: nuget-package
+          name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
           path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
   publish:
     runs-on: macos-latest
@@ -50,7 +50,7 @@ jobs:
       - name: Download NuGet package artifact
         uses: actions/download-artifact@v2
         with:
-          name: nuget-package
+          name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       - name: Add GitHub package registry source
         run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
       - name: Publish NuGet package on nuget.org

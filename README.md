@@ -107,6 +107,22 @@ By default, Log4NetTextFormatter serializes all Serilog properties. You can filt
 new Log4NetTextFormatter(c => c.UsePropertyFilter((_, name) => name != "MySecretProperty"))
 ```
 
+#### Log4j compatibility mode
+
+The formatter also supports a log4j compatibility mode. Log4Net and Log4j XML formats are very similar but have a few key differences.
+
+* Events are in different XML namespaces
+* The `timestamp` is a number of milliseconds (log4j) vs an ISO 8061 formatted date (log4net)
+* Exception elements are named `throwable` vs `exception`
+
+In order to enable the compatibility mode, call `UseLog4JCompatibility()`:
+
+```c#
+new Log4NetTextFormatter(c => c.UseLog4JCompatibility())
+```
+
+Note that unlike other fluent configuration methods, this one can not be chained because you should not change options after enabling the log4j compatibility mode.
+
 ### Combining options
 
 You can also combine options, for example, both removing namespaces and using Ben.Demystifier for exception formatting:

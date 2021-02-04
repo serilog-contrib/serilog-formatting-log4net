@@ -1,0 +1,8 @@
+﻿<log4j:event timestamp="1041689366535" level="INFO" xmlns:log4j="http://jakarta.apache.org/log4j/">
+  <log4j:properties>
+    <log4j:data name="π" value="3.14" />
+  </log4j:properties>
+  <log4j:message><![CDATA[Hello from Serilog]]></log4j:message>
+  <log4j:throwable><![CDATA[System.Exception: An error occurred
+  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123]]></log4j:throwable>
+</log4j:event>

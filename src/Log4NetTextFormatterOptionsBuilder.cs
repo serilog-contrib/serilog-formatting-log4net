@@ -151,6 +151,31 @@ namespace Serilog.Formatting.Log4Net
             return this;
         }
 
+        /// <summary>
+        /// Enables log4j compatibility mode. This tweaks the XML elements to match the log4j logging event specification.
+        /// The DTD can be found at https://raw.githubusercontent.com/apache/log4j/v1_2_17/src/main/resources/org/apache/log4j/xml/log4j.dtd
+        /// <para>
+        /// Here is the list of differences between the log4net and the log4j XML layout:
+        /// <list type="bullet">
+        ///   <item>The log element uses <c>log4j</c> instead of <c>log4net</c> XML namespace.</item>
+        ///   <item>The <c>timestamp</c> attribute uses milliseconds elapsed from 1/1/1970 instead of an ISO 8601 formatted date.</item>
+        ///   <item>The exception element is named <c>throwable</c> instead of <c>exception</c>.</item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        /// <remarks>You must not change other options after calling this method.</remarks>
+        public void UseLog4JCompatibility()
+        {
+            // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L135
+            LineEnding = LineEnding.CarriageReturn | LineEnding.LineFeed;
+
+            // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137
+            Log4NetXmlNamespace = new XmlQualifiedName("log4j", "http://jakarta.apache.org/log4j/");
+
+            // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L147
+            CDataMode = CDataMode.Always;
+        }
+
         internal Log4NetTextFormatterOptions Build()
             => new Log4NetTextFormatterOptions(FormatProvider, CDataMode, Log4NetXmlNamespace, CreateXmlWriterSettings(LineEnding, IndentationSettings), FilterProperty, FormatException);
 

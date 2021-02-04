@@ -118,6 +118,21 @@ namespace Serilog.Formatting.Log4Net.Tests
                 .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'.");
         }
 
+        [Fact]
+        public void InvalidLogEventLevelWithLog4JCompatibilityThrowsArgumentOutOfRangeException()
+        {
+            // Arrange
+            var logEvent = CreateLogEvent((LogEventLevel)(-1));
+            var formatter = new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
+
+            // Act
+            Action action = () => formatter.Format(logEvent, TextWriter.Null);
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentOutOfRangeException>()
+                .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'.");
+        }
+
         [Theory]
         [InlineData(Log4Net.CDataMode.Always, true)]
         [InlineData(Log4Net.CDataMode.Always, false)]
@@ -250,6 +265,24 @@ namespace Serilog.Formatting.Log4Net.Tests
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: "π = {π}", properties: new LogEventProperty("π", new ScalarValue(3.14m)));
             var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void Log4JCompatibility()
+        {
+            // Arrange
+            using var output = new StringWriter();
+            var logEvent = CreateLogEvent(
+                exception: new Exception("An error occurred").SetStackTrace(@"  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"),
+                properties: new LogEventProperty("π", new ScalarValue(3.14m))
+            );
+            var formatter = new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
 
             // Act
             formatter.Format(logEvent, output);

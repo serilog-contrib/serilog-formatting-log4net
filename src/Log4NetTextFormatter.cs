@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -89,9 +90,11 @@ namespace Serilog.Formatting.Log4Net
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L218-L310</remarks>
         private void WriteEvent(LogEvent logEvent, XmlWriter writer)
         {
+            var useLog4JCompatibility = _options.Log4NetXmlNamespace?.Name == "log4j";
             WriteStartElement(writer, "event");
             WriteEventAttribute(logEvent, writer, "logger", Constants.SourceContextPropertyName);
-            writer.WriteAttributeString("timestamp", XmlConvert.ToString(logEvent.Timestamp));
+            var timestamp = useLog4JCompatibility ? logEvent.Timestamp.ToUnixTimeMilliseconds().ToString(CultureInfo.InvariantCulture) : XmlConvert.ToString(logEvent.Timestamp);
+            writer.WriteAttributeString("timestamp", timestamp);
             writer.WriteAttributeString("level", LogLevel(logEvent.Level));
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
             WriteDomainAndUserName(logEvent, writer);
@@ -102,7 +105,7 @@ namespace Serilog.Formatting.Log4Net
                 WriteProperties(logEvent, writer, properties, machineNameProperty);
             }
             WriteMessage(logEvent, writer);
-            WriteException(logEvent, writer);
+            WriteException(logEvent, writer, useLog4JCompatibility ? "throwable" : "exception");
             writer.WriteEndElement();
         }
 
@@ -146,16 +149,17 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
-        /// Convert Serilog <see cref="LogEventLevel"/> into log4net equivalent level.
+        /// Convert Serilog <see cref="LogEventLevel"/> into log4net/log4j equivalent level.
         /// </summary>
         /// <param name="level">The serilog level.</param>
-        /// <returns>The equivalent log4net level.</returns>
+        /// <returns>The equivalent log4net/log4j level.</returns>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/Level.cs#L509-L603</remarks>
+        /// <remarks>https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/Level.java#L48-L92</remarks>
         private static string LogLevel(LogEventLevel level)
         {
             return level switch
             {
-                LogEventLevel.Verbose => "VERBOSE",
+                LogEventLevel.Verbose => "TRACE",
                 LogEventLevel.Debug => "DEBUG",
                 LogEventLevel.Information => "INFO",
                 LogEventLevel.Warning => "WARN",
@@ -331,9 +335,10 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
+        /// <param name="elementName">The element name, should be either <c>exception</c> or <c>throwable</c>.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L288-L295</remarks>
         [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
-        private void WriteException(LogEvent logEvent, XmlWriter writer)
+        private void WriteException(LogEvent logEvent, XmlWriter writer, string elementName)
         {
             var exception = logEvent.Exception;
             if (exception == null)
@@ -352,7 +357,7 @@ namespace Serilog.Formatting.Log4Net
             }
             if (formattedException != null)
             {
-                WriteContent(writer, "exception", formattedException);
+                WriteContent(writer, elementName, formattedException);
             }
         }
 

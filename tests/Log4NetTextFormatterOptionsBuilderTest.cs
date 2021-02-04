@@ -121,6 +121,22 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void UseLog4JCompatibility()
+        {
+            // Arrange
+            var builder = new Log4NetTextFormatterOptionsBuilder();
+
+            // Act
+            builder.UseLog4JCompatibility();
+
+            // Assert
+            builder.LineEnding.Should().Be(LineEnding.CarriageReturn | LineEnding.LineFeed);
+            builder.CDataMode.Should().Be(CDataMode.Always);
+            builder.Log4NetXmlNamespace.Should().NotBeNull();
+            builder.Log4NetXmlNamespace!.Name.Should().Be("log4j");
+        }
+
+        [Fact]
         public void SettingExceptionFormatterToNullThrowsArgumentNullException()
         {
             // Act

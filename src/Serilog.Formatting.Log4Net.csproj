@@ -26,7 +26,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Serilog log4net</PackageTags>
     <PackageProjectUrl>https://github.com/0xced/serilog-formatting-log4net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/0xced/serilog-formatting-log4net</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup Label="Packaging Metadata">

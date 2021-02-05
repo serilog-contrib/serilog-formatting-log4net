@@ -45,6 +45,7 @@ jobs:
           name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
           path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       - name: Retrieve tag message
+        if: matrix.os == 'macos-latest'
         run: |
           git fetch --tags --force
           RELEASE_NOTES=$(git tag --list ${{ steps.dotnet-pack.outputs.version }} --format='%(contents)')

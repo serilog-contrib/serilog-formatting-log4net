@@ -178,3 +178,18 @@ Combining these three enrichers wil produce a log event like this, including `th
 The [Serilog.Sinks.Log4Net](https://github.com/serilog/serilog-sinks-log4net) project is similar but depends on the log4net NuGet package whereas Serilog.Formatting.Log4Net does not. Also, Serilog.Sinks.Log4Net is a sink so you have to configure log4net in addition to configuring Serilog.
 
 The [Serilog.Sinks.Udp](https://github.com/FantasticFiasco/serilog-sinks-udp) project also provides a [Log4Net formatter](https://github.com/FantasticFiasco/serilog-sinks-udp/blob/v7.1.0/src/Serilog.Sinks.Udp/Sinks/Udp/TextFormatters/Log4netTextFormatter.cs) but it writes XML *manually* (without using an [XmlWriter](https://docs.microsoft.com/en-us/dotnet/api/System.Xml.XmlWriter)), completely ignores Serilog properties, is not configurable at all (indentation, newlines, namespaces etc.) and is not documented.
+
+## Creating a release
+
+**Serilog.Formatting.Log4Net** uses [MinVer](https://github.com/adamralph/minver) for its versioning, so a tag must exist with the chosen semantic version number in order to create an official release.
+
+1. Create an **[annotated](https://stackoverflow.com/questions/11514075/what-is-the-difference-between-an-annotated-and-unannotated-tag/25996877#25996877)** tag, the (multi-line) message of the annotated tag will be the content of the GitHub release. Markdown can be used.
+
+    `git tag --annotate 1.0.0-rc.1`
+
+2. [Push the tag](https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076)
+
+    `git push --follow-tags`
+
+Once pushed, the GitHub [Continuous Integration](https://github.com/0xced/serilog-formatting-log4net/blob/main/.github/workflows/continuous-integration.yml) workflow takes care of building, running the tests, creating the NuGet package and publishing the produced NuGet package.
+

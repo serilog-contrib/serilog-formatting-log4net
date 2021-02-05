@@ -58,7 +58,7 @@ jobs:
       - name: Download NuGet package artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
+          name: ${{ needs.package.outputs.nupkg-filename }}
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:

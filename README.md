@@ -69,7 +69,7 @@ You can remove the `log4net` XML namespace by setting the `Log4NetXmlNamespace` 
 new Log4NetTextFormatter(c => c.UseLog4NetXmlNamespace(null))
 ```
 
-### Line ending
+### Line ending
 
 By default, Log4NetTextFormatter uses the line feed (LF) character for line ending between XML elements. You can choose to use CRLF if you need to:
 
@@ -77,7 +77,7 @@ By default, Log4NetTextFormatter uses the line feed (LF) character for line endi
 new Log4NetTextFormatter(c => c.UseLineEnding(LineEnding.CarriageReturn | LineEnding.LineFeed))
 ```
 
-### Indentation
+### Indentation
 
 By default, Log4NetTextFormatter indents XML elements with two spaces. You can configure it to use either spaces or tabs. For example, indent XML elements with one tab:
 

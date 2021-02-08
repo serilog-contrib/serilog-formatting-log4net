@@ -45,7 +45,7 @@ Running this app writes the following XML events into the `logs.xml` file in the
 
 You can configure `Log4NetTextFormatter` in multiple ways, the fluent options builder will help you discover all the possibilities.
 
-#### Exception formatting
+### Exception formatting
 
 By default, Log4NetTextFormatter formats exception by calling [ToString()](https://docs.microsoft.com/en-us/dotnet/api/system.exception.tostring). You can customise this behaviour by setting your own formatting delegate. For exemple, you could use [Ben.Demystifier](https://github.com/benaadams/Ben.Demystifier/) like this:
 
@@ -53,7 +53,7 @@ By default, Log4NetTextFormatter formats exception by calling [ToString()](https
 new Log4NetTextFormatter(c => c.UseExceptionFormatter(exception => exception.ToStringDemystified()))
 ```
 
-#### CDATA
+### CDATA
 
 By default, Log4NetTextFormatter writes all messages and exceptions with a [CDATA](https://en.wikipedia.org/wiki/CDATA) section. It is possible to configure it to use CDATA sections only when the message or exception contain `&`, `<` or `>` by using `CDataMode.IfNeeded` or to never write CDATA sections by using `CDataMode.Never`:
 
@@ -61,7 +61,7 @@ By default, Log4NetTextFormatter writes all messages and exceptions with a [CDAT
 new Log4NetTextFormatter(c => c.UseCDataMode(CDataMode.Never))
 ```
 
-#### XML Namespace
+### XML Namespace
 
 You can remove the `log4net` XML namespace by setting the `Log4NetXmlNamespace` option to `null`. This is useful if you want to spare some bytes and your log reader supports log4net XML events without namespace, like [Log4View](https://www.log4view.com) does. You *could* also change the namespace to something else than the default `log4net:http://logging.apache.org/log4net/schemas/log4net-events-1.2/` but that would probably not be a good idea.
 
@@ -69,7 +69,7 @@ You can remove the `log4net` XML namespace by setting the `Log4NetXmlNamespace` 
 new Log4NetTextFormatter(c => c.UseLog4NetXmlNamespace(null))
 ```
 
-#### Line ending
+### Line ending
 
 By default, Log4NetTextFormatter uses the line feed (LF) character for line ending between XML elements. You can choose to use CRLF if you need to:
 
@@ -77,7 +77,7 @@ By default, Log4NetTextFormatter uses the line feed (LF) character for line endi
 new Log4NetTextFormatter(c => c.UseLineEnding(LineEnding.CarriageReturn | LineEnding.LineFeed))
 ```
 
-#### Indentation
+### Indentation
 
 By default, Log4NetTextFormatter indents XML elements with two spaces. You can configure it to use either spaces or tabs. For example, indent XML elements with one tab:
 
@@ -91,7 +91,7 @@ Or you can use no indentation at all, having log4net events written on a single 
 new Log4NetTextFormatter(c => c.UseNoIndentation())
 ```
 
-#### Format provider
+### Format provider
 
 By default, Log4NetTextFormatter uses the invariant culture (Serilog's default) when formatting Serilog properties that implement the `IFormattable` interface. It can be configured to use culture-specific formatting information. For example, to use the Swiss French culture:
 
@@ -99,7 +99,7 @@ By default, Log4NetTextFormatter uses the invariant culture (Serilog's default) 
 new Log4NetTextFormatter(c => c.UseFormatProvider(CultureInfo.GetCultureInfo("fr-CH")))
 ```
 
-####  Property filter
+### Property filter
 
 By default, Log4NetTextFormatter serializes all Serilog properties. You can filter out some properties by configuring a a custom property filter delegate:
 
@@ -107,7 +107,7 @@ By default, Log4NetTextFormatter serializes all Serilog properties. You can filt
 new Log4NetTextFormatter(c => c.UsePropertyFilter((_, name) => name != "MySecretProperty"))
 ```
 
-#### Log4j compatibility mode
+### Log4j compatibility mode
 
 The formatter also supports a log4j compatibility mode. Log4Net and Log4j XML formats are very similar but have a few key differences.
 
@@ -138,7 +138,7 @@ var formatter = new Log4NetTextFormatter(c => c
 
 The log4Net XML format defines some special attributes which are not included by default in Serilog events. They can be added by using the appropriate Serilog [enrichers](https://github.com/serilog/serilog/wiki/Enrichment).
 
-#### Thread Id
+### Thread Id
 
 Include the thread id in log4net events by using [Serilog.Enrichers.Thread](https://www.nuget.org/packages/Serilog.Enrichers.Thread/):
 
@@ -146,7 +146,7 @@ Include the thread id in log4net events by using [Serilog.Enrichers.Thread](http
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithThreadId();
 ```
 
-#### Domain and User Name
+### Domain and User Name
 
 Include the domain and user name in log4net events by using [Serilog.Enrichers.Environment](https://www.nuget.org/packages/Serilog.Enrichers.Environment/):
 
@@ -154,7 +154,7 @@ Include the domain and user name in log4net events by using [Serilog.Enrichers.E
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithEnvironmentUserName();
 ```
 
-#### Machine Name
+### Machine Name
 
 Include the machine name in log4net events by using [Serilog.Enrichers.Environment](https://www.nuget.org/packages/Serilog.Enrichers.Environment/):
 

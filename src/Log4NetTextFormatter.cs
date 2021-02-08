@@ -74,8 +74,14 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="output">The output.</param>
         public void Format(LogEvent logEvent, TextWriter output)
         {
-            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
-            if (output == null) throw new ArgumentNullException(nameof(output));
+            if (logEvent == null)
+            {
+                throw new ArgumentNullException(nameof(logEvent));
+            }
+            if (output == null)
+            {
+                throw new ArgumentNullException(nameof(output));
+            }
             using var writer = XmlWriter.Create(output, _options.XmlWriterSettings);
             WriteEvent(logEvent, writer);
             writer.Flush();

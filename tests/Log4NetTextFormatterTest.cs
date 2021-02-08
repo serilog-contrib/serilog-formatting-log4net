@@ -373,7 +373,9 @@ namespace Serilog.Formatting.Log4Net.Tests
             var formatter = new Log4NetTextFormatter(options => options.UsePropertyFilter((_, propertyName) =>
             {
                 if (propertyName == "one")
+                {
                     return true;
+                }
                 throw new InvalidOperationException($"Can't handle property '{propertyName}'.");
             }));
 

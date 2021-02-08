@@ -161,7 +161,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(Log4Net.LineEnding.LineFeed)]
         [InlineData(Log4Net.LineEnding.CarriageReturn)]
         [InlineData(Log4Net.LineEnding.CarriageReturn | Log4Net.LineEnding.LineFeed)]
-        public void LineEnding(LineEnding lineEnding)
+        public void XmlElementsLineEnding(LineEnding lineEnding)
         {
             NamerFactory.AdditionalInformation = lineEnding.ToString();
 
@@ -465,7 +465,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Theory]
         [InlineData(null)]
         [InlineData(1)]
-        public void ThreadId(int? threadId)
+        public void ThreadIdProperty(int? threadId)
         {
             NamerFactory.AdditionalInformation = threadId?.ToString() ?? "_null";
 
@@ -487,7 +487,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(@"TheUser")]
         [InlineData(@"TheDomain\TheUser")]
         [InlineData(@"TheDomain\TheUser\Name")]
-        public void DomainAndUserName(string? environmentUserName)
+        public void DomainAndUserNameProperty(string? environmentUserName)
         {
             NamerFactory.AdditionalInformation = environmentUserName == null ? "_null" : environmentUserName.Length == 0 ? "_empty" : environmentUserName.Replace(@"\", "_");
 
@@ -506,7 +506,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         [Theory]
         [InlineData(null)]
         [InlineData("TheMachineName")]
-        public void MachineName(string? machineName)
+        public void MachineNameProperty(string? machineName)
         {
             NamerFactory.AdditionalInformation = machineName ?? "_null";
 

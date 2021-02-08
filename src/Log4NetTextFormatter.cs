@@ -72,6 +72,7 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <param name="logEvent">The event to format.</param>
         /// <param name="output">The output.</param>
+        /// <exception cref="ArgumentNullException">If either <paramref name="logEvent"/> or <paramref name="output"/> is <c>null</c>.</exception>
         public void Format(LogEvent logEvent, TextWriter output)
         {
             if (logEvent == null)

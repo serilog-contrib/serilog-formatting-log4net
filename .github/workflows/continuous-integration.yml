@@ -35,13 +35,6 @@ jobs:
         run: dotnet build --verbosity normal
       - name: Run tests
         run: dotnet test --no-build --verbosity normal
-        id: dotnet-test
-      - name: Upload coverage report to Codacy
-        uses: codacy/codacy-coverage-reporter-action@master
-        if: matrix.os == 'ubuntu-latest'
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ steps.dotnet-test.outputs.coverlet-reports }}
       - name: Create NuGet package
         run: dotnet pack --output . --no-build --verbosity normal
         id: dotnet-pack

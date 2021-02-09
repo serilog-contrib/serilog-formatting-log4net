@@ -41,10 +41,6 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
-  <Target Name="PrintCoverletReportsForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest">
-    <Message Importance="high" Text="::set-output name=coverlet-reports::@(CoverletReport, ',')" />
-  </Target>
-
   <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
     <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install Codecov.Tool` -->
     <Exec Command="dotnet tool restore" />

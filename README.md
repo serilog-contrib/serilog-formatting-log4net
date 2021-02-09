@@ -111,9 +111,9 @@ new Log4NetTextFormatter(c => c.UsePropertyFilter((_, name) => name != "MySecret
 
 The formatter also supports a log4j compatibility mode. Log4Net and Log4j XML formats are very similar but have a few key differences.
 
-* Events are in different XML namespaces
-* The `timestamp` is a number of milliseconds (log4j) vs an ISO 8061 formatted date (log4net)
-* Exception elements are named `throwable` vs `exception`
+  * Events are in different XML namespaces
+  * The `timestamp` is a number of milliseconds (log4j) vs an ISO 8061 formatted date (log4net)
+  * Exception elements are named `throwable` vs `exception`
 
 In order to enable the compatibility mode, call `UseLog4JCompatibility()`:
 

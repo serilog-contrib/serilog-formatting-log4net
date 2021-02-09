@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using FluentAssertions;
-using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests
@@ -14,8 +13,8 @@ namespace Serilog.Formatting.Log4Net.Tests
     public class Log4NetTextFormatterOptionsTest
     {
         private static ConstructorInfo Log4NetTextFormatterOptionsConstructor { get; } = typeof(Log4NetTextFormatter).Assembly.GetType("Serilog.Formatting.Log4Net.Log4NetTextFormatterOptions")!.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance).Single();
-        private static bool FilterProperty(LogEvent logEvent, string propertyName) => true;
-        private static string FormatException(Exception _) => "";
+        private static readonly PropertyFilter FilterProperty = (logEvent, propertyName) => true;
+        private static readonly ExceptionFormatter FormatException = exception => "";
 
         [Fact]
         public void NullXmlWriterSettings_ThrowsArgumentNullException()
@@ -25,7 +24,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             const CDataMode cDataMode = default;
             XmlQualifiedName? log4NetXmlNamespace = default;
             XmlWriterSettings xmlWriterSettings = null!;
-            var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, (PropertyFilter)FilterProperty, (ExceptionFormatter)FormatException};
+            var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, FilterProperty, FormatException};
 
             // Act
             Action action = () => Log4NetTextFormatterOptionsConstructor.Invoke(parameters);
@@ -45,7 +44,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             XmlQualifiedName? log4NetXmlNamespace = default;
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
             PropertyFilter filterProperty = null!;
-            var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, filterProperty, (ExceptionFormatter)FormatException};
+            var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, filterProperty, FormatException};
 
             // Act
             Action action = () => Log4NetTextFormatterOptionsConstructor.Invoke(parameters);
@@ -65,7 +64,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             XmlQualifiedName? log4NetXmlNamespace = default;
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
             ExceptionFormatter formatException = null!;
-            var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, (PropertyFilter)FilterProperty, formatException};
+            var parameters = new object?[] {formatProvider, cDataMode, log4NetXmlNamespace, xmlWriterSettings, FilterProperty, formatException};
 
             // Act
             Action action = () => Log4NetTextFormatterOptionsConstructor.Invoke(parameters);

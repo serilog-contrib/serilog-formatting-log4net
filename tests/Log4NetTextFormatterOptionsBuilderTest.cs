@@ -87,7 +87,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void UsePropertyFilter()
         {
             // Arrange
-            PropertyFilter filterProperty = (logEvent, propertyName) => throw new NotImplementedException();
+            PropertyFilter filterProperty = (logEvent, propertyName) => true;
 
             // Act
             var builder = new Log4NetTextFormatterOptionsBuilder().UsePropertyFilter(filterProperty);
@@ -111,7 +111,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public void UseExceptionFormatter()
         {
             // Arrange
-            ExceptionFormatter formatException = exception => throw new NotImplementedException();
+            ExceptionFormatter formatException = exception => "";
 
             // Act
             var builder = new Log4NetTextFormatterOptionsBuilder().UseExceptionFormatter(formatException);

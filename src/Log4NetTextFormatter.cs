@@ -189,8 +189,11 @@ namespace Serilog.Formatting.Log4Net
         {
             WriteStartElement(writer, "properties");
             {
-                // https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/LoggingEvent.cs#L1609
-                WriteProperty(writer, "log4net:HostName", machineNameProperty);
+                if (machineNameProperty != null)
+                {
+                    // https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Core/LoggingEvent.cs#L1609
+                    WriteProperty(writer, "log4net:HostName", machineNameProperty);
+                }
                 foreach (var (propertyName, propertyValue) in properties.Select(e => (e.Key, e.Value)))
                 {
                     bool includeProperty;
@@ -233,7 +236,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="writer">The XML writer.</param>
         /// <param name="propertyName">The property name.</param>
         /// <param name="propertyValue">The property value.</param>
-        private void WriteProperty(XmlWriter writer, string propertyName, LogEventPropertyValue? propertyValue)
+        private void WriteProperty(XmlWriter writer, string propertyName, LogEventPropertyValue propertyValue)
         {
             switch (propertyValue)
             {
@@ -248,6 +251,9 @@ namespace Serilog.Formatting.Log4Net
                     break;
                 case StructureValue structureValue:
                     WriteStructureProperty(writer, propertyName, structureValue);
+                    break;
+                default:
+                    WritePropertyElement(writer, propertyName, propertyValue);
                     break;
             }
         }

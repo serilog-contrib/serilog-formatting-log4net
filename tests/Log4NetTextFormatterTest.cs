@@ -579,5 +579,20 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Assert
             Approvals.VerifyWithExtension(output.ToString(), "xml");
         }
+
+        [Fact]
+        public void CustomLogEventPropertyValue()
+        {
+            // Arrange
+            using var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty("Custom", new CustomLogEventPropertyValue("CustomValue")));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
     }
 }

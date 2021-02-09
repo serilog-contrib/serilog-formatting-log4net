@@ -192,4 +192,3 @@ The [Serilog.Sinks.Udp](https://github.com/FantasticFiasco/serilog-sinks-udp) pr
     `git push --follow-tags`
 
 Once pushed, the GitHub [Continuous Integration](https://github.com/0xced/serilog-formatting-log4net/blob/main/.github/workflows/continuous-integration.yml) workflow takes care of building, running the tests, creating the NuGet package and publishing the produced NuGet package.
-

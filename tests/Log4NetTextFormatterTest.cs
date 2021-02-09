@@ -134,13 +134,13 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Theory]
-        [InlineData(Log4Net.CDataMode.Always, true)]
-        [InlineData(Log4Net.CDataMode.Always, false)]
-        [InlineData(Log4Net.CDataMode.Never, true)]
-        [InlineData(Log4Net.CDataMode.Never, false)]
-        [InlineData(Log4Net.CDataMode.IfNeeded, true)]
-        [InlineData(Log4Net.CDataMode.IfNeeded, false)]
-        public void CDataMode(CDataMode mode, bool needsEscaping)
+        [InlineData(CDataMode.Always, true)]
+        [InlineData(CDataMode.Always, false)]
+        [InlineData(CDataMode.Never, true)]
+        [InlineData(CDataMode.Never, false)]
+        [InlineData(CDataMode.IfNeeded, true)]
+        [InlineData(CDataMode.IfNeeded, false)]
+        public void MessageCDataMode(CDataMode mode, bool needsEscaping)
         {
             NamerFactory.AdditionalInformation = mode + "." + (needsEscaping ? "NeedsEscaping" : "DoesntNeedEscaping");
 
@@ -157,10 +157,10 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Theory]
-        [InlineData(Log4Net.LineEnding.None)]
-        [InlineData(Log4Net.LineEnding.LineFeed)]
-        [InlineData(Log4Net.LineEnding.CarriageReturn)]
-        [InlineData(Log4Net.LineEnding.CarriageReturn | Log4Net.LineEnding.LineFeed)]
+        [InlineData(LineEnding.None)]
+        [InlineData(LineEnding.LineFeed)]
+        [InlineData(LineEnding.CarriageReturn)]
+        [InlineData(LineEnding.CarriageReturn | LineEnding.LineFeed)]
         public void XmlElementsLineEnding(LineEnding lineEnding)
         {
             NamerFactory.AdditionalInformation = lineEnding.ToString();

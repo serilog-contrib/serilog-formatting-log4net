@@ -44,7 +44,7 @@
   <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
     <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install Codecov.Tool` -->
     <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet codecov --file &quot;@(CoverletReport, '&quot; &quot;')&quot;" />
+    <Exec Command="dotnet codecov --required --file &quot;@(CoverletReport, '&quot; &quot;')&quot;" />
   </Target>
 
   <ItemGroup>

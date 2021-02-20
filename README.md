@@ -1,4 +1,4 @@
-**Serilog.Formatting.Log4Net** is an add-on for [Serilog](https://serilog.net/) to format log events as [log4net](https://logging.apache.org/log4net/) compatible XML format.
+**Serilog.Formatting.Log4Net** is an add-on for [Serilog](https://serilog.net/) to format log events as [log4net](https://logging.apache.org/log4net/) or [log4j](https://logging.apache.org/log4j/) compatible XML format.
 
 [![NuGet](https://img.shields.io/nuget/v/Serilog.Formatting.Log4Net.svg?label=NuGet&logo=NuGet)](https://www.nuget.org/packages/Serilog.Formatting.Log4Net/) [![Continuous Integration](https://img.shields.io/github/workflow/status/0xced/serilog-formatting-log4net/Continuous%20Integration?label=Continuous%20Integration&logo=GitHub)](https://github.com/0xced/serilog-formatting-log4net/actions?query=workflow%3A%22Continuous+Integration%22) [![Coverage](https://img.shields.io/codecov/c/github/0xced/serilog-formatting-log4net?label=Coverage&logo=Codecov&logoColor=f5f5f5)](https://codecov.io/gh/0xced/serilog-formatting-log4net) [![Code Quality](https://img.shields.io/codacy/grade/8220fe3733a34982acfcadd54ca3b2c0?label=Code%20Quality&logo=Codacy)](https://app.codacy.com/gh/0xced/serilog-formatting-log4net)
 
@@ -111,8 +111,8 @@ new Log4NetTextFormatter(c => c.UsePropertyFilter((_, name) => name != "MySecret
 
 The formatter also supports a log4j compatibility mode. Log4Net and Log4j XML formats are very similar but have a few key differences.
 
-*   Events are in different XML namespaces
-*   The `timestamp` is a number of milliseconds (log4j) vs an ISO 8061 formatted date (log4net)
+*   The `event` elements are in different XML namespaces
+*   The `timestamp` attribute is a number of milliseconds (log4j) vs an ISO 8061 formatted date (log4net)
 *   Exception elements are named `throwable` vs `exception`
 
 In order to enable the compatibility mode, call `UseLog4JCompatibility()`:

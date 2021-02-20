@@ -21,10 +21,10 @@
   <PropertyGroup Label="Packaging Metadata">
     <Authors>Cédric Luthi</Authors>
     <Copyright>Copyright © Cédric Luthi</Copyright>
-    <Description>Format Serilog events in log4net compatible XML format</Description>
+    <Description>Format Serilog events in log4net or log4j compatible XML format</Description>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>Serilog log4net</PackageTags>
+    <PackageTags>Serilog log4net log4j</PackageTags>
     <PackageProjectUrl>https://github.com/0xced/serilog-formatting-log4net</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>

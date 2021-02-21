@@ -27,7 +27,7 @@ namespace Serilog.Formatting.Log4Net
         /// <para>The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.</para>
         /// </summary>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L49</remarks>
-        public XmlQualifiedName? Log4NetXmlNamespace { get; private set; } = new XmlQualifiedName("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
+        public XmlQualifiedName? Log4NetXmlNamespace { get; private set; } = new("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
 
         /// <summary>
         /// The line ending used for log4net events.
@@ -39,14 +39,14 @@ namespace Serilog.Formatting.Log4Net
         /// The indentation settings used for log4net events. No indentation is used if <see langref="null"/>.
         /// <para>The default value uses two spaces.</para>
         /// </summary>
-        public IndentationSettings? IndentationSettings { get; private set; } = new IndentationSettings(Indentation.Space, size: 2);
+        public IndentationSettings? IndentationSettings { get; private set; } = new(Indentation.Space, size: 2);
 
         /// <summary>
         /// The <see cref="PropertyFilter"/> applied on all Serilog properties.
         /// <para>The default implementation always returns <c>true</c>, i.e. it doesn't filter out any property.</para>
         /// </summary>
         /// <remarks>If an exception is thrown while executing the filter, the default filter will be applied, i.e. the Serilog property will be included in the log4net properties.</remarks>
-        public PropertyFilter FilterProperty { get; private set; } = (logEvent, propertyName) => true;
+        public PropertyFilter FilterProperty { get; private set; } = (_, _) => true;
 
         /// <summary>
         /// The <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
@@ -177,11 +177,11 @@ namespace Serilog.Formatting.Log4Net
         }
 
         internal Log4NetTextFormatterOptions Build()
-            => new Log4NetTextFormatterOptions(FormatProvider, CDataMode, Log4NetXmlNamespace, CreateXmlWriterSettings(LineEnding, IndentationSettings), FilterProperty, FormatException);
+            => new(FormatProvider, CDataMode, Log4NetXmlNamespace, CreateXmlWriterSettings(LineEnding, IndentationSettings), FilterProperty, FormatException);
 
         private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
         {
-            return new XmlWriterSettings
+            return new()
             {
                 Indent = !(indentationSettings is null),
                 IndentChars = indentationSettings?.ToString() ?? "",

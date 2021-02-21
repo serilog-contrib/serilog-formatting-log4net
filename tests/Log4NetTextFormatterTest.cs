@@ -259,6 +259,21 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
 
         [Fact]
+        public void LoggerNameStructureValue()
+        {
+            // Arrange
+            using var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(Constants.SourceContextPropertyName, new StructureValue(new List<LogEventProperty>())));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
         public void DefaultFormatProvider()
         {
             // Arrange
@@ -503,6 +518,21 @@ namespace Serilog.Formatting.Log4Net.Tests
             Approvals.VerifyWithExtension(output.ToString(), "xml");
         }
 
+        [Fact]
+        public void DomainAndUserNamePropertyStructureValue()
+        {
+            // Arrange
+            using var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(EnvironmentUserNameEnricher.EnvironmentUserNamePropertyName, new StructureValue(new List<LogEventProperty>())));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData("TheMachineName")]
@@ -513,6 +543,21 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new ScalarValue(machineName)));
+            var formatter = new Log4NetTextFormatter();
+
+            // Act
+            formatter.Format(logEvent, output);
+
+            // Assert
+            Approvals.VerifyWithExtension(output.ToString(), "xml");
+        }
+
+        [Fact]
+        public void MachineNamePropertyStructureValue()
+        {
+            // Arrange
+            using var output = new StringWriter();
+            var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new StructureValue(new List<LogEventProperty>())));
             var formatter = new Log4NetTextFormatter();
 
             // Act

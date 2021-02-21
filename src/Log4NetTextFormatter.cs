@@ -106,7 +106,7 @@ namespace Serilog.Formatting.Log4Net
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
             WriteDomainAndUserName(logEvent, writer);
             var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key)).ToList();
-            var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue scalarValue && scalarValue.Value != null;
+            var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue { Value: not null };
             if (properties.Any() || hasMachineNameProperty)
             {
                 WriteProperties(logEvent, writer, properties, machineNameProperty);
@@ -123,7 +123,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="writer">The XML writer.</param>
         private static void WriteDomainAndUserName(LogEvent logEvent, XmlWriter writer)
         {
-            if (logEvent.Properties.TryGetValue(UserNamePropertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue && scalarValue.Value is string userNameProperty)
+            if (logEvent.Properties.TryGetValue(UserNamePropertyName, out var propertyValue) && propertyValue is ScalarValue { Value: string userNameProperty })
             {
                 // See https://github.com/serilog/serilog-enrichers-environment/blob/3fc7cf78c5f34816633000ae74d846033498e44b/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L53
                 var parts = userNameProperty.Split('\\');
@@ -149,9 +149,9 @@ namespace Serilog.Formatting.Log4Net
         /// <remarks>Only properties with a non null <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
         private void WriteEventAttribute(LogEvent logEvent, XmlWriter writer, string attributeName, string propertyName)
         {
-            if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue scalarValue && scalarValue.Value != null)
+            if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue { Value: not null })
             {
-                writer.WriteAttributeString(attributeName, RenderValue(scalarValue));
+                writer.WriteAttributeString(attributeName, RenderValue(propertyValue));
             }
         }
 
@@ -225,7 +225,7 @@ namespace Serilog.Formatting.Log4Net
         {
             using var valueWriter = new StringWriter();
             // The "l" format specifier switches off quoting of strings, see https://github.com/serilog/serilog/wiki/Formatting-Output#formatting-plain-text
-            value.Render(valueWriter, value is ScalarValue scalarValue && scalarValue.Value is string ? "l" : null, _options.FormatProvider);
+            value.Render(valueWriter, value is ScalarValue { Value: string } ? "l" : null, _options.FormatProvider);
             return valueWriter.ToString();
         }
 
@@ -321,7 +321,7 @@ namespace Serilog.Formatting.Log4Net
         {
             WriteStartElement(writer, "data");
             writer.WriteAttributeString("name", name);
-            var isNullValue = value is ScalarValue scalarValue && scalarValue.Value == null;
+            var isNullValue = value is ScalarValue { Value: null };
             if (!isNullValue)
             {
                 writer.WriteAttributeString("value", RenderValue(value));

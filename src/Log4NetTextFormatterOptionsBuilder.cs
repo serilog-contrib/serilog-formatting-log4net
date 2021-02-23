@@ -164,7 +164,7 @@ namespace Serilog.Formatting.Log4Net
         /// <para>
         /// Here is the list of differences between the log4net and the log4j XML layout:
         /// <list type="bullet">
-        ///   <item>The log element uses <c>log4j</c> instead of <c>log4net</c> XML namespace.</item>
+        ///   <item>The <c>event</c> elements have <c>log4j</c> instead of <c>log4net</c> XML namespace.</item>
         ///   <item>The <c>timestamp</c> attribute uses milliseconds elapsed from 1/1/1970 instead of an ISO 8601 formatted date.</item>
         ///   <item>The exception element is named <c>throwable</c> instead of <c>exception</c>.</item>
         /// </list>

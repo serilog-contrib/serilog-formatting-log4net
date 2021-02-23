@@ -1,5 +1,5 @@
 ﻿[assembly: System.CLSCompliant(true)]
-[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/0xced/serilog-formatting-log4net.git")]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/0xced/serilog-formatting-log4net")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName="")]
 namespace Serilog.Formatting.Log4Net
 {

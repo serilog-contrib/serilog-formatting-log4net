@@ -13,9 +13,9 @@ namespace Serilog.Formatting.Log4Net
             FormatProvider = formatProvider;
             CDataMode = cDataMode;
             Log4NetXmlNamespace = log4NetXmlNamespace;
-            XmlWriterSettings = xmlWriterSettings ?? throw new ArgumentNullException(nameof(xmlWriterSettings));
-            FilterProperty = filterProperty ?? throw new ArgumentNullException(nameof(filterProperty));
-            FormatException = formatException ?? throw new ArgumentNullException(nameof(formatException));
+            XmlWriterSettings = xmlWriterSettings;
+            FilterProperty = filterProperty;
+            FormatException = formatException;
         }
 
         /// See <see cref="Log4NetTextFormatterOptionsBuilder.FormatProvider"/>

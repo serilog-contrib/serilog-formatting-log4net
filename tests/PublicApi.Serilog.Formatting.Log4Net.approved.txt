@@ -39,7 +39,6 @@ namespace Serilog.Formatting.Log4Net
     }
     public class Log4NetTextFormatterOptionsBuilder
     {
-        public Log4NetTextFormatterOptionsBuilder() { }
         public Serilog.Formatting.Log4Net.CDataMode CDataMode { get; }
         public Serilog.Formatting.Log4Net.PropertyFilter FilterProperty { get; }
         public Serilog.Formatting.Log4Net.ExceptionFormatter FormatException { get; }

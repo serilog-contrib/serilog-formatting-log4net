@@ -11,6 +11,13 @@ namespace Serilog.Formatting.Log4Net
     public class Log4NetTextFormatterOptionsBuilder
     {
         /// <summary>
+        /// Initialize a new instance of the <see cref="Log4NetTextFormatterOptionsBuilder"/> class.
+        /// </summary>
+        internal Log4NetTextFormatterOptionsBuilder()
+        {
+        }
+
+        /// <summary>
         /// The <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
         /// <para>The default value is <see langref="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.</para>
         /// </summary>

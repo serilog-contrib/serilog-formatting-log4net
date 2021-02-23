@@ -80,6 +80,30 @@ namespace Serilog.Formatting.Log4Net.Tests
             action.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("output");
         }
 
+        [Fact]
+        public void SettingPropertyFilterToNullThrowsArgumentNullException()
+        {
+            // Act
+            Action action = () => _ = new Log4NetTextFormatter(c => c.UsePropertyFilter(null!));
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentNullException>()
+                .WithMessage("The FilterProperty option can not be null.*")
+                .And.ParamName.Should().Be("filterProperty");
+        }
+
+        [Fact]
+        public void SettingExceptionFormatterToNullThrowsArgumentNullException()
+        {
+            // Act
+            Action action = () => _ = new Log4NetTextFormatter(c => c.UseExceptionFormatter(null!));
+
+            // Assert
+            action.Should().ThrowExactly<ArgumentNullException>()
+                .WithMessage("The FormatException option can not be null.*")
+                .And.ParamName.Should().Be("formatException");
+        }
+
         [Theory]
         [InlineData(Events.LogEventLevel.Verbose)]
         [InlineData(Events.LogEventLevel.Debug)]

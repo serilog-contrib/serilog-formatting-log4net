@@ -48,7 +48,7 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Serilog.Formatting.Log4Net.csproj" />
+    <ProjectReference Include="../src/Serilog.Formatting.Log4Net.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,12 @@ You can use [Log4View](https://www.log4view.com) to look at log files produced w
 
 ## Getting started
 
+Add the [Serilog.Formatting.Log4Net](https://www.nuget.org/packages/Serilog.Formatting.Log4Net/) NuGet package to your project using the NuGet Package Manager or run the following command:
+
+```
+dotnet add package Serilog.Formatting.Log4Net
+```
+
 **Serilog.Formatting.Log4Net** provides the `Log4NetTextFormatter` class which implements Serilog's [ITextFormatter](https://github.com/serilog/serilog/blob/v2.0.0/src/Serilog/Formatting/ITextFormatter.cs#L20-L31) interface.
 
 Here's how to use it with a file sink in a simple *Hello World* app:
@@ -47,7 +53,7 @@ You can configure `Log4NetTextFormatter` in multiple ways, the fluent options bu
 
 ### Exception formatting
 
-By default, Log4NetTextFormatter formats exception by calling [ToString()](https://docs.microsoft.com/en-us/dotnet/api/system.exception.tostring). You can customise this behaviour by setting your own formatting delegate. For exemple, you could use [Ben.Demystifier](https://github.com/benaadams/Ben.Demystifier/) like this:
+By default, Log4NetTextFormatter formats exception by calling [ToString()](https://docs.microsoft.com/en-us/dotnet/api/system.exception.tostring). You can customise this behaviour by setting your own formatting delegate. For example, you could use [Ben.Demystifier](https://github.com/benaadams/Ben.Demystifier/) like this:
 
 ```c#
 new Log4NetTextFormatter(c => c.UseExceptionFormatter(exception => exception.ToStringDemystified()))
@@ -125,13 +131,22 @@ Note that unlike other fluent configuration methods, this one can not be chained
 
 ### Combining options
 
-You can also combine options, for example, both removing namespaces and using Ben.Demystifier for exception formatting:
+You can also combine options, for example, using [Ben.Demystifier](https://www.nuget.org/packages/Ben.Demystifier/) for exception formatting, filtering properties and using the log4j compatibility mode. This sample configuration sends logs as UDP packages over the network with [Serilog.Sinks.Udp](https://www.nuget.org/packages/Serilog.Sinks.Udp/) and are viewable with [Loginator](https://github.com/dabeku/Loginator):
 
 ```c#
+var appFileName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+var processId = Process.GetCurrentProcess().Id;
 var formatter = new Log4NetTextFormatter(c => c
-    .UseLog4NetXmlNamespace(null)
     .UseExceptionFormatter(exception => exception.ToStringDemystified())
+    .UsePropertyFilter((_, name) => name.StartsWith("log4j"))
+    .UseLog4JCompatibility()
 );
+Log.Logger = new LoggerConfiguration()
+    .Enrich.WithProperty("log4japp", $"{appFileName}({processId})")
+    .Enrich.WithProperty("log4jmachinename", Environment.MachineName)
+    .Enrich.WithThreadId()
+    .WriteTo.Udp("localhost", 7071, AddressFamily.InterNetwork, formatter)
+    .CreateLogger();
 ```
 
 ## Enrichers
@@ -162,7 +177,7 @@ Include the machine name in log4net events by using [Serilog.Enrichers.Environme
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithMachineName();
 ```
 
-Combining these three enrichers wil produce a log event like this, including `thread`, `domain` and `username` attributes plus a `log4net:HostName` property containing the machine name:
+Combining these three enrichers will produce a log event like this, including `thread`, `domain` and `username` attributes plus a `log4net:HostName` property containing the machine name:
 
 ```xml
 <event timestamp="2020-06-28T10:07:33.314159+02:00" level="INFO" thread="1" domain="TheDomainName" username="TheUserName">

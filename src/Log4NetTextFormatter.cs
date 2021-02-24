@@ -291,9 +291,9 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="sequenceValue">The <see cref="SequenceValue"/> to write.</param>
         private void WriteSequenceProperty(XmlWriter writer, string propertyName, SequenceValue sequenceValue)
         {
-            foreach (var value in sequenceValue.Elements)
+            foreach (var (value, i) in sequenceValue.Elements.Select((e, i) => (e, i)))
             {
-                WritePropertyElement(writer, propertyName, value);
+                WritePropertyElement(writer,$"{propertyName}[{i}]", value);
             }
         }
 

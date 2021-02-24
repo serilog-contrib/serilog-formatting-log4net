@@ -14,7 +14,7 @@ dotnet add package Serilog.Formatting.Log4Net
 
 **Serilog.Formatting.Log4Net** provides the `Log4NetTextFormatter` class which implements Serilog's [ITextFormatter](https://github.com/serilog/serilog/blob/v2.0.0/src/Serilog/Formatting/ITextFormatter.cs#L20-L31) interface.
 
-Here's how to use it with a file sink in a simple *Hello World* app:
+Here's how to use it with a [file sink](https://www.nuget.org/packages/Serilog.Sinks.File/) in a simple *Hello World* app:
 
 ```c#
 using System;
@@ -23,13 +23,14 @@ using Serilog.Formatting.Log4Net;
 
 static class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
         var logger = new LoggerConfiguration()
-            .WriteTo.File(new Log4NetTextFormatter(), "logs.xml")
+            .Enrich.WithProperty("AppName", "Program")
+            .WriteTo.File(new Log4NetTextFormatter(c => c.UseCDataMode(CDataMode.Never)), "logs.xml")
             .CreateLogger();
 
-        logger.Information("Start app");
+        logger.Information("Start app with {Args}", args);
         Console.WriteLine("Hello World!");
         logger.Information("Stop app");
     }
@@ -39,11 +40,19 @@ static class Program
 Running this app writes the following XML events into the `logs.xml` file in the current working directory:
 
 ```xml
-<log4net:event timestamp="2020-06-28T10:03:31.685165+02:00" level="INFO" xmlns:log4net="http://logging.apache.org/log4net/schemas/log4net-events-1.2/">
-  <log4net:message><![CDATA[Start app]]></log4net:message>
+<log4net:event timestamp="2021-02-24T18:23:40.4496605+01:00" level="INFO" xmlns:log4net="http://logging.apache.org/log4net/schemas/log4net-events-1.2/">
+  <log4net:properties>
+    <log4net:data name="Args[0]" value="--first-argument" />
+    <log4net:data name="Args[1]" value="--second-argument" />
+    <log4net:data name="AppName" value="Program" />
+  </log4net:properties>
+  <log4net:message>Start app with ["--first-argument", "--second-argument"]</log4net:message>
 </log4net:event>
-<log4net:event timestamp="2020-06-28T10:03:31.705216+02:00" level="INFO" xmlns:log4net="http://logging.apache.org/log4net/schemas/log4net-events-1.2/">
-  <log4net:message><![CDATA[Stop app]]></log4net:message>
+<log4net:event timestamp="2021-02-24T18:23:40.5086666+01:00" level="INFO" xmlns:log4net="http://logging.apache.org/log4net/schemas/log4net-events-1.2/">
+  <log4net:properties>
+    <log4net:data name="AppName" value="Program" />
+  </log4net:properties>
+  <log4net:message>Stop app</log4net:message>
 </log4net:event>
 ```
 

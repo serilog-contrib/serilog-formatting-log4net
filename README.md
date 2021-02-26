@@ -8,7 +8,7 @@ You can use [Log4View](https://www.log4view.com) to look at log files produced w
 
 Add the [Serilog.Formatting.Log4Net](https://www.nuget.org/packages/Serilog.Formatting.Log4Net/) NuGet package to your project using the NuGet Package Manager or run the following command:
 
-```
+```sh
 dotnet add package Serilog.Formatting.Log4Net
 ```
 

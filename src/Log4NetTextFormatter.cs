@@ -12,7 +12,7 @@ using Serilog.Formatting.Display;
 namespace Serilog.Formatting.Log4Net
 {
     /// <summary>
-    /// A text formatter that serialize log events into [log4net](https://logging.apache.org/log4net/) compatible XML format.
+    /// A text formatter that serialize log events into [log4net](https://logging.apache.org/log4net/) or [log4j](https://logging.apache.org/log4j/) compatible XML format.
     /// </summary>
     public class Log4NetTextFormatter : ITextFormatter
     {
@@ -68,7 +68,7 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
-        /// Format the log event as log4net compatible XML format into the output.
+        /// Format the log event as log4net or log4j compatible XML format into the output.
         /// </summary>
         /// <param name="logEvent">The event to format.</param>
         /// <param name="output">The output.</param>

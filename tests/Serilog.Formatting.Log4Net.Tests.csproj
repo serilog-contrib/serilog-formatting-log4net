@@ -24,7 +24,7 @@
   <PropertyGroup Label="Coverage">
     <!-- Automatically collect coverage when running `dotnet test` -->
     <CollectCoverage>true</CollectCoverage>
-    <!-- Tweak the default coverlet output directory to be `coverage` inside the `tests` directory -->
+    <!-- Tweak the default coverlet output directory to be `coverage` in the repository root directory -->
     <CoverletOutput>$([MSBuild]::EnsureTrailingSlash($([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine($(MSBuildProjectDirectory),'..','coverage'))))))</CoverletOutput>
     <!-- The default output format is `json` which is not supported by ReportGenerator -->
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>

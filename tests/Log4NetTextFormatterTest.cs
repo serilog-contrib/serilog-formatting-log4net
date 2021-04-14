@@ -28,8 +28,11 @@ namespace Serilog.Formatting.Log4Net.Tests
     }
 
     [UseReporter(typeof(DiffReporter))]
-    public class Log4NetTextFormatterTest
+    public class Log4NetTextFormatterTest : IDisposable
     {
+        private readonly TextWriter _selfLogWriter;
+        private string? SelfLogValue => _selfLogWriter.ToString();
+
         /// <summary>
         /// Create a <see cref="DictionaryValue"/> containing two entries, mapping scalar values 1 to "one" and "two" to 2.
         /// </summary>
@@ -51,6 +54,18 @@ namespace Serilog.Formatting.Log4Net.Tests
                 new MessageTemplateParser().Parse(messageTemplate),
                 properties
             );
+        }
+
+        public Log4NetTextFormatterTest()
+        {
+            _selfLogWriter = new StringWriter();
+            Debugging.SelfLog.Enable(_selfLogWriter);
+        }
+
+        public void Dispose()
+        {
+            Debugging.SelfLog.Disable();
+            _selfLogWriter.Dispose();
         }
 
         [Fact]
@@ -423,6 +438,7 @@ namespace Serilog.Formatting.Log4Net.Tests
 
             // Assert
             Approvals.VerifyWithExtension(output.ToString(), "xml");
+            SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while filtering property 'two'.");
         }
 
         [Fact]
@@ -499,6 +515,7 @@ namespace Serilog.Formatting.Log4Net.Tests
 
             // Assert
             Approvals.VerifyWithExtension(output.ToString(), "xml");
+            SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while formatting an exception.");
         }
 
         [Theory]

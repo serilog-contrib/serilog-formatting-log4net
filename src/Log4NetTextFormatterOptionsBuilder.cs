@@ -188,13 +188,17 @@ namespace Serilog.Formatting.Log4Net
 
         private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
         {
-            return new()
+            var xmlWriterSettings = new XmlWriterSettings
             {
-                Indent = !(indentationSettings is null),
-                IndentChars = indentationSettings?.ToString() ?? "",
+                Indent = indentationSettings is not null,
                 NewLineChars = lineEnding.ToCharacters(),
                 ConformanceLevel = ConformanceLevel.Fragment,
             };
+            if (indentationSettings is not null)
+            {
+                xmlWriterSettings.IndentChars = indentationSettings.ToString();
+            }
+            return xmlWriterSettings;
         }
     }
 

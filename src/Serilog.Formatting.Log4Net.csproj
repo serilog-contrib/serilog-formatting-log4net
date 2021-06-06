@@ -25,7 +25,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>serilog log4net log4j</PackageTags>
-    <PackageProjectUrl>https://github.com/0xced/serilog-formatting-log4net</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/serilog-contrib/serilog-formatting-log4net</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 

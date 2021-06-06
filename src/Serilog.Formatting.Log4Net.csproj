@@ -24,7 +24,7 @@
     <Description>Format Serilog events in log4net or log4j compatible XML format</Description>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>Serilog log4net log4j</PackageTags>
+    <PackageTags>serilog log4net log4j</PackageTags>
     <PackageProjectUrl>https://github.com/0xced/serilog-formatting-log4net</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>

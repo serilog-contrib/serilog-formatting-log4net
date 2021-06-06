@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     ".NETStandard,Version=v2.0": {
+      "Microsoft.DotNet.ApiCompat": {
+        "type": "Direct",
+        "requested": "[7.0.0-*, )",
+        "resolved": "7.0.0-beta.21463.4",
+        "contentHash": "TbIGBfVrAqVDA3a8H2V7RtLFJg5AWhIHL3DHFO4SWAAzEhNwUdTqk0j6etl2nKaY5jalC3xk90DuRME/NG6FOw=="
+      },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
         "requested": "[1.0.0, )",

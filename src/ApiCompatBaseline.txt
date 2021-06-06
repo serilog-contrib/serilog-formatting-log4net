@@ -1,0 +1,11 @@
+Compat issues with assembly Serilog.Formatting.Log4Net:
+TypesMustExist : Type 'Serilog.Formatting.Log4Net.LineEndingExtensions' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Serilog.Formatting.Log4Net.CDataMode Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.CDataMode.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Serilog.Formatting.Log4Net.PropertyFilter Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.FilterProperty.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Serilog.Formatting.Log4Net.ExceptionFormatter Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.FormatException.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public System.IFormatProvider Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.FormatProvider.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Serilog.Formatting.Log4Net.IndentationSettings Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.IndentationSettings.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Serilog.Formatting.Log4Net.LineEnding Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.LineEnding.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public System.Xml.XmlQualifiedName Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.Log4NetXmlNamespace.get()' does not exist in the implementation but it does exist in the contract.
+MembersMustExist : Member 'public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.UseLog4NetXmlNamespace(System.Xml.XmlQualifiedName)' does not exist in the implementation but it does exist in the contract.
+Total Issues: 9

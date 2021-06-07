@@ -74,9 +74,5 @@ jobs:
           body: ${{ needs.package.outputs.release-body }}
           draft: false
           prerelease: ${{ contains(needs.package.outputs.version, '-') }}
-      - name: Add GitHub package registry source
-        run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
-      - name: Publish NuGet package on github.com
-        run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source github
       - name: Publish NuGet package on nuget.org
         run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

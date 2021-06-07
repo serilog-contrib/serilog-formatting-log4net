@@ -42,6 +42,10 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
+  <Target Name="PrintCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
+    <Message Importance="high" Text="::set-output name=coverage-reports::@(CoverletReport, ',')" />
+  </Target>
+
   <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
     <Codecov ReportFiles="@(CoverletReport)" />
   </Target>

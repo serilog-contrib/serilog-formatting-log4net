@@ -16,6 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: Run tests and create NuGet package
     outputs:
+      coverage-reports: ${{ steps.dotnet-test.outputs.coverage-reports }}
       version: ${{ steps.dotnet-pack.outputs.version }}
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       release-body: ${{ steps.tag-message.outputs.release-notes }}
@@ -35,6 +36,12 @@ jobs:
         run: dotnet build --verbosity normal
       - name: Run tests
         run: dotnet test --no-build --verbosity normal
+        id: dotnet-test
+      - name: Upload coverage report to Codacy
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ${{ steps.dotnet-test.outputs.coverage-reports }}
       - name: Create NuGet package
         run: dotnet pack --output . --no-build --verbosity normal
         id: dotnet-pack

@@ -47,8 +47,7 @@
   </Target>
 
   <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
-    <!-- Temporarily disabled because of issues on Codecov, see https://community.codecov.com/t/intermittent-unable-to-locate-build-via-github-actions-api/2936 -->
-    <!-- <Codecov ReportFiles="@(CoverletReport)" /> -->
+    <Codecov ReportFiles="@(CoverletReport)" />
   </Target>
 
   <ItemGroup>

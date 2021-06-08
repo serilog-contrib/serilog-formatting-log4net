@@ -186,7 +186,7 @@ Include the machine name in log4net events by using [Serilog.Enrichers.Environme
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithMachineName();
 ```
 
-Combining these three enrichers will produce a log event like this, including `thread`, `domain` and `username` attributes plus a `log4net:HostName` property containing the machine name:
+Combining these three enrichers will produce a log event including `thread`, `domain` and `username` attributes plus a `log4net:HostName` property containing the machine name:
 
 ```xml
 <event timestamp="2020-06-28T10:07:33.314159+02:00" level="INFO" thread="1" domain="TheDomainName" username="TheUserName">
@@ -215,4 +215,4 @@ The [Serilog.Sinks.Udp](https://github.com/FantasticFiasco/serilog-sinks-udp) pr
 
     `git push --follow-tags`
 
-Once pushed, the GitHub [Continuous Integration](https://github.com/serilog-contrib/serilog-formatting-log4net/blob/main/.github/workflows/continuous-integration.yml) workflow takes care of building, running the tests, creating the NuGet package and publishing the produced NuGet package.
+Once pushed, the GitHub [Continuous Integration](https://github.com/serilog-contrib/serilog-formatting-log4net/blob/main/.github/workflows/continuous-integration.yml) workflow takes care of building, running the tests, creating the NuGet package, creating the GitHub release and finally publishing the produced NuGet package.

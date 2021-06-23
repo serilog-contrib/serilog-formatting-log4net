@@ -7,6 +7,12 @@
       "commands": [
         "dotnet-validate"
       ]
+    },
+    "dotnet-stryker": {
+      "version": "0.22.9",
+      "commands": [
+        "dotnet-stryker"
+      ]
     }
   }
 }

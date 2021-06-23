@@ -12,6 +12,7 @@
     <PackageReference Include="Codecov.MSBuild" Version="1.13.0" />
     <PackageReference Include="coverlet.msbuild" Version="3.0.3" PrivateAssets="all" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.Build.Tasks.Git" Version="1.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Include="PublicApiGenerator" Version="10.2.0" />
     <PackageReference Include="ReportGenerator" Version="4.8.7" />
@@ -40,6 +41,19 @@
     <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
     <!-- executing "explorer path\to\index.html" returns exit code 1, so we ignore it -->
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
+  </Target>
+
+  <Target Name="GenerateMutationReport" AfterTargets="GenerateCoverageResultAfterTest" DependsOnTargets="InitializeSourceControlInformationFromSourceControlManager" Condition="$(ContinuousIntegrationBuild) == 'true'">
+    <PropertyGroup>
+      <!-- Once https://github.com/stryker-mutator/stryker-net/pull/1663 is merged and Stryker.NET v1.0 is released
+           * Remove ––dashboard-project and ––dashboard-version options (they will be automatically detected)
+           * Remove DependsOnTargets="InitializeSourceControlInformationFromSourceControlManager"
+           * Remove the Microsoft.Build.Tasks.Git package reference
+           * Change the reporters CLI option to ––reporter dashboard (beware double hyphen-minus instead of double en dash) -->
+      <StrykerArguments >--reporters [\"dashboard\"] --dashboard-project github.com/serilog-contrib/serilog-formatting-log4net --dashboard-version $(SourceRevisionId)</StrykerArguments>
+    </PropertyGroup>
+    <Exec Command="dotnet tool restore" />
+    <Exec Command="dotnet tool run dotnet-stryker $(StrykerArguments)" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
   <Target Name="PrintCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">

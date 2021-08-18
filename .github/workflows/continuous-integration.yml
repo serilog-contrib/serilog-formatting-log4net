@@ -38,10 +38,17 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: echo "UploadCoverageReport=true" >> $GITHUB_ENV
       - name: Run tests
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         run: dotnet test --no-build --verbosity normal
         id: dotnet-test
+      - name: Run mutation tests and upload report to Stryker dashboard
+        if: matrix.os == 'macos-latest'
+        # Once https://github.com/stryker-mutator/stryker-net/pull/1663 is merged and Stryker.NET v1.0 is released
+        # - Remove --dashboard-project and --dashboard-version options (they will be automatically detected)
+        # - Change the reporters CLI option to --reporter dashboard
+        run: |
+          cd tests
+          dotnet tool restore
+          dotnet tool run dotnet-stryker --reporters '["progress","dashboard"]' --dashboard-project github.com/serilog-contrib/serilog-formatting-log4net --dashboard-version ${GITHUB_REF#refs/heads/} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Upload coverage report to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         if: matrix.os == 'macos-latest'

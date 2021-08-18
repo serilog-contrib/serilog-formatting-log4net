@@ -43,7 +43,7 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
-  <Target Name="GenerateMutationReport" AfterTargets="GenerateCoverageResultAfterTest" DependsOnTargets="InitializeSourceControlInformationFromSourceControlManager" Condition="$(ContinuousIntegrationBuild) == 'true'">
+  <Target Name="GenerateMutationReport" AfterTargets="GenerateCoverageResultAfterTest" DependsOnTargets="InitializeSourceControlInformationFromSourceControlManager" Condition="$(UploadCoverageReport) == 'true'">
     <PropertyGroup>
       <!-- Once https://github.com/stryker-mutator/stryker-net/pull/1663 is merged and Stryker.NET v1.0 is released
            * Remove ––dashboard-project and ––dashboard-version options (they will be automatically detected)
@@ -60,7 +60,7 @@
     <Message Importance="high" Text="::set-output name=coverage-reports::@(CoverletReport, ',')" />
   </Target>
 
-  <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
+  <Target Name="UploadCoverageToCodecov" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(UploadCoverageReport) == 'true'">
     <Codecov ReportFiles="@(CoverletReport)" />
   </Target>
 

@@ -34,6 +34,9 @@ jobs:
         run: dotnet restore --verbosity normal
       - name: Build solution
         run: dotnet build --verbosity normal
+      - name: Set UploadCoverageReport environment variable to true
+        if: matrix.os == 'macos-latest'
+        run: echo "UploadCoverageReport=true" >> $GITHUB_ENV
       - name: Run tests
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

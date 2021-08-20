@@ -41,18 +41,18 @@ jobs:
       - name: Run tests
         run: dotnet test --no-build --verbosity normal --logger:"html;LogFileName=../../TestResults-${{ runner.os }}.html"
         id: dotnet-test
+      - name: Upload received files from failing tests
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: Received-${{ runner.os }}
+          path: "**/*.received.*"
       - name: Upload test results
         uses: actions/upload-artifact@v2
         if: always()
         with:
           name: TestResults-${{ runner.os }}
           path: TestResults-${{ runner.os }}.html
-      - name: Upload received files from failing tests
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: Received-${{ runner.os }}
-          path: "**/*.received.*"
       - name: Run mutation tests and upload report to Stryker dashboard
         if: matrix.os == 'macos-latest'
         # Once https://github.com/stryker-mutator/stryker-net/pull/1663 is merged and Stryker.NET v1.0 is released

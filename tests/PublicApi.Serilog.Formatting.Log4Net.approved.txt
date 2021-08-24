@@ -27,10 +27,6 @@ namespace Serilog.Formatting.Log4Net
         LineFeed = 1,
         CarriageReturn = 2,
     }
-    public static class LineEndingExtensions
-    {
-        public static string ToCharacters(this Serilog.Formatting.Log4Net.LineEnding lineEnding) { }
-    }
     public class Log4NetTextFormatter : Serilog.Formatting.ITextFormatter
     {
         public Log4NetTextFormatter() { }

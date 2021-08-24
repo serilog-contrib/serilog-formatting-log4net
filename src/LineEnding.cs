@@ -27,7 +27,7 @@ namespace Serilog.Formatting.Log4Net
     /// <summary>
     /// Extensions to the <see cref="LineEnding"/> enum type.
     /// </summary>
-    public static class LineEndingExtensions
+    internal static class LineEndingExtensions
     {
         /// <summary>
         /// Returns a string representation of the specified <paramref name="lineEnding"/>.

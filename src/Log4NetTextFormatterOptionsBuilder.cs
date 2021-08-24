@@ -41,7 +41,8 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
-        /// <para>The default value is <see langword="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.</para>
+        /// <para/>
+        /// The default value is <see langword="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.
         /// </summary>
         /// <param name="formatProvider">The <see cref="IFormatProvider"/> to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -53,7 +54,8 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the <see cref="CDataMode"/> controlling how <c>message</c> and <c>exception</c> XML elements of log4net events are written.
-        /// <para>The default value is <see cref="Log4Net.CDataMode.Always"/>.</para>
+        /// <para/>
+        /// The default value is <see cref="Log4Net.CDataMode.Always"/>.
         /// </summary>
         /// <param name="cDataMode">The <see cref="CDataMode"/> to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -65,7 +67,8 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the XML namespace used for log4net events. Set to <see langword="null"/> in order not to use a namespace.
-        /// <para>The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.</para>
+        /// <para/>
+        /// The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.
         /// </summary>
         /// <param name="log4NetXmlNamespace">The XML namespace to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -77,7 +80,8 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the line ending used for log4net events.
-        /// <para>The default value is <see cref="Log4Net.LineEnding.LineFeed"/>.</para>
+        /// <para/>
+        /// The default value is <see cref="Log4Net.LineEnding.LineFeed"/>.
         /// </summary>
         /// <param name="lineEnding">The <see cref="Log4Net.LineEnding"/> to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -89,7 +93,8 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the indentation settings used for log4net events.
-        /// <para>The default value uses two spaces.</para>
+        /// <para/>
+        /// The default value uses two spaces.
         /// </summary>
         /// <param name="indentationSettings">The <see cref="IndentationSettings"/> to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -111,7 +116,8 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the <see cref="PropertyFilter"/> applied on all Serilog properties.
-        /// <para>The default implementation always returns <c>true</c>, i.e. it doesn't filter out any property.</para>
+        /// <para/>
+        /// The default property filter always returns <c>true</c>, i.e. it doesn't filter out any property.
         /// </summary>
         /// <remarks>If an exception is thrown while executing the filter, the default filter will be applied, i.e. the Serilog property will be included in the log4net properties.</remarks>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -123,8 +129,10 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
-        /// <para>The default implementation calls <c>Exception.ToString()</c>.</para>
-        /// <para>If the formatter returns <see langword="null"/>, the exception will not be written to the log4net event.</para>
+        /// <para/>
+        /// If the formatter returns <see langword="null"/>, the exception will not be written to the log4net event.
+        /// <para/>
+        /// The default exception formatter calls <c>Exception.ToString()</c>.
         /// </summary>
         /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used, i.e. <c>Exception.ToString()</c>.</remarks>
         /// <returns>The builder in order to fluently chain all options.</returns>

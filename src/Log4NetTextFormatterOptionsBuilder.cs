@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Xml;
 using Serilog.Events;
 
@@ -42,7 +41,7 @@ namespace Serilog.Formatting.Log4Net
         /// <summary>
         /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
         /// <para/>
-        /// The default value is <see langword="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.
+        /// The default value is <see langword="null"/>, meaning that the default Serilog format provider is used, i.e. the invariant culture.
         /// </summary>
         /// <param name="formatProvider">The <see cref="IFormatProvider"/> to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>

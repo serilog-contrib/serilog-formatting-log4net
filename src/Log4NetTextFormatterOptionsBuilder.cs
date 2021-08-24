@@ -17,51 +17,27 @@ namespace Serilog.Formatting.Log4Net
         {
         }
 
-        /// <summary>
-        /// The <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
-        /// <para>The default value is <see langref="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.</para>
-        /// </summary>
-        public IFormatProvider? FormatProvider { get; private set; }
+        /// <summary>See <see cref="UseFormatProvider"/></summary>
+        private IFormatProvider? _formatProvider;
 
-        /// <summary>
-        /// The <see cref="CDataMode"/> controlling how <c>message</c> and <c>exception</c> XML elements of log4net events are written.
-        /// <para>The default value is <see cref="Log4Net.CDataMode.Always"/>.</para>
-        /// </summary>
-        public CDataMode CDataMode { get; private set; } = CDataMode.Always;
+        /// <summary> See <see cref="UseCDataMode"/></summary>
+        private CDataMode _cDataMode = CDataMode.Always;
 
-        /// <summary>
-        /// The XML namespace used for log4net events. No namespace is used if <see langref="null"/>.
-        /// <para>The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.</para>
-        /// </summary>
+        /// <summary>See <see cref="UseLog4NetXmlNamespace"/></summary>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L49</remarks>
-        public XmlQualifiedName? Log4NetXmlNamespace { get; private set; } = new("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
+        private XmlQualifiedName? _log4NetXmlNamespace = new("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
 
-        /// <summary>
-        /// The line ending used for log4net events.
-        /// <para>The default value is <see cref="Log4Net.LineEnding.LineFeed"/>.</para>
-        /// </summary>
-        public LineEnding LineEnding { get; private set; } = LineEnding.LineFeed;
+        /// <summary>See <see cref="UseLineEnding"/></summary>
+        private LineEnding _lineEnding = LineEnding.LineFeed;
 
-        /// <summary>
-        /// The indentation settings used for log4net events. No indentation is used if <see langref="null"/>.
-        /// <para>The default value uses two spaces.</para>
-        /// </summary>
-        public IndentationSettings? IndentationSettings { get; private set; } = new(Indentation.Space, size: 2);
+        /// <summary>See <see cref="UseIndentationSettings"/></summary>
+        private IndentationSettings? _indentationSettings = new(Indentation.Space, size: 2);
 
-        /// <summary>
-        /// The <see cref="PropertyFilter"/> applied on all Serilog properties.
-        /// <para>The default implementation always returns <c>true</c>, i.e. it doesn't filter out any property.</para>
-        /// </summary>
-        /// <remarks>If an exception is thrown while executing the filter, the default filter will be applied, i.e. the Serilog property will be included in the log4net properties.</remarks>
-        public PropertyFilter FilterProperty { get; private set; } = (_, _) => true;
+        /// <summary>See <see cref="UsePropertyFilter"/></summary>
+        private PropertyFilter _filterProperty = (_, _) => true;
 
-        /// <summary>
-        /// The <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
-        /// <para>The default implementation calls <c>Exception.ToString()</c>.</para>
-        /// <para>If the formatter returns <see langref="null"/>, the exception will not be written to the log4net event.</para>
-        /// </summary>
-        /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used, i.e. <c>Exception.ToString()</c>.</remarks>
-        public ExceptionFormatter FormatException { get; private set; } = exception => exception.ToString();
+        /// <summary>See <see cref="UseExceptionFormatter"/></summary>
+        private ExceptionFormatter _formatException = exception => exception.ToString();
 
         /// <summary>
         /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
@@ -71,7 +47,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseFormatProvider(IFormatProvider? formatProvider)
         {
-            FormatProvider = formatProvider;
+            _formatProvider = formatProvider;
             return this;
         }
 
@@ -83,7 +59,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseCDataMode(CDataMode cDataMode)
         {
-            CDataMode = cDataMode;
+            _cDataMode = cDataMode;
             return this;
         }
 
@@ -95,7 +71,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseLog4NetXmlNamespace(XmlQualifiedName? log4NetXmlNamespace)
         {
-            Log4NetXmlNamespace = log4NetXmlNamespace;
+            _log4NetXmlNamespace = log4NetXmlNamespace;
             return this;
         }
 
@@ -107,7 +83,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseLineEnding(LineEnding lineEnding)
         {
-            LineEnding = lineEnding;
+            _lineEnding = lineEnding;
             return this;
         }
 
@@ -119,7 +95,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseIndentationSettings(IndentationSettings indentationSettings)
         {
-            IndentationSettings = indentationSettings;
+            _indentationSettings = indentationSettings;
             return this;
         }
 
@@ -129,7 +105,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseNoIndentation()
         {
-            IndentationSettings = null;
+            _indentationSettings = null;
             return this;
         }
 
@@ -141,7 +117,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UsePropertyFilter(PropertyFilter filterProperty)
         {
-            FilterProperty = filterProperty ?? throw new ArgumentNullException(nameof(filterProperty), $"The {nameof(FilterProperty)} option can not be null.");
+            _filterProperty = filterProperty ?? throw new ArgumentNullException(nameof(filterProperty), "The property filter can not be null.");
             return this;
         }
 
@@ -154,7 +130,7 @@ namespace Serilog.Formatting.Log4Net
         /// <returns>The builder in order to fluently chain all options.</returns>
         public Log4NetTextFormatterOptionsBuilder UseExceptionFormatter(ExceptionFormatter formatException)
         {
-            FormatException = formatException ?? throw new ArgumentNullException(nameof(formatException), $"The {nameof(FormatException)} option can not be null.");
+            _formatException = formatException ?? throw new ArgumentNullException(nameof(formatException), "The exception formatter can not be null.");
             return this;
         }
 
@@ -174,17 +150,17 @@ namespace Serilog.Formatting.Log4Net
         public void UseLog4JCompatibility()
         {
             // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L135
-            LineEnding = LineEnding.CarriageReturn | LineEnding.LineFeed;
+            _lineEnding = LineEnding.CarriageReturn | LineEnding.LineFeed;
 
             // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137
-            Log4NetXmlNamespace = new XmlQualifiedName("log4j", "http://jakarta.apache.org/log4j/");
+            _log4NetXmlNamespace = new XmlQualifiedName("log4j", "http://jakarta.apache.org/log4j/");
 
             // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L147
-            CDataMode = CDataMode.Always;
+            _cDataMode = CDataMode.Always;
         }
 
         internal Log4NetTextFormatterOptions Build()
-            => new(FormatProvider, CDataMode, Log4NetXmlNamespace, CreateXmlWriterSettings(LineEnding, IndentationSettings), FilterProperty, FormatException);
+            => new(_formatProvider, _cDataMode, _log4NetXmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException);
 
         private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
         {

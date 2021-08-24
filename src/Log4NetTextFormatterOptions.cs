@@ -18,22 +18,22 @@ namespace Serilog.Formatting.Log4Net
             FormatException = formatException;
         }
 
-        /// See <see cref="Log4NetTextFormatterOptionsBuilder.FormatProvider"/>
+        /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseFormatProvider"/></summary>
         internal IFormatProvider? FormatProvider { get; }
 
-        /// See <see cref="Log4NetTextFormatterOptionsBuilder.CDataMode"/>
+        /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseCDataMode"/></summary>
         internal CDataMode CDataMode { get; }
 
-        /// See <see cref="Log4NetTextFormatterOptionsBuilder.Log4NetXmlNamespace"/>
+        /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseLog4NetXmlNamespace"/></summary>
         internal XmlQualifiedName? Log4NetXmlNamespace { get; }
 
-        /// See <see cref="Log4NetTextFormatterOptionsBuilder.CreateXmlWriterSettings"/>
+        /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.CreateXmlWriterSettings"/></summary>
         internal XmlWriterSettings XmlWriterSettings { get; }
 
-        /// See <see cref="Log4NetTextFormatterOptionsBuilder.FilterProperty"/>
+        /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UsePropertyFilter"/></summary>
         internal PropertyFilter FilterProperty { get; }
 
-        /// See <see cref="Log4NetTextFormatterOptionsBuilder.FormatException"/>
+        /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseExceptionFormatter"/></summary>
         internal ExceptionFormatter FormatException { get; }
     }
 }

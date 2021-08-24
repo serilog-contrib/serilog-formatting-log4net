@@ -103,7 +103,7 @@ namespace Serilog.Formatting.Log4Net.Tests
 
             // Assert
             action.Should().ThrowExactly<ArgumentNullException>()
-                .WithMessage("The FilterProperty option can not be null.*")
+                .WithMessage("The property filter can not be null.*")
                 .And.ParamName.Should().Be("filterProperty");
         }
 
@@ -115,7 +115,7 @@ namespace Serilog.Formatting.Log4Net.Tests
 
             // Assert
             action.Should().ThrowExactly<ArgumentNullException>()
-                .WithMessage("The FormatException option can not be null.*")
+                .WithMessage("The exception formatter can not be null.*")
                 .And.ParamName.Should().Be("formatException");
         }
 

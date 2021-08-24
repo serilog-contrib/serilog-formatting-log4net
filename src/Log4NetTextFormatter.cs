@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -100,7 +99,7 @@ namespace Serilog.Formatting.Log4Net
             var useLog4JCompatibility = _options.Log4NetXmlNamespace?.Name == "log4j";
             WriteStartElement(writer, "event");
             WriteEventAttribute(logEvent, writer, "logger", Constants.SourceContextPropertyName);
-            var timestamp = useLog4JCompatibility ? logEvent.Timestamp.ToUnixTimeMilliseconds().ToString(CultureInfo.InvariantCulture) : XmlConvert.ToString(logEvent.Timestamp);
+            var timestamp = useLog4JCompatibility ? XmlConvert.ToString(logEvent.Timestamp.ToUnixTimeMilliseconds()) : XmlConvert.ToString(logEvent.Timestamp);
             writer.WriteAttributeString("timestamp", timestamp);
             writer.WriteAttributeString("level", LogLevel(logEvent.Level));
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);

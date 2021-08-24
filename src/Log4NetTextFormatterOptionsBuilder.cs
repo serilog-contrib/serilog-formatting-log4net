@@ -41,7 +41,7 @@ namespace Serilog.Formatting.Log4Net
 
         /// <summary>
         /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
-        /// <para>The default value is <see langref="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.</para>
+        /// <para>The default value is <see langword="null"/>, meaning that the default Serilog provider is used, i.e. the <see cref="CultureInfo.InvariantCulture"/>.</para>
         /// </summary>
         /// <param name="formatProvider">The <see cref="IFormatProvider"/> to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -64,7 +64,7 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
-        /// Sets the XML namespace used for log4net events. Set to <see langref="null"/> in order not to use a namespace.
+        /// Sets the XML namespace used for log4net events. Set to <see langword="null"/> in order not to use a namespace.
         /// <para>The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.</para>
         /// </summary>
         /// <param name="log4NetXmlNamespace">The XML namespace to use.</param>
@@ -124,7 +124,7 @@ namespace Serilog.Formatting.Log4Net
         /// <summary>
         /// Sets the <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
         /// <para>The default implementation calls <c>Exception.ToString()</c>.</para>
-        /// <para>If the formatter returns <see langref="null"/>, the exception will not be written to the log4net event.</para>
+        /// <para>If the formatter returns <see langword="null"/>, the exception will not be written to the log4net event.</para>
         /// </summary>
         /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used, i.e. <c>Exception.ToString()</c>.</remarks>
         /// <returns>The builder in order to fluently chain all options.</returns>
@@ -183,7 +183,7 @@ namespace Serilog.Formatting.Log4Net
     /// </summary>
     /// <param name="logEvent">The <see cref="LogEvent"/> associated with the Serilog property.</param>
     /// <param name="propertyName">The Serilog property name.</param>
-    /// <returns><see langref="true"/> to include the Serilog property in the log4net properties or <see langref="false"/> to ignore the Serilog property.</returns>
+    /// <returns><see langword="true"/> to include the Serilog property in the log4net properties or <see langword="false"/> to ignore the Serilog property.</returns>
     public delegate bool PropertyFilter(LogEvent logEvent, string propertyName);
 
     /// <summary>

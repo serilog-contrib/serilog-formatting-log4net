@@ -182,7 +182,7 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
         /// <param name="properties">The collection of properties to write.</param>
-        /// <param name="machineNameProperty">The machine name property to write or <see langref="null"/> if doesn't exist.</param>
+        /// <param name="machineNameProperty">The machine name property to write or <see langword="null"/> if doesn't exist.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L262-L286</remarks>
         [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
         private void WriteProperties(LogEvent logEvent, XmlWriter writer, IEnumerable<KeyValuePair<string, LogEventPropertyValue>> properties, LogEventPropertyValue? machineNameProperty)

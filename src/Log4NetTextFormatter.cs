@@ -105,7 +105,7 @@ namespace Serilog.Formatting.Log4Net
             writer.WriteAttributeString("level", LogLevel(logEvent.Level));
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
             WriteDomainAndUserName(logEvent, writer);
-            var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key)).ToList();
+            var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key, StringComparer.Ordinal)).ToList();
             var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue { Value: not null };
             if (properties.Any() || hasMachineNameProperty)
             {

@@ -78,10 +78,10 @@ new Log4NetTextFormatter(c => c.UseCDataMode(CDataMode.Never))
 
 ### XML Namespace
 
-You can remove the `log4net` XML namespace by setting the `Log4NetXmlNamespace` option to `null`. This is useful if you want to spare some bytes and your log reader supports log4net XML events without namespace, like [Log4View](https://www.log4view.com) does. You *could* also change the namespace to something else than the default `log4net:http://logging.apache.org/log4net/schemas/log4net-events-1.2/` but that would probably not be a good idea.
+You can remove the `log4net` XML namespace by calling `UseNoXmlNamespace()` on the options builder. This is useful if you want to spare some bytes and your log reader supports log4net XML events without namespace, like [Log4View](https://www.log4view.com) does.
 
 ```c#
-new Log4NetTextFormatter(c => c.UseLog4NetXmlNamespace(null))
+new Log4NetTextFormatter(c => c.UseNoXmlNamespace())
 ```
 
 ### Line ending

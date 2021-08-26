@@ -88,6 +88,8 @@ namespace Serilog.Formatting.Log4Net
             output.Write(_options.XmlWriterSettings.NewLineChars);
         }
 
+        private bool UsesLog4JCompatibility => ReferenceEquals(Log4NetTextFormatterOptionsBuilder.Log4JXmlNamespace, _options.XmlNamespace);
+
         /// <summary>
         /// Write the log event into the XML writer.
         /// </summary>
@@ -96,10 +98,9 @@ namespace Serilog.Formatting.Log4Net
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L218-L310</remarks>
         private void WriteEvent(LogEvent logEvent, XmlWriter writer)
         {
-            var useLog4JCompatibility = _options.Log4NetXmlNamespace?.Name == "log4j";
             WriteStartElement(writer, "event");
             WriteEventAttribute(logEvent, writer, "logger", Constants.SourceContextPropertyName);
-            var timestamp = useLog4JCompatibility ? XmlConvert.ToString(logEvent.Timestamp.ToUnixTimeMilliseconds()) : XmlConvert.ToString(logEvent.Timestamp);
+            var timestamp = UsesLog4JCompatibility ? XmlConvert.ToString(logEvent.Timestamp.ToUnixTimeMilliseconds()) : XmlConvert.ToString(logEvent.Timestamp);
             writer.WriteAttributeString("timestamp", timestamp);
             writer.WriteAttributeString("level", LogLevel(logEvent.Level));
             WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
@@ -111,7 +112,7 @@ namespace Serilog.Formatting.Log4Net
                 WriteProperties(logEvent, writer, properties, machineNameProperty);
             }
             WriteMessage(logEvent, writer);
-            WriteException(logEvent, writer, useLog4JCompatibility ? "throwable" : "exception");
+            WriteException(logEvent, writer, UsesLog4JCompatibility ? "throwable" : "exception");
             writer.WriteEndElement();
         }
 
@@ -374,13 +375,13 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
-        /// Start writing an XML element, taking into account the configured <see cref="Log4NetTextFormatterOptions.Log4NetXmlNamespace"/>.
+        /// Start writing an XML element, taking into account the configured <see cref="Log4NetTextFormatterOptions.XmlNamespace"/>.
         /// </summary>
         /// <param name="writer">The XML writer.</param>
         /// <param name="elementName">The name of the XML element to write.</param>
         private void WriteStartElement(XmlWriter writer, string elementName)
         {
-            var qualifiedName = _options.Log4NetXmlNamespace;
+            var qualifiedName = _options.XmlNamespace;
             if (qualifiedName != null)
             {
                 writer.WriteStartElement(qualifiedName.Name, elementName, qualifiedName.Namespace);

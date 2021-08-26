@@ -10,6 +10,18 @@ namespace Serilog.Formatting.Log4Net
     public class Log4NetTextFormatterOptionsBuilder
     {
         /// <summary>
+        /// The XML namespace used for log4net events.
+        /// </summary>
+        /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L49</remarks>
+        private static readonly XmlQualifiedName Log4NetXmlNamespace = new("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
+
+        /// <summary>
+        /// The XML namespace used for Log4j events.
+        /// </summary>
+        /// <remarks>// https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137</remarks>
+        internal static readonly XmlQualifiedName Log4JXmlNamespace = new("log4j", "http://jakarta.apache.org/log4j/");
+
+        /// <summary>
         /// Initialize a new instance of the <see cref="Log4NetTextFormatterOptionsBuilder"/> class.
         /// </summary>
         internal Log4NetTextFormatterOptionsBuilder()
@@ -22,9 +34,8 @@ namespace Serilog.Formatting.Log4Net
         /// <summary> See <see cref="UseCDataMode"/></summary>
         private CDataMode _cDataMode = CDataMode.Always;
 
-        /// <summary>See <see cref="UseLog4NetXmlNamespace"/></summary>
-        /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L49</remarks>
-        private XmlQualifiedName? _log4NetXmlNamespace = new("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
+        /// <summary>See <see cref="UseNoXmlNamespace"/></summary>
+        private XmlQualifiedName? _xmlNamespace = Log4NetXmlNamespace;
 
         /// <summary>See <see cref="UseLineEnding"/></summary>
         private LineEnding _lineEnding = LineEnding.LineFeed;
@@ -65,15 +76,14 @@ namespace Serilog.Formatting.Log4Net
         }
 
         /// <summary>
-        /// Sets the XML namespace used for log4net events. Set to <see langword="null"/> in order not to use a namespace.
+        /// Do not use any XML namespace for log4net events.
         /// <para/>
         /// The default value has prefix <c>log4net</c> and namespace <c>http://logging.apache.org/log4net/schemas/log4net-events-1.2/</c>.
         /// </summary>
-        /// <param name="log4NetXmlNamespace">The XML namespace to use.</param>
         /// <returns>The builder in order to fluently chain all options.</returns>
-        public Log4NetTextFormatterOptionsBuilder UseLog4NetXmlNamespace(XmlQualifiedName? log4NetXmlNamespace)
+        public Log4NetTextFormatterOptionsBuilder UseNoXmlNamespace()
         {
-            _log4NetXmlNamespace = log4NetXmlNamespace;
+            _xmlNamespace = null;
             return this;
         }
 
@@ -160,14 +170,14 @@ namespace Serilog.Formatting.Log4Net
             _lineEnding = LineEnding.CarriageReturn | LineEnding.LineFeed;
 
             // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137
-            _log4NetXmlNamespace = new XmlQualifiedName("log4j", "http://jakarta.apache.org/log4j/");
+            _xmlNamespace = Log4JXmlNamespace;
 
             // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L147
             _cDataMode = CDataMode.Always;
         }
 
         internal Log4NetTextFormatterOptions Build()
-            => new(_formatProvider, _cDataMode, _log4NetXmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException);
+            => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException);
 
         private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
         {

@@ -258,7 +258,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent();
-            var formatter = new Log4NetTextFormatter(options => options.UseLog4NetXmlNamespace(null));
+            var formatter = new Log4NetTextFormatter(options => options.UseNoXmlNamespace());
 
             // Act
             formatter.Format(logEvent, output);

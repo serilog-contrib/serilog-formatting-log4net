@@ -1,4 +1,4 @@
-﻿<log4j:event timestamp="1041689366535" level="INFO" xmlns:log4j="http://jakarta.apache.org/log4j/">
+﻿<log4j:event timestamp="1041689366535" level="INFO">
   <log4j:properties>
     <log4j:data name="π" value="3.14" />
   </log4j:properties>

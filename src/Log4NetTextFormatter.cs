@@ -82,9 +82,22 @@ namespace Serilog.Formatting.Log4Net
             {
                 throw new ArgumentNullException(nameof(output));
             }
-            using var writer = XmlWriter.Create(output, _options.XmlWriterSettings);
+            var xmlWriterOutput = UsesLog4JCompatibility ? new StringWriter() : output;
+            using var writer = XmlWriter.Create(xmlWriterOutput, _options.XmlWriterSettings);
             WriteEvent(logEvent, writer);
             writer.Flush();
+            if (UsesLog4JCompatibility)
+            {
+                // log4j writes the XML "manually", see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145
+                // The resulting XML is impossible to write with a standard compliant XML writer such as XmlWriter.
+                // That's why we write the event in a StringWriter then massage the output to remove the xmlns:log4j attribute to match log4j output.
+                // The XML fragment becomes valid when surrounded by an external entity, see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L31-L49
+                const string log4JNamespaceAttribute = @" xmlns:log4j=""http://jakarta.apache.org/log4j/""";
+                var xmlString = xmlWriterOutput.ToString();
+                var i = xmlString.IndexOf(log4JNamespaceAttribute, StringComparison.Ordinal);
+                output.Write(xmlString.Substring(0, i));
+                output.Write(xmlString.Substring(i + log4JNamespaceAttribute.Length));
+            }
             output.Write(_options.XmlWriterSettings.NewLineChars);
         }
 

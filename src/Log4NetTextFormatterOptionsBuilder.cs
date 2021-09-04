@@ -18,7 +18,7 @@ namespace Serilog.Formatting.Log4Net
         /// <summary>
         /// The XML namespace used for Log4j events.
         /// </summary>
-        /// <remarks>// https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137</remarks>
+        /// <remarks>https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137</remarks>
         internal static readonly XmlQualifiedName Log4JXmlNamespace = new("log4j", "http://jakarta.apache.org/log4j/");
 
         /// <summary>

@@ -20,6 +20,10 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(ContinuousIntegrationBuild) == 'true'">
+    <PackageReference Include="GitHubActionsTestLogger" Version="1.2.0" />
+  </ItemGroup>
+
   <PropertyGroup Label="Coverage">
     <!-- Automatically collect coverage when running `dotnet test` -->
     <CollectCoverage>true</CollectCoverage>

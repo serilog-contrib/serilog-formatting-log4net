@@ -36,7 +36,7 @@ jobs:
       - name: Build solution
         run: dotnet build
       - name: Run tests
-        run: dotnet test --no-build --logger:"html;LogFileName=../../TestResults-${{ runner.os }}.html"
+        run: dotnet test --no-build --logger "html;LogFileName=../../TestResults-${{ runner.os }}.html" --logger GitHubActions
         id: dotnet-test
       - name: Upload received files from failing tests
         uses: actions/upload-artifact@v2

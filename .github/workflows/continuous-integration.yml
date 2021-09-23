@@ -36,7 +36,7 @@ jobs:
       - name: Build solution
         run: dotnet build
       - name: Run tests
-        run: dotnet test --no-build --logger "html;LogFileName=../../TestResults-${{ runner.os }}.html" --logger GitHubActions
+        run: dotnet test --no-build --logger "html;LogFileName=../../TestResults-${{ runner.os }}.html" --logger "trx;LogFileName=../../TestResults-${{ runner.os }}.trx" --logger GitHubActions
         id: dotnet-test
       - name: Upload received files from failing tests
         uses: actions/upload-artifact@v2
@@ -50,6 +50,13 @@ jobs:
         with:
           name: TestResults-${{ runner.os }}
           path: TestResults-${{ runner.os }}.html
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results (${{ runner.os }})
+          path: TestResults-${{ runner.os }}.trx
+          reporter: dotnet-trx
       - name: Upload coverage report to Codecov
         if: matrix.os == 'macos-latest'
         uses: codecov/codecov-action@v2

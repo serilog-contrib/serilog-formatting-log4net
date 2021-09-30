@@ -78,7 +78,8 @@ namespace Serilog.Formatting.Log4Net.Tests
             Action action = () => formatter.Format(null!, TextWriter.Null);
 
             // Assert
-            action.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("logEvent");
+            action.Should().ThrowExactly<ArgumentNullException>().WithParameterName("logEvent")
+                .Which.StackTrace!.TrimStart().Should().StartWith("at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format");
         }
 
         [Fact]
@@ -92,7 +93,8 @@ namespace Serilog.Formatting.Log4Net.Tests
             Action action = () => formatter.Format(logEvent, null!);
 
             // Assert
-            action.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("output");
+            action.Should().ThrowExactly<ArgumentNullException>().WithParameterName("output")
+                .Which.StackTrace!.TrimStart().Should().StartWith("at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format");
         }
 
         [Fact]

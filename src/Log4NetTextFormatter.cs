@@ -145,10 +145,7 @@ namespace Serilog.Formatting.Log4Net
                 {
                     writer.WriteAttributeString("domain", domain);
                 }
-                if (userName != null)
-                {
-                    writer.WriteAttributeString("username", userName);
-                }
+                writer.WriteAttributeString("username", userName);
             }
         }
 

@@ -76,7 +76,7 @@ jobs:
         run: |
           cd tests
           dotnet tool restore
-          dotnet tool run dotnet-stryker --version ${GITHUB_REF#refs/heads/} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF#refs/heads/} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Create NuGet package
         run: dotnet pack --no-build --output .
         id: dotnet-pack

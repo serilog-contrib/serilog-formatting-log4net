@@ -1,0 +1,14 @@
+{
+   "stryker-config" : {
+      "baseline" : {
+         "enabled" : true
+      },
+      "reporters" : [
+         "dashboard",
+         "baseline"
+      ],
+      "since" : {
+         "target" : "main"
+      }
+   }
+}

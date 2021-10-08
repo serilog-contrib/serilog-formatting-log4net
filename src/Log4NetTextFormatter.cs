@@ -125,7 +125,7 @@ namespace Serilog.Formatting.Log4Net
                 WriteProperties(logEvent, writer, properties, machineNameProperty);
             }
             WriteMessage(logEvent, writer);
-            WriteException(logEvent, writer, UsesLog4JCompatibility ? "throwable" : "exception");
+            WriteException(logEvent, writer);
             writer.WriteEndElement();
         }
 
@@ -358,10 +358,9 @@ namespace Serilog.Formatting.Log4Net
         /// </summary>
         /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
-        /// <param name="elementName">The element name, should be either <c>exception</c> or <c>throwable</c>.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L288-L295</remarks>
         [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
-        private void WriteException(LogEvent logEvent, XmlWriter writer, string elementName)
+        private void WriteException(LogEvent logEvent, XmlWriter writer)
         {
             var exception = logEvent.Exception;
             if (exception == null)
@@ -380,6 +379,7 @@ namespace Serilog.Formatting.Log4Net
             }
             if (formattedException != null)
             {
+                var elementName = UsesLog4JCompatibility ? "throwable" : "exception";
                 WriteContent(writer, elementName, formattedException);
             }
         }

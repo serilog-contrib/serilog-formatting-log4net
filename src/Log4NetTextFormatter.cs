@@ -303,7 +303,7 @@ namespace Serilog.Formatting.Log4Net
         {
             foreach (var (value, i) in sequenceValue.Elements.Select((e, i) => (e, i)))
             {
-                WritePropertyElement(writer,$"{propertyName}[{i}]", value);
+                WritePropertyElement(writer, $"{propertyName}[{i}]", value);
             }
         }
 

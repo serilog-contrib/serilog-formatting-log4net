@@ -53,4 +53,9 @@
     <ProjectReference Include="../src/Serilog.Formatting.Log4Net.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="PublicApi.verified.cs" />
+    <None Include="PublicApi.verified.cs" />
+  </ItemGroup>
+
 </Project>

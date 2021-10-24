@@ -12,7 +12,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         public Task ApprovePublicApi()
         {
             var publicApi = typeof(Log4NetTextFormatter).Assembly.GeneratePublicApi();
-            return Verifier.Verify(publicApi).UseFileName("PublicApi");
+            return Verifier.Verify(publicApi).UseFileName("PublicApi").UseExtension("cs");
         }
     }
 }

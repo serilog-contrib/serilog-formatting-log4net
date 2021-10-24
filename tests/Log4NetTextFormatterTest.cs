@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using ApprovalTests;
-using ApprovalTests.Namers;
-using ApprovalTests.Reporters;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Serilog.Core;
 using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Parsing;
+using VerifyTests;
+using VerifyXunit;
 using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests
@@ -27,7 +27,7 @@ namespace Serilog.Formatting.Log4Net.Tests
         }
     }
 
-    [UseReporter(typeof(DiffReporter))]
+    [UsesVerify]
     public class Log4NetTextFormatterTest : IDisposable
     {
         private readonly TextWriter _selfLogWriter;
@@ -128,10 +128,8 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(Events.LogEventLevel.Warning)]
         [InlineData(Events.LogEventLevel.Error)]
         [InlineData(Events.LogEventLevel.Fatal)]
-        public void LogEventLevel(LogEventLevel level)
+        public Task LogEventLevel(LogEventLevel level)
         {
-            NamerFactory.AdditionalInformation = level.ToString();
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(level);
@@ -141,7 +139,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(level);
         }
 
         [Fact]
@@ -166,10 +164,8 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(CDataMode.Never, false)]
         [InlineData(CDataMode.IfNeeded, true)]
         [InlineData(CDataMode.IfNeeded, false)]
-        public void MessageCDataMode(CDataMode mode, bool needsEscaping)
+        public Task MessageCDataMode(CDataMode mode, bool needsEscaping)
         {
-            NamerFactory.AdditionalInformation = mode + "." + (needsEscaping ? "NeedsEscaping" : "DoesntNeedEscaping");
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(messageTemplate: needsEscaping ? ">> Hello from Serilog <<" : "Hello from Serilog");
@@ -179,7 +175,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(mode, needsEscaping);
         }
 
         [Theory]
@@ -187,10 +183,8 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(LineEnding.LineFeed)]
         [InlineData(LineEnding.CarriageReturn)]
         [InlineData(LineEnding.CarriageReturn | LineEnding.LineFeed)]
-        public void XmlElementsLineEnding(LineEnding lineEnding)
+        public Task XmlElementsLineEnding(LineEnding lineEnding)
         {
-            NamerFactory.AdditionalInformation = lineEnding.ToString();
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent();
@@ -200,7 +194,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(lineEnding);
         }
 
         [Theory]
@@ -208,10 +202,8 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(Indentation.Space, 4)]
         [InlineData(Indentation.Tab, 2)]
         [InlineData(Indentation.Tab, 4)]
-        public void IndentationSettings(Indentation indentation, byte size)
+        public Task IndentationSettings(Indentation indentation, byte size)
         {
-            NamerFactory.AdditionalInformation = indentation + "." + size;
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent();
@@ -221,11 +213,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(indentation, size);
         }
 
         [Fact]
-        public void NoIndentation()
+        public Task NoIndentation()
         {
             // Arrange
             using var output = new StringWriter();
@@ -236,11 +228,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void NoNamespace()
+        public Task NoNamespace()
         {
             // Arrange
             using var output = new StringWriter();
@@ -251,11 +243,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void NullProperty()
+        public Task NullProperty()
         {
             // Arrange
             using var output = new StringWriter();
@@ -266,11 +258,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void LoggerName()
+        public Task LoggerName()
         {
             // Arrange
             using var output = new StringWriter();
@@ -281,11 +273,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void LoggerNameStructureValue()
+        public Task LoggerNameStructureValue()
         {
             // Arrange
             using var output = new StringWriter();
@@ -296,11 +288,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void DefaultFormatProvider()
+        public Task DefaultFormatProvider()
         {
             // Arrange
             using var output = new StringWriter();
@@ -311,11 +303,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void Log4JCompatibility()
+        public Task Log4JCompatibility()
         {
             // Arrange
             using var output = new StringWriter();
@@ -329,11 +321,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void ExplicitFormatProvider()
+        public Task ExplicitFormatProvider()
         {
             // Arrange
             using var output = new StringWriter();
@@ -345,11 +337,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void TwoProperties()
+        public Task TwoProperties()
         {
             // Arrange
             using var output = new StringWriter();
@@ -363,11 +355,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void TwoPropertiesOneNull()
+        public Task TwoPropertiesOneNull()
         {
             // Arrange
             using var output = new StringWriter();
@@ -381,11 +373,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void FilterProperty()
+        public Task FilterProperty()
         {
             // Arrange
             using var output = new StringWriter();
@@ -399,11 +391,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void FilterPropertyThrowing()
+        public Task FilterPropertyThrowing()
         {
             // Arrange
             using var output = new StringWriter();
@@ -424,12 +416,12 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
             SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while filtering property 'two'.");
+            return Verify(output);
         }
 
         [Fact]
-        public void TwoEvents()
+        public Task TwoEvents()
         {
             // Arrange
             using var output = new StringWriter();
@@ -441,11 +433,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void Exception()
+        public Task Exception()
         {
             // Arrange
             using var output = new StringWriter();
@@ -456,11 +448,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void ExceptionFormatter()
+        public Task ExceptionFormatter()
         {
             // Arrange
             using var output = new StringWriter();
@@ -471,11 +463,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void ExceptionFormatterReturningNull()
+        public Task ExceptionFormatterReturningNull()
         {
             // Arrange
             using var output = new StringWriter();
@@ -486,11 +478,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void ExceptionFormatterThrowing()
+        public Task ExceptionFormatterThrowing()
         {
             // Arrange
             using var output = new StringWriter();
@@ -501,17 +493,15 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
             SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while formatting an exception.");
+            return Verify(output);
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData(1)]
-        public void ThreadIdProperty(int? threadId)
+        public Task ThreadIdProperty(int? threadId)
         {
-            NamerFactory.AdditionalInformation = threadId?.ToString() ?? "_null";
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(ThreadIdEnricher.ThreadIdPropertyName, new ScalarValue(threadId)));
@@ -521,7 +511,7 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(threadId);
         }
 
         [Theory]
@@ -530,10 +520,8 @@ namespace Serilog.Formatting.Log4Net.Tests
         [InlineData(@"TheUser")]
         [InlineData(@"TheDomain\TheUser")]
         [InlineData(@"TheDomain\TheUser\Name")]
-        public void DomainAndUserNameProperty(string? environmentUserName)
+        public Task DomainAndUserNameProperty(string? environmentUserName)
         {
-            NamerFactory.AdditionalInformation = environmentUserName == null ? "_null" : environmentUserName.Length == 0 ? "_empty" : environmentUserName.Replace(@"\", "_");
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(EnvironmentUserNameEnricher.EnvironmentUserNamePropertyName, new ScalarValue(environmentUserName)));
@@ -543,11 +531,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(environmentUserName);
         }
 
         [Fact]
-        public void DomainAndUserNamePropertyStructureValue()
+        public Task DomainAndUserNamePropertyStructureValue()
         {
             // Arrange
             using var output = new StringWriter();
@@ -558,16 +546,14 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Theory]
         [InlineData(null)]
         [InlineData("TheMachineName")]
-        public void MachineNameProperty(string? machineName)
+        public Task MachineNameProperty(string? machineName)
         {
-            NamerFactory.AdditionalInformation = machineName ?? "_null";
-
             // Arrange
             using var output = new StringWriter();
             var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new ScalarValue(machineName)));
@@ -577,11 +563,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output).UseParameters(machineName);
         }
 
         [Fact]
-        public void MachineNamePropertyStructureValue()
+        public Task MachineNamePropertyStructureValue()
         {
             // Arrange
             using var output = new StringWriter();
@@ -592,11 +578,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void SequenceProperty()
+        public Task SequenceProperty()
         {
             // Arrange
             using var output = new StringWriter();
@@ -608,11 +594,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void DictionaryProperty()
+        public Task DictionaryProperty()
         {
             // Arrange
             using var output = new StringWriter();
@@ -629,11 +615,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void StructureProperty()
+        public Task StructureProperty()
         {
             // Arrange
             using var output = new StringWriter();
@@ -650,11 +636,11 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
         }
 
         [Fact]
-        public void CustomLogEventPropertyValue()
+        public Task CustomLogEventPropertyValue()
         {
             // Arrange
             using var output = new StringWriter();
@@ -665,7 +651,13 @@ namespace Serilog.Formatting.Log4Net.Tests
             formatter.Format(logEvent, output);
 
             // Assert
-            Approvals.VerifyWithExtension(output.ToString(), "xml");
+            return Verify(output);
+        }
+
+        private static SettingsTask Verify(StringWriter output)
+        {
+            var xml = output.ToString();
+            return Verifier.Verify(xml).UseExtension("xml");
         }
     }
 }

@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased][unreleased]
 
 * Replace `UseLog4NetXmlNamespace(null)` with `UseNoXmlNamespace()`
 * Reduce the public API surface
@@ -28,7 +28,7 @@ After (1.0.0-rc.3)
 ```
 
 
-## [1.0.0-rc.2] - 2021-03-25
+## [1.0.0-rc.2][1.0.0-rc.2] - 2021-03-25
 
 * Handle non Serilog provided `LogEventPropertyValue` subclasses
 * The `Log4NetTextFormatterOptionsBuilder` constructor is now internal
@@ -50,18 +50,17 @@ After (1.0.0-rc.2)
 
 * Documentation has been improved
 
-## [1.0.0-rc.1] - 2021-02-05
+## [1.0.0-rc.1][1.0.0-rc.1] - 2021-02-05
 
 This release contains the same code as 1.0.0-alpha.0.110.
 
 Still trying to figure out how to make everything fit together with [MinVer](https://github.com/adamralph/minver), **annotated** tags and GitHub actions.
 
-## [1.0.0-alpha.0.110] - 2021-02-04
+## [1.0.0-alpha.0.110][1.0.0-alpha.0.110] - 2021-02-04
 
 * Implement log4j compatibility mode.
 
-[Unreleased]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.2...HEAD
+[unreleased]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.2...HEAD
 [1.0.0-rc.2]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.1...1.0.0-rc.2
 [1.0.0-rc.1]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-alpha.0.110...1.0.0-rc.1
 [1.0.0-alpha.0.110]: https://github.com/serilog-contrib/serilog-formatting-log4net/releases/tag/1.0.0-alpha.0.110
-

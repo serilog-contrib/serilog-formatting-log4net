@@ -5,11 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased][unreleased]
 
-* Replace `UseLog4NetXmlNamespace(null)` with `UseNoXmlNamespace()`
-* Reduce the public API surface
-  * Removed all property getters on `Log4NetTextFormatterOptionsBuilder`
-  * Converted the `LineEndingExtensions` class from public to internal
-* Improve log4j compatibility mode: don't write the `xmlns:log4j` attribute to be [exactly compatible](https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145) with log4j
+- Replace `UseLog4NetXmlNamespace(null)` with `UseNoXmlNamespace()`
+- Reduce the public API surface
+  - Removed all property getters on `Log4NetTextFormatterOptionsBuilder`
+  - Converted the `LineEndingExtensions` class from public to internal
+- Improve log4j compatibility mode: don't write the `xmlns:log4j` attribute to be [exactly compatible](https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145) with log4j
 
 Before (1.0.0-rc.2):
 
@@ -27,12 +27,11 @@ After (1.0.0-rc.3)
 </log4j:event> 
 ```
 
-
 ## [1.0.0-rc.2][1.0.0-rc.2] - 2021-03-25
 
-* Handle non Serilog provided `LogEventPropertyValue` subclasses
-* The `Log4NetTextFormatterOptionsBuilder` constructor is now internal
-* Include the index in the property name when formatting a SequenceValue
+- Handle non Serilog provided `LogEventPropertyValue` subclasses
+- The `Log4NetTextFormatterOptionsBuilder` constructor is now internal
+- Include the index in the property name when formatting a SequenceValue
 
 Before (1.0.0-rc.1):
 
@@ -48,7 +47,7 @@ After (1.0.0-rc.2)
 <log4net:data name="Args[1]" value="--second-argument" />
 ```
 
-* Documentation has been improved
+- Documentation has been improved
 
 ## [1.0.0-rc.1][1.0.0-rc.1] - 2021-02-05
 
@@ -58,7 +57,7 @@ Still trying to figure out how to make everything fit together with [MinVer](htt
 
 ## [1.0.0-alpha.0.110][1.0.0-alpha.0.110] - 2021-02-04
 
-* Implement log4j compatibility mode.
+- Implement log4j compatibility mode.
 
 [unreleased]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.2...HEAD
 [1.0.0-rc.2]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.1...1.0.0-rc.2

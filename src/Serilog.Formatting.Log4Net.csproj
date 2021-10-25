@@ -23,6 +23,7 @@
     <Copyright>Copyright © Cédric Luthi</Copyright>
     <Description>Format Serilog events in log4net or log4j compatible XML format</Description>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>serilog log4net log4j</PackageTags>
     <PackageProjectUrl>https://github.com/serilog-contrib/serilog-formatting-log4net</PackageProjectUrl>
@@ -30,10 +31,8 @@
   </PropertyGroup>
 
   <ItemGroup Label="Packaging Metadata">
-    <None Include="../resources/icon.png" Visible="false">
-      <Pack>true</Pack>
-      <PackagePath />
-    </None>
+    <None Include="../resources/icon.png" Pack="true" PackagePath="" Visible="false" />
+    <None Include="../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <PropertyGroup Label="Versioning">

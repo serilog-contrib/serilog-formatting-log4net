@@ -59,7 +59,7 @@
        See https://stu.dev/check-for-breaking-changes-with-apicompat/ for more information -->
   <Target Name="SetupResolvedMatchingContract" BeforeTargets="ValidateApiCompatForSrc">
     <PropertyGroup>
-      <ContractVersion>1.0.0-rc.2</ContractVersion>
+      <ContractVersion>1.0.0-rc.3</ContractVersion>
       <ContractFilePath>$([System.IO.Path]::Combine($(NuGetPackageRoot),$(PackageId.ToLowerInvariant()),$(ContractVersion),'lib',$(TargetFramework),$(TargetFileName)))</ContractFilePath>
     </PropertyGroup>
     <ItemGroup>

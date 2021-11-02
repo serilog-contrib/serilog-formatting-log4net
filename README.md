@@ -116,7 +116,7 @@ new Log4NetTextFormatter(c => c.UseFormatProvider(CultureInfo.GetCultureInfo("fr
 
 ### Property filter
 
-By default, Log4NetTextFormatter serializes all Serilog properties. You can filter out some properties by configuring a a custom property filter delegate:
+By default, Log4NetTextFormatter serializes all Serilog properties. You can filter out some properties by configuring a custom property filter delegate:
 
 ```c#
 new Log4NetTextFormatter(c => c.UsePropertyFilter((_, name) => name != "MySecretProperty"))

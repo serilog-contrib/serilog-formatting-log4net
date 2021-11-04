@@ -1,5 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{F0707B5E-7B54-4D36-993B-17293615DEF7}"
+ProjectSection(SolutionItems) = preProject
+	global.json = global.json
+	NuGet.config = NuGet.config
+EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net", "src\Serilog.Formatting.Log4Net.csproj", "{66DF8036-B2E9-4FD1-9204-012EE3F9A2E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net.Tests", "tests\Serilog.Formatting.Log4Net.Tests.csproj", "{E94ABEEA-1E45-42DE-9752-896974FC4389}"

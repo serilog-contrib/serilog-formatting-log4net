@@ -4,6 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{F0707B5E-7
 ProjectSection(SolutionItems) = preProject
 	global.json = global.json
 	NuGet.config = NuGet.config
+	.config\dotnet-tools.json = .config\dotnet-tools.json
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net", "src\Serilog.Formatting.Log4Net.csproj", "{66DF8036-B2E9-4FD1-9204-012EE3F9A2E4}"

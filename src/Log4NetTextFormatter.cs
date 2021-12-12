@@ -139,13 +139,16 @@ namespace Serilog.Formatting.Log4Net
             if (logEvent.Properties.TryGetValue(UserNamePropertyName, out var propertyValue) && propertyValue is ScalarValue { Value: string userNameProperty })
             {
                 // See https://github.com/serilog/serilog-enrichers-environment/blob/3fc7cf78c5f34816633000ae74d846033498e44b/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L53
-                var parts = userNameProperty.Split('\\');
-                var (domain, userName) = parts.Length >= 2 ? (parts[0], string.Join(@"\", parts.Skip(1))) : (null, parts[0]);
-                if (domain != null)
+                var separatorIndex = userNameProperty.IndexOf(@"\", StringComparison.OrdinalIgnoreCase);
+                if (separatorIndex >= 0)
                 {
-                    writer.WriteAttributeString("domain", domain);
+                    writer.WriteAttributeString("domain", userNameProperty.Substring(0, separatorIndex));
+                    writer.WriteAttributeString("username", userNameProperty.Substring(separatorIndex + 1));
                 }
-                writer.WriteAttributeString("username", userName);
+                else
+                {
+                    writer.WriteAttributeString("username", userNameProperty);
+                }
             }
         }
 

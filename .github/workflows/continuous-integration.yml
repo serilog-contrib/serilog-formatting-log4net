@@ -23,12 +23,12 @@ jobs:
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       release-body: ${{ steps.tag-message.outputs.release-notes }}
     steps:
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v1
       - name: Checkout git repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v1
       - name: Retrieve cached NuGet packages
         uses: actions/cache@v2
         with:

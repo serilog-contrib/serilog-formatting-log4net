@@ -18,6 +18,13 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <!-- Run `dotnet pack -p:GenerateCompatibilitySuppressionFile=true` to accept breaking changes
+       See https://docs.microsoft.com/en-us/dotnet/fundamentals/package-validation/overview for more information -->
+  <PropertyGroup Label="API Validation">
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>1.0.0-rc.4</PackageValidationBaselineVersion>
+  </PropertyGroup>
+
   <PropertyGroup Label="Packaging Metadata">
     <Authors>Cédric Luthi</Authors>
     <Copyright>Copyright © Cédric Luthi</Copyright>
@@ -51,27 +58,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ApiCompat" Version="7.0.0-*" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all" />
     <PackageReference Include="Serilog" Version="2.0.0" />
   </ItemGroup>
-
-  <!-- Run `dotnet build -p:BaselineAllAPICompatError=true` to accept breaking changes
-       See https://stu.dev/check-for-breaking-changes-with-apicompat/ for more information -->
-  <Target Name="SetupResolvedMatchingContract" BeforeTargets="ValidateApiCompatForSrc">
-    <PropertyGroup>
-      <ContractVersion>1.0.0-rc.4</ContractVersion>
-      <ContractFilePath>$([System.IO.Path]::Combine($(NuGetPackageRoot),$(PackageId.ToLowerInvariant()),$(ContractVersion),'lib',$(TargetFramework),$(TargetFileName)))</ContractFilePath>
-    </PropertyGroup>
-    <ItemGroup>
-      <ResolvedMatchingContract Include="$(ContractFilePath)" />
-    </ItemGroup>
-    <!--  We don't really want to validate the package here but `dotnet validate package remote ...` downloads and extract the NuGet package into the NuGet package root -->
-    <Exec Command="dotnet tool restore" Condition="!Exists($(ContractFilePath))" />
-    <Exec Command="dotnet validate package remote $(PackageId) --version $(ContractVersion)" StandardOutputImportance="low" IgnoreExitCode="true" Condition="!Exists($(ContractFilePath))" />
-  </Target>
-
+  
   <Target Name="ValidateNuGetPackage" AfterTargets="Pack">
     <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install dotnet-validate` -->
     <Exec Command="dotnet tool restore" />

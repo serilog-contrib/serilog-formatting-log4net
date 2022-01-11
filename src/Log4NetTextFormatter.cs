@@ -140,7 +140,7 @@ namespace Serilog.Formatting.Log4Net
             {
                 // See https://github.com/serilog/serilog-enrichers-environment/blob/3fc7cf78c5f34816633000ae74d846033498e44b/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L53
                 var separatorIndex = userNameProperty.IndexOf(@"\", StringComparison.OrdinalIgnoreCase);
-                if (separatorIndex >= 0)
+                if (separatorIndex != -1)
                 {
                     writer.WriteAttributeString("domain", userNameProperty.Substring(0, separatorIndex));
                     writer.WriteAttributeString("username", userNameProperty.Substring(separatorIndex + 1));

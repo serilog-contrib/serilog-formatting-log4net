@@ -19,5 +19,5 @@ Once pushed, the GitHub [Continuous Integration](https://github.com/serilog-cont
 
 After the NuGet package is succesfully published:
 
-4.  Update the `ContractVersion` version in the `Serilog.Formatting.Log4Net.csproj` file to the newly released version.
-5.  Delete the `ApiCompatBaseline.txt` file if there's one.
+4.  Update the `PackageValidationBaselineVersion` element in the `Serilog.Formatting.Log4Net.csproj` file to the newly released version.
+5.  Delete the `CompatibilitySuppressions.xml` file if there's one.

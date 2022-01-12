@@ -3,16 +3,15 @@ using PublicApiGenerator;
 using VerifyXunit;
 using Xunit;
 
-namespace Serilog.Formatting.Log4Net.Tests
+namespace Serilog.Formatting.Log4Net.Tests;
+
+[UsesVerify]
+public class PublicApi
 {
-    [UsesVerify]
-    public class PublicApi
+    [Fact]
+    public Task ApprovePublicApi()
     {
-        [Fact]
-        public Task ApprovePublicApi()
-        {
-            var publicApi = typeof(Log4NetTextFormatter).Assembly.GeneratePublicApi();
-            return Verifier.Verify(publicApi).UseFileName("PublicApi").UseExtension("cs");
-        }
+        var publicApi = typeof(Log4NetTextFormatter).Assembly.GeneratePublicApi();
+        return Verifier.Verify(publicApi).UseFileName("PublicApi").UseExtension("cs");
     }
 }

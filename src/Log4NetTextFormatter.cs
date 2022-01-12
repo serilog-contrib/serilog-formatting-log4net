@@ -197,7 +197,6 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="properties">The collection of properties to write.</param>
         /// <param name="machineNameProperty">The machine name property to write or <see langword="null"/> if doesn't exist.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L262-L286</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
         private void WriteProperties(LogEvent logEvent, XmlWriter writer, IEnumerable<KeyValuePair<string, LogEventPropertyValue>> properties, LogEventPropertyValue? machineNameProperty)
         {
             WriteStartElement(writer, "properties");
@@ -209,23 +208,34 @@ namespace Serilog.Formatting.Log4Net
                 }
                 foreach (var (propertyName, propertyValue) in properties.Select(e => (e.Key, e.Value)))
                 {
-                    bool includeProperty;
-                    try
-                    {
-                        includeProperty = _options.FilterProperty(logEvent, propertyName);
-                    }
-                    catch (Exception filterException)
-                    {
-                        Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while filtering property '{propertyName}'. Including the property in the log4net event.\n{filterException}");
-                        includeProperty = true;
-                    }
-                    if (includeProperty)
+                    if (IncludeProperty(logEvent, propertyName))
                     {
                         WriteProperty(writer, propertyName, propertyValue);
                     }
                 }
             }
             writer.WriteEndElement();
+        }
+
+        /// <summary>
+        /// Determine whether the property should be included with the user-provided <see cref="PropertyFilter"/>.
+        /// </summary>
+        /// <param name="logEvent">The log event.</param>
+        /// <param name="propertyName">The property name.</param>
+        /// <returns><see langword="true"/> if the property must be included in the log4net properties, <see langword="false"/> otherwise.</returns>
+        /// <remarks>If the property filter throws an exception, a self-log is emitted and the property is included.</remarks>
+        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
+        private bool IncludeProperty(LogEvent logEvent, string propertyName)
+        {
+            try
+            {
+                return _options.FilterProperty(logEvent, propertyName);
+            }
+            catch (Exception filterException)
+            {
+                Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while filtering property '{propertyName}'. Including the property in the log4net event.\n{filterException}");
+                return true;
+            }
         }
 
         /// <summary>
@@ -362,7 +372,6 @@ namespace Serilog.Formatting.Log4Net
         /// <param name="logEvent">The log event.</param>
         /// <param name="writer">The XML writer.</param>
         /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L288-L295</remarks>
-        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
         private void WriteException(LogEvent logEvent, XmlWriter writer)
         {
             var exception = logEvent.Exception;
@@ -370,20 +379,34 @@ namespace Serilog.Formatting.Log4Net
             {
                 return;
             }
-            string formattedException;
-            try
-            {
-                formattedException = _options.FormatException(exception);
-            }
-            catch (Exception formattingException)
-            {
-                Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
-                formattedException = exception.ToString();
-            }
+            var formattedException = FormatException(exception);
             if (formattedException != null)
             {
                 var elementName = UsesLog4JCompatibility ? "throwable" : "exception";
                 WriteContent(writer, elementName, formattedException);
+            }
+        }
+
+        /// <summary>
+        /// Formats the given <paramref name="exception"/> with the user-provided <see cref="ExceptionFormatter"/>.
+        /// </summary>
+        /// <param name="exception">The exception to format.</param>
+        /// <returns>The formatted exception.</returns>
+        /// <remarks>
+        /// If the exception formatter throws an exception, a self-log is emitted and
+        /// the default formatting is applied, i.e. <c>exception.ToString()</c>.
+        /// </remarks>
+        [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
+        private string? FormatException(Exception exception)
+        {
+            try
+            {
+                return _options.FormatException(exception);
+            }
+            catch (Exception formattingException)
+            {
+                Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
+                return exception.ToString();
             }
         }
 

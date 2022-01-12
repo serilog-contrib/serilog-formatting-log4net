@@ -6,6 +6,7 @@ ProjectSection(SolutionItems) = preProject
 	NuGet.config = NuGet.config
 	.config\dotnet-tools.json = .config\dotnet-tools.json
 	.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
+	src\packages.lock.json = src\packages.lock.json
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net", "src\Serilog.Formatting.Log4Net.csproj", "{66DF8036-B2E9-4FD1-9204-012EE3F9A2E4}"

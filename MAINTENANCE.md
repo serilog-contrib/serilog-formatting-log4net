@@ -11,7 +11,11 @@
 
    `git tag --annotate 1.0.0-rc.1`
 
-3.  [Push the tag](https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076)
+3.  Push the `main` branch and ensure that the [build is successful](https://github.com/serilog-contrib/serilog-formatting-log4net/actions).
+
+   `git push`
+   
+4. [Push the tag](https://stackoverflow.com/questions/5195859/how-do-you-push-a-tag-to-a-remote-repository-using-git/26438076#26438076)
 
    `git push --follow-tags`
 

@@ -16,6 +16,8 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
       fail-fast: false
     runs-on: ${{ matrix.os }}
+    permissions:
+      checks: write
     name: Run tests and create NuGet package
     outputs:
       coverage-reports: ${{ steps.dotnet-test.outputs.coverage-reports }}

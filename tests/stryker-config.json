@@ -1,0 +1,11 @@
+{
+    "stryker-config": {
+        "since": {
+            "target": "main"
+        },
+        "baseline": {
+            "enabled": true,
+            "provider": "Dashboard"
+        }
+    }
+}

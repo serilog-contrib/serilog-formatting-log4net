@@ -67,7 +67,7 @@ jobs:
           reporter: dotnet-trx
       - name: Upload coverage report to Codecov
         if: matrix.os == 'macos-latest'
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           files: ${{ steps.dotnet-test.outputs.coverage-reports }}
       - name: Upload coverage report to Codacy

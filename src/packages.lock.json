@@ -14,9 +14,9 @@
       },
       "MinVer": {
         "type": "Direct",
-        "requested": "[4.0.0, )",
-        "resolved": "4.0.0",
-        "contentHash": "mNrPozq05R8iW9rV6rSR4LAnRrPqauv31asMe34dEfPqO1g1v9tgTlI7jsMe+OovdkpOUBHgB2n7j/8LYCNv4Q=="
+        "requested": "[4.1.0, )",
+        "resolved": "4.1.0",
+        "contentHash": "xUhfTmN6ytNfV0Q70IbfIeOKb8WK3oegJkNvUoxXasi5ALew/dO5vEbNpS1+BYQUIodb8BobdtLaqfx8113dGg=="
       },
       "NETStandard.Library": {
         "type": "Direct",

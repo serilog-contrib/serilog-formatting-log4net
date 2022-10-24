@@ -3,3 +3,4 @@ obj
 coverage
 .vs/
 .idea/
+*.user

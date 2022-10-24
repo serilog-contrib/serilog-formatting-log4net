@@ -62,16 +62,19 @@
     <PackageReference Include="MinVer" Version="4.2.0" PrivateAssets="all" />
     <PackageReference Include="Serilog" Version="2.0.0" />
   </ItemGroup>
-  
+
   <Target Name="ValidateNuGetPackage" AfterTargets="Pack">
     <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install dotnet-validate` -->
     <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet validate package local $([MSBuild]::EnsureTrailingSlash($(PackageOutputPath)))$(PackageId).$(PackageVersion).nupkg" />
   </Target>
 
-  <Target Name="PrintPackageVersionForGitHubActions" AfterTargets="Pack">
-    <Message Importance="high" Text="::set-output name=version::$(PackageVersion)" />
-    <Message Importance="high" Text="::set-output name=nupkg-filename::$(PackageId).$(PackageVersion).nupkg" />
+  <Target Name="WritePackageVersionForGitHubActions" AfterTargets="Pack">
+    <ItemGroup>
+      <GitHubOutput Include="version=$(PackageVersion)" />
+      <GitHubOutput Include="nupkg-filename=$(PackageId).$(PackageVersion).nupkg" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(GITHUB_OUTPUT)" Lines="@(GitHubOutput)" />
   </Target>
 
 </Project>

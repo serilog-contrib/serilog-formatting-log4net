@@ -45,8 +45,11 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
-  <Target Name="PrintCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
-    <Message Importance="high" Text="::set-output name=coverage-reports::@(CoverletReport, ',')" />
+  <Target Name="WriteCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
+    <ItemGroup>
+      <GitHubOutput Include="coverage-reports=@(CoverletReport, ',')" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(GITHUB_OUTPUT)" Lines="@(GitHubOutput)" />
   </Target>
 
   <ItemGroup>

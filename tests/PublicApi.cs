@@ -12,6 +12,6 @@ public class PublicApi
     public Task ApprovePublicApi()
     {
         var publicApi = typeof(Log4NetTextFormatter).Assembly.GeneratePublicApi();
-        return Verifier.Verify(publicApi).UseFileName("PublicApi").UseExtension("cs");
+        return Verifier.Verify(publicApi, "cs").UseFileName("PublicApi");
     }
 }

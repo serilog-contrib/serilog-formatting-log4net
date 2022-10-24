@@ -657,6 +657,6 @@ public class Log4NetTextFormatterTest : IDisposable
     private static SettingsTask Verify(StringWriter output)
     {
         var xml = output.ToString();
-        return Verifier.Verify(xml).UseExtension("xml");
+        return Verifier.Verify(xml, "xml");
     }
 }

@@ -29,11 +29,11 @@ jobs:
       STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
     steps:
       - name: Checkout git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Install .NET SDK
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
       - name: Retrieve cached NuGet packages
         uses: actions/cache@v3
         with:
@@ -49,13 +49,13 @@ jobs:
         run: dotnet test --no-build --logger "html;LogFileName=../../TestResults-${{ runner.os }}.html" --logger "trx;LogFileName=../../TestResults-${{ runner.os }}.trx" --logger GitHubActions
         id: dotnet-test
       - name: Upload received files from failing tests
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: Received-${{ runner.os }}
           path: "**/*.received.*"
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: TestResults-${{ runner.os }}
@@ -89,7 +89,7 @@ jobs:
         id: dotnet-pack
       - name: Upload NuGet package artifact
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
           path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}

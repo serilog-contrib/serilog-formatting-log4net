@@ -46,8 +46,11 @@
   </Target>
 
   <Target Name="WriteCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
+    <PropertyGroup>
+      <CoverageReports>@(CoverletReport, ',')</CoverageReports>
+    </PropertyGroup>
     <ItemGroup>
-      <GitHubOutput Include="coverage-reports=@(CoverletReport, ',')" />
+      <GitHubOutput Include="coverage-reports=$(CoverageReports)" />
     </ItemGroup>
     <WriteLinesToFile File="$(GITHUB_OUTPUT)" Lines="@(GitHubOutput)" />
   </Target>

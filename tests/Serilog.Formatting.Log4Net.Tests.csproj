@@ -56,7 +56,10 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Include="../src/Serilog.Formatting.Log4Net.csproj" />
+    <ProjectReference Include="../src/Serilog.Formatting.Log4Net.csproj">
+      <!-- Run with `dotnet test -p:TestNetStandard20=true` in order to test the netstandard2.0 implementation -->
+      <SetTargetFramework Condition="$(TestNetStandard20) == 'true'">TargetFramework=netstandard2.0</SetTargetFramework>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

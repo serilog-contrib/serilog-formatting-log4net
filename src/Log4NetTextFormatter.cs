@@ -95,10 +95,15 @@ public class Log4NetTextFormatter : ITextFormatter
             // That's why we write the event in a StringWriter then massage the output to remove the xmlns:log4j attribute to match log4j output.
             // The XML fragment becomes valid when surrounded by an external entity, see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L31-L49
             const string log4JNamespaceAttribute = @" xmlns:log4j=""http://jakarta.apache.org/log4j/""";
-            var xmlString = xmlWriterOutput.ToString();
+            var xmlString = ((StringWriter)xmlWriterOutput).ToString();
             var i = xmlString.IndexOf(log4JNamespaceAttribute, StringComparison.Ordinal);
+#if NETSTANDARD2_0
             output.Write(xmlString.Substring(0, i));
             output.Write(xmlString.Substring(i + log4JNamespaceAttribute.Length));
+#else
+            output.Write(xmlString.AsSpan(0, i));
+            output.Write(xmlString.AsSpan(i + log4JNamespaceAttribute.Length));
+#endif
         }
         output.Write(_options.XmlWriterSettings.NewLineChars);
     }
@@ -401,7 +406,7 @@ public class Log4NetTextFormatter : ITextFormatter
     {
         try
         {
-            return _options.FormatException(exception);
+            return (string?)_options.FormatException(exception);
         }
         catch (Exception formattingException)
         {

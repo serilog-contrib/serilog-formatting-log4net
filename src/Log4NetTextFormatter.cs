@@ -47,6 +47,7 @@ public class Log4NetTextFormatter : ITextFormatter
     private const string MachineNamePropertyName = "MachineName";
 
     private readonly Log4NetTextFormatterOptions _options;
+    private readonly bool _usesLog4JCompatibility;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="Log4NetTextFormatter"/> class.
@@ -64,6 +65,7 @@ public class Log4NetTextFormatter : ITextFormatter
         var optionsBuilder = new Log4NetTextFormatterOptionsBuilder();
         configureOptions?.Invoke(optionsBuilder);
         _options = optionsBuilder.Build();
+        _usesLog4JCompatibility = ReferenceEquals(Log4NetTextFormatterOptionsBuilder.Log4JXmlNamespace, _options.XmlNamespace);
     }
 
     /// <summary>
@@ -82,11 +84,11 @@ public class Log4NetTextFormatter : ITextFormatter
         {
             throw new ArgumentNullException(nameof(output));
         }
-        var xmlWriterOutput = UsesLog4JCompatibility ? new StringWriter() : output;
+        var xmlWriterOutput = _usesLog4JCompatibility ? new StringWriter() : output;
         using var writer = XmlWriter.Create(xmlWriterOutput, _options.XmlWriterSettings);
         WriteEvent(logEvent, writer);
         writer.Flush();
-        if (UsesLog4JCompatibility)
+        if (_usesLog4JCompatibility)
         {
             // log4j writes the XML "manually", see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145
             // The resulting XML is impossible to write with a standard compliant XML writer such as XmlWriter.
@@ -101,8 +103,6 @@ public class Log4NetTextFormatter : ITextFormatter
         output.Write(_options.XmlWriterSettings.NewLineChars);
     }
 
-    private bool UsesLog4JCompatibility => ReferenceEquals(Log4NetTextFormatterOptionsBuilder.Log4JXmlNamespace, _options.XmlNamespace);
-
     /// <summary>
     /// Write the log event into the XML writer.
     /// </summary>
@@ -113,7 +113,7 @@ public class Log4NetTextFormatter : ITextFormatter
     {
         WriteStartElement(writer, "event");
         WriteEventAttribute(logEvent, writer, "logger", Constants.SourceContextPropertyName);
-        var timestamp = UsesLog4JCompatibility ? XmlConvert.ToString(logEvent.Timestamp.ToUnixTimeMilliseconds()) : XmlConvert.ToString(logEvent.Timestamp);
+        var timestamp = _usesLog4JCompatibility ? XmlConvert.ToString(logEvent.Timestamp.ToUnixTimeMilliseconds()) : XmlConvert.ToString(logEvent.Timestamp);
         writer.WriteAttributeString("timestamp", timestamp);
         writer.WriteAttributeString("level", LogLevel(logEvent.Level));
         WriteEventAttribute(logEvent, writer, "thread", ThreadIdPropertyName);
@@ -382,7 +382,7 @@ public class Log4NetTextFormatter : ITextFormatter
         var formattedException = FormatException(exception);
         if (formattedException != null)
         {
-            var elementName = UsesLog4JCompatibility ? "throwable" : "exception";
+            var elementName = _usesLog4JCompatibility ? "throwable" : "exception";
             WriteContent(writer, elementName, formattedException);
         }
     }

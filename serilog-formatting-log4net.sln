@@ -9,6 +9,9 @@ ProjectSection(SolutionItems) = preProject
 	src\packages.lock.json = src\packages.lock.json
 	.github\dependabot.yml = .github\dependabot.yml
 	MAINTENANCE.md = MAINTENANCE.md
+	CHANGELOG.md = CHANGELOG.md
+	CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+	LICENSE = LICENSE
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net", "src\Serilog.Formatting.Log4Net.csproj", "{66DF8036-B2E9-4FD1-9204-012EE3F9A2E4}"

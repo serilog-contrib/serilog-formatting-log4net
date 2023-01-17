@@ -68,7 +68,7 @@
     <Exec Command="dotnet validate package local $([MSBuild]::EnsureTrailingSlash($(PackageOutputPath)))$(PackageId).$(PackageVersion).nupkg" />
   </Target>
 
-  <Target Name="WritePackageVersionForGitHubActions" AfterTargets="Pack">
+  <Target Name="WritePackageVersionForGitHubActions" AfterTargets="Pack" Condition="$(GITHUB_OUTPUT) != ''">
     <ItemGroup>
       <GitHubOutput Include="version=$(PackageVersion)" />
       <GitHubOutput Include="nupkg-filename=$(PackageId).$(PackageVersion).nupkg" />

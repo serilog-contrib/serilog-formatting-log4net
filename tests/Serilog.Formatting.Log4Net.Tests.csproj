@@ -45,7 +45,7 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
   </Target>
 
-  <Target Name="WriteCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) == 'true'">
+  <Target Name="WriteCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(GITHUB_OUTPUT) != ''">
     <PropertyGroup>
       <CoverageReports>@(CoverletReport, ',')</CoverageReports>
     </PropertyGroup>

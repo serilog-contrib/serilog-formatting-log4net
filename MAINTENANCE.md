@@ -21,7 +21,7 @@
 
 Once pushed, the GitHub [Continuous Integration](https://github.com/serilog-contrib/serilog-formatting-log4net/blob/main/.github/workflows/continuous-integration.yml) workflow takes care of building, running the tests, creating the NuGet package, creating the GitHub release and finally publishing the produced NuGet package.
 
-After the NuGet package is succesfully published:
+After the NuGet package is successfully published:
 
 4.  Update the `PackageValidationBaselineVersion` element in the `Serilog.Formatting.Log4Net.csproj` file to the newly released version.
 5.  Delete the `CompatibilitySuppressions.xml` file if there's one.

@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased][unreleased]
+## [1.0.1][1.0.1] - 2023-01-17
 
 - Add support for .NET 6. It will be beneficial for [string interpolation](https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-6/#arrays-strings-spans) which is used extensively through the project. See [Are there benefits in producing a .NET 6.0 version of a .NET Standard 2.0 library?](https://stackoverflow.com/questions/70778797/are-there-benefits-in-producing-a-net-6-0-version-of-a-net-standard-2-0-librar/72266562#72266562) on Stack Overflow.
 
@@ -71,7 +71,7 @@ Still trying to figure out how to make everything fit together with [MinVer](htt
 
 - Implement log4j compatibility mode.
 
-[unreleased]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0...HEAD
+[1.0.1]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.4...1.0.0
 [1.0.0-rc.4]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.3...1.0.0-rc.4
 [1.0.0-rc.3]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.2...1.0.0-rc.3

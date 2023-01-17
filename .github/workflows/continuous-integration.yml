@@ -90,7 +90,6 @@ jobs:
       - name: Run mutation tests and upload report to Stryker dashboard
         if: matrix.os == 'ubuntu-latest' && env.STRYKER_DASHBOARD_API_KEY != ''
         run: |
-          cd tests
           dotnet tool restore
           dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF##*/} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Retrieve tag message

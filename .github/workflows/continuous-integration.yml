@@ -91,7 +91,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && env.STRYKER_DASHBOARD_API_KEY != ''
         run: |
           dotnet tool restore
-          dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF##*/} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Retrieve tag message
         if: matrix.os == 'ubuntu-latest'
         run: |

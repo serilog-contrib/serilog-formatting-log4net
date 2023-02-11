@@ -108,6 +108,8 @@ jobs:
     runs-on: macos-latest
     needs: package
     if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
     name: Publish NuGet package and create GitHub release
     steps:
       - name: Download NuGet package artifact
@@ -115,14 +117,11 @@ jobs:
         with:
           name: ${{ needs.package.outputs.nupkg-filename }}
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
+          name: Version ${{ needs.package.outputs.version }}
           tag_name: ${{ needs.package.outputs.version }}
-          release_name: Version ${{ needs.package.outputs.version }}
           body: ${{ needs.package.outputs.release-body }}
-          draft: false
           prerelease: ${{ contains(needs.package.outputs.version, '-') }}
       - name: Publish NuGet package on nuget.org
         run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

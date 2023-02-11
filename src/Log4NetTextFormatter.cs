@@ -50,6 +50,13 @@ public class Log4NetTextFormatter : ITextFormatter
     private readonly bool _usesLog4JCompatibility;
 
     /// <summary>
+    /// A <see cref="Log4NetTextFormatter"/> instance configured for the log4j XML layout.
+    /// Accessible with <c>Serilog.Formatting.Log4Net.Log4NetTextFormatter::Log4JFormatter, Serilog.Formatting.Log4Net</c> when using the
+    /// <a href="https://github.com/serilog/serilog-settings-configuration/">Serilog.Settings.Configuration</a> package.
+    /// </summary>
+    public static Log4NetTextFormatter Log4JFormatter { get; } = new(c => c.UseLog4JCompatibility());
+
+    /// <summary>
     /// Initialize a new instance of the <see cref="Log4NetTextFormatter"/> class.
     /// </summary>
     public Log4NetTextFormatter() : this(configureOptions: null)

@@ -31,6 +31,7 @@ namespace Serilog.Formatting.Log4Net
     {
         public Log4NetTextFormatter() { }
         public Log4NetTextFormatter(System.Action<Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder>? configureOptions) { }
+        public static Serilog.Formatting.Log4Net.Log4NetTextFormatter Log4JFormatter { get; }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
     }
     public class Log4NetTextFormatterOptionsBuilder

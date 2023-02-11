@@ -306,8 +306,10 @@ public class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
-    public Task Log4JCompatibility()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task Log4JCompatibility(bool useStaticInstance)
     {
         // Arrange
         using var output = new StringWriter();
@@ -315,13 +317,13 @@ public class Log4NetTextFormatterTest : IDisposable
             exception: new Exception("An error occurred").SetStackTrace(@"  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"),
             properties: new LogEventProperty("π", new ScalarValue(3.14m))
         );
-        var formatter = new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
+        var formatter = useStaticInstance ? Log4NetTextFormatter.Log4JFormatter : new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
 
         // Act
         formatter.Format(logEvent, output);
 
         // Assert
-        return Verify(output);
+        return Verify(output).DisableRequireUniquePrefix();
     }
 
     [Fact]

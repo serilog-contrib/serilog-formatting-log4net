@@ -140,7 +140,7 @@ Note that unlike other fluent configuration methods, this one can not be chained
 
 Alternatively, you can use the `Log4NetTextFormatter.Log4JFormatter` static property which is configured for the log4j XML layout. This static property is also useful when using the [Serilog.Settings.Configuration](https://github.com/serilog/serilog-settings-configuration/) package where it can be used with the following accessor:
 
-```
+```text
 Serilog.Formatting.Log4Net.Log4NetTextFormatter::Log4JFormatter, Serilog.Formatting.Log4Net
 ```
 

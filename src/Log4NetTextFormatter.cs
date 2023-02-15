@@ -11,7 +11,7 @@ using Serilog.Formatting.Display;
 namespace Serilog.Formatting.Log4Net;
 
 /// <summary>
-/// A text formatter that serialize log events into [log4net](https://logging.apache.org/log4net/) or [log4j](https://logging.apache.org/log4j/) compatible XML format.
+/// A text formatter that serialize log events into <a href="https://logging.apache.org/log4net/">log4net</a> or <a href="https://logging.apache.org/log4j/">log4j</a> compatible XML format.
 /// </summary>
 public class Log4NetTextFormatter : ITextFormatter
 {
@@ -29,19 +29,19 @@ public class Log4NetTextFormatter : ITextFormatter
     };
 
     /// <summary>
-    /// The name of the thread id property, set by [Serilog.Enrichers.Thread](https://www.nuget.org/packages/Serilog.Enrichers.Thread/)
+    /// The name of the thread id property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.Thread/">Serilog.Enrichers.Thread</a>
     /// </summary>
     /// <remarks>https://github.com/serilog/serilog-enrichers-thread/blob/v3.1.0/src/Serilog.Enrichers.Thread/Enrichers/ThreadIdEnricher.cs#L30</remarks>
     private const string ThreadIdPropertyName = "ThreadId";
 
     /// <summary>
-    /// The name of the user name property, set by [Serilog.Enrichers.Environment](https://www.nuget.org/packages/Serilog.Enrichers.Environment/)
+    /// The name of the user name property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.Environment/">Serilog.Enrichers.Environment</a>
     /// </summary>
     /// <remarks>https://github.com/serilog/serilog-enrichers-environment/blob/v2.1.3/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L31</remarks>
     private const string UserNamePropertyName = "EnvironmentUserName";
 
     /// <summary>
-    /// The name of the machine name property, set by [Serilog.Enrichers.Environment](https://www.nuget.org/packages/Serilog.Enrichers.Environment/)
+    /// The name of the machine name property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.Environment/">Serilog.Enrichers.Environment</a>
     /// </summary>
     /// <remarks>https://github.com/serilog/serilog-enrichers-environment/blob/v2.1.3/src/Serilog.Enrichers.Environment/Enrichers/MachineNameEnricher.cs#L36</remarks>
     private const string MachineNamePropertyName = "MachineName";

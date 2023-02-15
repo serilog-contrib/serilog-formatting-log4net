@@ -5,7 +5,7 @@ namespace Serilog.Formatting.Log4Net;
 /// <summary>
 /// Possible XML line endings.
 /// <para>Both <see cref="CarriageReturn"/> and <see cref="LineFeed"/> can be combined, i.e. <c>LineEnding.CarriageReturn | LineEnding.LineFeed</c> in order to produce the CR+LF characters.</para>
-/// <para>See also [End-of-Line Handling](https://www.w3.org/TR/xml/#sec-line-ends) in the XML specification.</para>
+/// <para>See also <a href="https://www.w3.org/TR/xml/#sec-line-ends">End-of-Line Handling</a> in the XML specification.</para>
 /// </summary>
 [Flags]
 public enum LineEnding

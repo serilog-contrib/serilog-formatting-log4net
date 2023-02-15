@@ -121,6 +121,7 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <param name="logEvent">The log event.</param>
     /// <param name="writer">The XML writer.</param>
     /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L218-L310</remarks>
+    /// <remarks>https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L122-L207</remarks>
     private void WriteEvent(LogEvent logEvent, XmlWriter writer)
     {
         WriteStartElement(writer, "event");

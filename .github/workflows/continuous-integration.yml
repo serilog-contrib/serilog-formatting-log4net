@@ -26,9 +26,6 @@ jobs:
       version: ${{ steps.dotnet-pack.outputs.version }}
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       release-body: ${{ steps.tag-message.outputs.release-notes }}
-    env:
-      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-      STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
@@ -75,7 +72,7 @@ jobs:
         with:
           files: ${{ steps.dotnet-test.outputs.coverage-reports }}
       - name: Upload coverage report to Codacy
-        if: matrix.os == 'ubuntu-latest' && env.CODACY_PROJECT_TOKEN != ''
+        if: matrix.os == 'ubuntu-latest' && secrets.CODACY_PROJECT_TOKEN != ''
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -90,7 +87,7 @@ jobs:
           name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
           path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       - name: Run mutation tests and upload report to Stryker dashboard
-        if: matrix.os == 'ubuntu-latest' && env.STRYKER_DASHBOARD_API_KEY != ''
+        if: matrix.os == 'ubuntu-latest' && secrets.STRYKER_DASHBOARD_API_KEY != ''
         run: |
           dotnet tool restore
           dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

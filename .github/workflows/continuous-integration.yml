@@ -23,9 +23,7 @@ jobs:
     name: Run tests and create NuGet package
     outputs:
       coverage-reports: ${{ steps.dotnet-test.outputs.coverage-reports }}
-      version: ${{ steps.dotnet-pack.outputs.version }}
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
-      release-body: ${{ steps.tag-message.outputs.release-notes }}
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
@@ -95,16 +93,17 @@ jobs:
         run: |
           dotnet tool restore
           dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ env.STRYKER_DASHBOARD_API_KEY }}
-      - name: Retrieve tag message
-        if: matrix.os == 'ubuntu-latest'
+      - name: Retrieve release notes from tag
+        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
         run: |
           git fetch --tags --force
-          RELEASE_NOTES=$(git tag --list ${{ steps.dotnet-pack.outputs.version }} --format='%(contents)')
-          RELEASE_NOTES="${RELEASE_NOTES//'%'/%25}"
-          RELEASE_NOTES="${RELEASE_NOTES//$'\n'/%0A}"
-          RELEASE_NOTES="${RELEASE_NOTES//$'\r'/%0D}"
-          echo "release-notes=$RELEASE_NOTES" >> $GITHUB_OUTPUT
-        id: tag-message
+          git tag --list ${{ github.ref_name }} --format='%(contents)' > ReleaseNotes.md
+      - name: Upload release notes
+        if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v3
+        with:
+          name: Release Notes
+          path: ReleaseNotes.md
   publish:
     runs-on: macos-latest
     needs: package
@@ -117,12 +116,15 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ needs.package.outputs.nupkg-filename }}
+      - name: Download release notes artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Release Notes
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: Version ${{ needs.package.outputs.version }}
-          tag_name: ${{ needs.package.outputs.version }}
-          body: ${{ needs.package.outputs.release-body }}
-          prerelease: ${{ contains(needs.package.outputs.version, '-') }}
+          name: Version ${{ github.ref_name }}
+          body_path: ReleaseNotes.md
+          prerelease: ${{ contains(github.ref_name, '-') }}
       - name: Publish NuGet package on nuget.org
         run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

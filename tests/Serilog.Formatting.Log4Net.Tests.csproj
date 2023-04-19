@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="3.2.0" PrivateAssets="all" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0" PrivateAssets="all" />
     <PackageReference Include="FluentAssertions" Version="6.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="PublicApiGenerator" Version="11.0.0" />
@@ -24,35 +24,48 @@
     <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <VSTestLogger Include="GitHubActions" Visible="false" Condition="$(ContinuousIntegrationBuild) == 'true'" />
+    <VSTestLogger Include="trx%3BLogFileName=TestResults-$(TargetFramework).trx" Visible="false" Condition="$(ContinuousIntegrationBuild) == 'true'" />
+    <VSTestLogger Include="html%3BLogFileName=TestResults-$(TargetFramework).html" Visible="false" />
+  </ItemGroup>
+
   <PropertyGroup Label="Coverage">
-    <!-- Automatically collect coverage when running `dotnet test` -->
-    <CollectCoverage>true</CollectCoverage>
-    <!-- Tweak the default coverlet output directory to be `coverage` in the repository root directory -->
-    <CoverletOutput>$([MSBuild]::EnsureTrailingSlash($([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine($(MSBuildProjectDirectory),'..','coverage'))))))</CoverletOutput>
-    <!-- The default output format is `json` which is not supported by ReportGenerator -->
-    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <RootDirectory>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</RootDirectory>
+    <CoverageReportDirectory>$([System.IO.Path]::Combine($(RootDirectory),'coverage',$(TargetFramework)))</CoverageReportDirectory>
+    <VSTestResultsDirectory Condition="$(ContinuousIntegrationBuild) == 'true'">$(RootDirectory)</VSTestResultsDirectory>
+    <VSTestResultsDirectory Condition="$(ContinuousIntegrationBuild) != 'true'">$([System.IO.Path]::Combine($(CoverageReportDirectory),'results'))</VSTestResultsDirectory>
+    <VSTestCollect>XPlat Code Coverage</VSTestCollect>
+    <VSTestLogger>@(VSTestLogger)</VSTestLogger>
   </PropertyGroup>
 
-  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(ContinuousIntegrationBuild) != 'true'">
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="VSTest" Condition="$(TargetFramework) != ''">
+    <ItemGroup>
+      <CoverletReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
+    </ItemGroup>
+    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
+  </Target>
+
+  <!-- Because of https://github.com/microsoft/vstest/issues/2378 -->
+  <Target Name="MoveCoverletReport" AfterTargets="GenerateHtmlCoverageReport">
+    <Move SourceFiles="@(CoverletReport)" DestinationFolder="$(CoverageReportDirectory)" />
     <PropertyGroup>
-      <CoverageReportDirectory>$([MSBuild]::EnsureTrailingSlash('$(CoverletOutput)report'))</CoverageReportDirectory>
+      <CoverletReport>@(CoverletReport)</CoverletReport>
+    </PropertyGroup>
+    <ItemGroup>
+      <CoverletReportParentDirectory Include="$([System.IO.Path]::Combine($(CoverletReport),'..'))" />
+    </ItemGroup>
+    <RemoveDir Directories="@(CoverletReportParentDirectory)" />
+  </Target>
+
+  <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverletReport" Condition="$(ContinuousIntegrationBuild) != 'true'">
+    <PropertyGroup>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">explorer</OpenCommand>
     </PropertyGroup>
-    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
     <!-- executing "explorer path\to\index.html" returns exit code 1, so we ignore it -->
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(OpenCommand) index.html" Condition="$(OpenCommand) != ''" IgnoreExitCode="true" />
-  </Target>
-
-  <Target Name="WriteCoverageReportPathForGitHubActions" AfterTargets="GenerateCoverageResultAfterTest" Condition="$(GITHUB_OUTPUT) != ''">
-    <PropertyGroup>
-      <CoverageReports>@(CoverletReport, ',')</CoverageReports>
-    </PropertyGroup>
-    <ItemGroup>
-      <GitHubOutput Include="coverage-reports=$(CoverageReports)" />
-    </ItemGroup>
-    <WriteLinesToFile File="$(GITHUB_OUTPUT)" Lines="@(GitHubOutput)" />
   </Target>
 
   <ItemGroup>

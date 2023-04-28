@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(ContinuousIntegrationBuild) == 'true'">
-    <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1" PrivateAssets="all" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.0.2" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup Label="Coverage">

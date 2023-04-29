@@ -40,7 +40,7 @@
     <ItemGroup>
       <CoverletReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
     </ItemGroup>
-    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" />
+    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="Html;TextSummary" />
   </Target>
 
   <!-- Because of https://github.com/microsoft/vstest/issues/2378 -->
@@ -55,6 +55,14 @@
     <RemoveDir Directories="@(CoverletReportParentDirectory)" />
   </Target>
 
+  <Target Name="DisplayCoverageSummary" AfterTargets="MoveCoverletReport">
+    <PropertyGroup>
+      <CatCommand Condition="!$([MSBuild]::IsOSPlatform('Windows'))">cat</CatCommand>
+      <CatCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">type</CatCommand>
+    </PropertyGroup>
+    <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(CatCommand) Summary.txt" />
+  </Target>
+  
   <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverletReport" Condition="$(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>

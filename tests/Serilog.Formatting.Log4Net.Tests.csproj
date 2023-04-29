@@ -44,18 +44,18 @@
   </Target>
 
   <!-- Because of https://github.com/microsoft/vstest/issues/2378 -->
-  <Target Name="MoveCoverletReport" AfterTargets="GenerateHtmlCoverageReport">
+  <Target Name="MoveCoverletReport" AfterTargets="GenerateHtmlCoverageReport" Condition="$(TargetFramework) != ''">
     <Move SourceFiles="@(CoverletReport)" DestinationFolder="$(CoverageReportDirectory)" />
     <PropertyGroup>
       <CoverletReport>@(CoverletReport)</CoverletReport>
     </PropertyGroup>
     <ItemGroup>
-      <CoverletReportParentDirectory Include="$([System.IO.Path]::Combine($(CoverletReport),'..'))" />
+      <CoverletReportParentDirectory Include="$([System.IO.Path]::Combine($(CoverletReport),'..'))" Condition="$(CoverletReport) != ''" />
     </ItemGroup>
     <RemoveDir Directories="@(CoverletReportParentDirectory)" />
   </Target>
 
-  <Target Name="DisplayCoverageSummary" AfterTargets="MoveCoverletReport">
+  <Target Name="DisplayCoverageSummary" AfterTargets="MoveCoverletReport" Condition="$(TargetFramework) != ''">
     <PropertyGroup>
       <CatCommand Condition="!$([MSBuild]::IsOSPlatform('Windows'))">cat</CatCommand>
       <CatCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">type</CatCommand>
@@ -63,7 +63,7 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(CatCommand) Summary.txt" />
   </Target>
   
-  <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverletReport" Condition="$(ContinuousIntegrationBuild) != 'true'">
+  <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverletReport" Condition="$(TargetFramework) != '' AND $(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>

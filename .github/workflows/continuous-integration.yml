@@ -22,7 +22,6 @@ jobs:
       checks: write
     name: Run tests and create NuGet package
     outputs:
-      coverage-reports: ${{ steps.dotnet-test.outputs.coverage-reports }}
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
     steps:
       - name: Checkout git repository
@@ -41,9 +40,9 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
       - name: Build solution
-        run: dotnet build
+        run: dotnet build --no-restore
       - name: Run tests
-        run: dotnet test --no-build --logger "html;LogFileName=../../TestResults-${{ runner.os }}.html" --logger "trx;LogFileName=../../TestResults-${{ runner.os }}.trx" --logger GitHubActions
+        run: dotnet test --no-build
         id: dotnet-test
       - name: Upload received files from failing tests
         uses: actions/upload-artifact@v3
@@ -55,20 +54,20 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: TestResults-${{ runner.os }}
-          path: TestResults-${{ runner.os }}.html
+          name: TestResults (${{ runner.os }})
+          path: TestResults-*.html
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Test Results (${{ runner.os }})
-          path: TestResults-${{ runner.os }}.trx
+          path: TestResults-*.trx
           reporter: dotnet-trx
       - name: Upload coverage report to Codecov
         if: matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v3
         with:
-          files: ${{ steps.dotnet-test.outputs.coverage-reports }}
+          files: coverage/*/coverage.cobertura.xml
       - name: Upload coverage report to Codacy
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -76,7 +75,7 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ env.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ${{ steps.dotnet-test.outputs.coverage-reports }}
+          coverage-reports: coverage/*/coverage.cobertura.xml
       - name: Create NuGet package
         run: dotnet pack --no-build --output .
         id: dotnet-pack

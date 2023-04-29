@@ -21,8 +21,6 @@ jobs:
     permissions:
       checks: write
     name: Run tests and create NuGet package
-    outputs:
-      nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
     steps:
       - name: Checkout git repository
         uses: actions/checkout@v3
@@ -43,7 +41,6 @@ jobs:
         run: dotnet build --no-restore
       - name: Run tests
         run: dotnet test --no-build
-        id: dotnet-test
       - name: Upload received files from failing tests
         uses: actions/upload-artifact@v3
         if: failure()
@@ -78,13 +75,12 @@ jobs:
           coverage-reports: coverage/*/coverage.cobertura.xml
       - name: Create NuGet package
         run: dotnet pack --no-build --output .
-        id: dotnet-pack
       - name: Upload NuGet package artifact
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
-          path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
+          name: NuGet package
+          path: "*.nupkg"
       - name: Run mutation tests and upload report to Stryker dashboard
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -114,7 +110,7 @@ jobs:
       - name: Download NuGet package artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ needs.package.outputs.nupkg-filename }}
+          name: NuGet package
       - name: Download release notes artifact
         uses: actions/download-artifact@v3
         with:
@@ -126,4 +122,4 @@ jobs:
           body_path: ReleaseNotes.md
           prerelease: ${{ contains(github.ref_name, '-') }}
       - name: Publish NuGet package on nuget.org
-        run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"
+        run: dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

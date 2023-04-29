@@ -68,13 +68,4 @@
     <Exec Command="dotnet validate package local $([MSBuild]::EnsureTrailingSlash($(PackageOutputPath)))$(PackageId).$(PackageVersion).nupkg" />
   </Target>
 
-  <Target Name="WritePackageVersionForGitHubActions" AfterTargets="Pack" Condition="$(GITHUB_OUTPUT) != ''">
-    <ItemGroup>
-      <GitHubOutput Include="version=$(PackageVersion)" />
-      <!-- No property is provided for the NuGet package file path, see https://github.com/NuGet/Home/issues/6671 -->
-      <GitHubOutput Include="nupkg-filename=$(PackageId).$(PackageVersion).nupkg" />
-    </ItemGroup>
-    <WriteLinesToFile File="$(GITHUB_OUTPUT)" Lines="@(GitHubOutput)" />
-  </Target>
-
 </Project>

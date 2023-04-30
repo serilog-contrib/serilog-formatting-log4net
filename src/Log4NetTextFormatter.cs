@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Serilog.Core;
 using Serilog.Events;
@@ -25,7 +26,7 @@ public class Log4NetTextFormatter : ITextFormatter
     /// </summary>
     private static readonly string[] SpecialProperties = {
         Constants.SourceContextPropertyName, OutputProperties.MessagePropertyName,
-        ThreadIdPropertyName, UserNamePropertyName, MachineNamePropertyName
+        ThreadIdPropertyName, UserNamePropertyName, MachineNamePropertyName, CallerPropertyName
     };
 
     /// <summary>
@@ -45,6 +46,17 @@ public class Log4NetTextFormatter : ITextFormatter
     /// </summary>
     /// <remarks>https://github.com/serilog/serilog-enrichers-environment/blob/v2.1.3/src/Serilog.Enrichers.Environment/Enrichers/MachineNameEnricher.cs#L36</remarks>
     private const string MachineNamePropertyName = "MachineName";
+
+    /// <summary>
+    /// The name of the caller property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.WithCaller/">Serilog.Enrichers.WithCaller</a>
+    /// </summary>
+    /// <remarks>https://github.com/pmetz-steelcase/Serilog.Enrichers.WithCaller/blob/1.2.0/Serilog.Enrichers.WithCaller/CallerEnricher.cs#L66</remarks>
+    private const string CallerPropertyName = "Caller";
+
+    /// <summary>
+    /// The regular exception matching "class", "method", and optionally "file" and "line" for the caller property.
+    /// </summary>
+    private static readonly Regex CallerRegex = new(@"(?<class>.*)\.(?<method>.*\(.*\))(?: (?<file>.*):(?<line>\d+))?", RegexOptions.Compiled);
 
     private readonly Log4NetTextFormatterOptions _options;
     private readonly bool _usesLog4JCompatibility;
@@ -139,6 +151,7 @@ public class Log4NetTextFormatter : ITextFormatter
         }
         WriteMessage(logEvent, writer);
         WriteException(logEvent, writer);
+        WriteLocationInfo(logEvent, writer);
         writer.WriteEndElement();
     }
 
@@ -420,6 +433,31 @@ public class Log4NetTextFormatter : ITextFormatter
         {
             Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
             return exception.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Write location information associated to the log event, i.e. class, method, file and line where the event originated.
+    /// If the event was not enriched with caller information then nothing is written.
+    /// </summary>
+    /// <param name="logEvent">The log event.</param>
+    /// <param name="writer">The XML writer.</param>
+    /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L297-L307</remarks>
+    /// <remarks>https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L170-L181</remarks>
+    private void WriteLocationInfo(LogEvent logEvent, XmlWriter writer)
+    {
+        if (logEvent.Properties.TryGetValue(CallerPropertyName, out var callerProperty) && callerProperty is ScalarValue { Value: string caller })
+        {
+            var match = CallerRegex.Match(caller);
+            if (match.Success)
+            {
+                WriteStartElement(writer, "locationInfo");
+                writer.WriteAttributeString("class", match.Groups[1].Value);
+                writer.WriteAttributeString("method", match.Groups[2].Value);
+                writer.WriteAttributeString("file", match.Groups[3].Value);
+                writer.WriteAttributeString("line", match.Groups[4].Value);
+                writer.WriteEndElement();
+            }
         }
     }
 

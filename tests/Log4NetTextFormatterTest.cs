@@ -584,6 +584,70 @@ public class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
+    public Task Caller()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new ScalarValue("Fully.Qualified.ClassName.MethodName(System.String)")));
+
+        var formatter = new Log4NetTextFormatter();
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task CallerNonScalar()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new CustomLogEventPropertyValue("")));
+
+        var formatter = new Log4NetTextFormatter();
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task CallerWithFile()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new ScalarValue("Fully.Qualified.ClassName.MethodName(System.String) /Absolute/Path/To/FileName.cs:123")));
+
+        var formatter = new Log4NetTextFormatter();
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task CallerLog4J()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new ScalarValue("Fully.Qualified.ClassName.MethodName(System.String)")));
+
+        var formatter = new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
     public Task SequenceProperty()
     {
         // Arrange

@@ -1,0 +1,4 @@
+﻿<log4j:event timestamp="1041689366535" level="INFO">
+  <log4j:message><![CDATA[Hello from Serilog]]></log4j:message>
+  <log4j:locationInfo class="Fully.Qualified.ClassName" method="MethodName(System.String)" file="" line="" />
+</log4j:event>

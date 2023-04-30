@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0][1.1.0] - 2023-05-02
+
+- Add support for caller information (class, method, file, line) through the [Serilog.Enrichers.WithCaller](https://www.nuget.org/packages/Serilog.Enrichers.WithCaller/) package.
+
 ## [1.0.2][1.0.2] - 2023-02-11
 
 - Add a new `Log4NetTextFormatter.Log4JFormatter` static property which is configured for the log4j XML layout. This static property is also useful when using the [Serilog.Settings.Configuration](https://github.com/serilog/serilog-settings-configuration/) package where it can be used with the following accessor:
@@ -80,6 +84,7 @@ Still trying to figure out how to make everything fit together with [MinVer](htt
 
 - Implement log4j compatibility mode.
 
+[1.1.0]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.2...1.1.0
 [1.0.2]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.0-rc.4...1.0.0

@@ -192,7 +192,17 @@ Include the machine name in log4net events by using [Serilog.Enrichers.Environme
 var loggerConfiguration = new LoggerConfiguration().Enrich.WithMachineName();
 ```
 
-Combining these three enrichers will produce a log event including `thread`, `domain` and `username` attributes plus a `log4net:HostName` property containing the machine name:
+### Caller
+
+Include caller information (class, method, file, line) by using [Serilog.Enrichers.WithCaller](https://www.nuget.org/packages/Serilog.Enrichers.WithCaller/):
+
+```c#
+var loggerConfiguration = new LoggerConfiguration().Enrich.WithCaller(includeFileInfo: true);
+```
+
+### All together
+
+Combining these four enrichers will produce a log event including `thread`, `domain` and `username` attributes, a `log4net:HostName` property containing the machine name and a `locationInfo` element:
 
 ```xml
 <event timestamp="2020-06-28T10:07:33.314159+02:00" level="INFO" thread="1" domain="TheDomainName" username="TheUserName">
@@ -200,6 +210,7 @@ Combining these three enrichers will produce a log event including `thread`, `do
     <data name="log4net:HostName" value="TheMachineName" />
   </properties>
   <message>The message</message>
+  <locationInfo class="Program" method="Main(System.String[])" file="/Absolute/Path/To/Program.cs" line="29" />
 </event>
 ```
 

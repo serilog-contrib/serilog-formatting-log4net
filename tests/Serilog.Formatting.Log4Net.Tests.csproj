@@ -14,7 +14,7 @@
     <PackageReference Include="PublicApiGenerator" Version="11.0.0" />
     <PackageReference Include="ReportGenerator" Version="5.1.25" PrivateAssets="all" />
     <PackageReference Include="Serilog" Version="2.12.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
     <PackageReference Include="Verify.Xunit" Version="21.2.0" />
     <PackageReference Include="xunit" Version="2.5.1" />

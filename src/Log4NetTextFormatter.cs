@@ -19,15 +19,15 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <summary>
     /// The characters that must be escaped inside an XML element. Used when <see cref="CDataMode"/> is <see cref="CDataMode.IfNeeded"/>.
     /// </summary>
-    private static readonly char[] XmlElementCharactersToEscape = { '&', '<', '>' };
+    private static readonly char[] XmlElementCharactersToEscape = [ '&', '<', '>' ];
 
     /// <summary>
     /// The Serilog properties which have a special mapping in a log4net event and must not be part of the log4net:properties element.
     /// </summary>
-    private static readonly string[] SpecialProperties = {
+    private static readonly string[] SpecialProperties = [
         Constants.SourceContextPropertyName, OutputProperties.MessagePropertyName,
         ThreadIdPropertyName, UserNamePropertyName, MachineNamePropertyName, CallerPropertyName
-    };
+    ];
 
     /// <summary>
     /// The name of the thread id property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.Thread/">Serilog.Enrichers.Thread</a>
@@ -93,6 +93,7 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <param name="logEvent">The event to format.</param>
     /// <param name="output">The output.</param>
     /// <exception cref="ArgumentNullException">If either <paramref name="logEvent"/> or <paramref name="output"/> is <c>null</c>.</exception>
+    [SuppressMessage("Maintainability", "CA1510:Use ArgumentNullException throw helper", Justification = "Does not exist on .NET Standard 2.0")]
     public void Format(LogEvent logEvent, TextWriter output)
     {
         if (logEvent == null)
@@ -113,7 +114,9 @@ public class Log4NetTextFormatter : ITextFormatter
             // The resulting XML is impossible to write with a standard compliant XML writer such as XmlWriter.
             // That's why we write the event in a StringWriter then massage the output to remove the xmlns:log4j attribute to match log4j output.
             // The XML fragment becomes valid when surrounded by an external entity, see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L31-L49
-            const string log4JNamespaceAttribute = @" xmlns:log4j=""http://jakarta.apache.org/log4j/""";
+            const string log4JNamespaceAttribute = """
+                                                    xmlns:log4j="http://jakarta.apache.org/log4j/"
+                                                   """;
             var xmlString = ((StringWriter)xmlWriterOutput).ToString();
             var i = xmlString.IndexOf(log4JNamespaceAttribute, StringComparison.Ordinal);
 #if NETSTANDARD2_0
@@ -145,7 +148,7 @@ public class Log4NetTextFormatter : ITextFormatter
         WriteDomainAndUserName(logEvent, writer);
         var properties = logEvent.Properties.Where(e => !SpecialProperties.Contains(e.Key, StringComparer.Ordinal)).ToList();
         var hasMachineNameProperty = logEvent.Properties.TryGetValue(MachineNamePropertyName, out var machineNameProperty) && machineNameProperty is ScalarValue { Value: not null };
-        if (properties.Any() || hasMachineNameProperty)
+        if (properties.Count > 0 || hasMachineNameProperty)
         {
             WriteProperties(logEvent, writer, properties, machineNameProperty);
         }
@@ -165,7 +168,12 @@ public class Log4NetTextFormatter : ITextFormatter
         if (logEvent.Properties.TryGetValue(UserNamePropertyName, out var propertyValue) && propertyValue is ScalarValue { Value: string userNameProperty })
         {
             // See https://github.com/serilog/serilog-enrichers-environment/blob/3fc7cf78c5f34816633000ae74d846033498e44b/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L53
-            var separatorIndex = userNameProperty.IndexOf(@"\", StringComparison.OrdinalIgnoreCase);
+#if NETSTANDARD
+            const string backslash = @"\";
+#else
+            const char backslash = '\\';
+#endif
+            var separatorIndex = userNameProperty.IndexOf(backslash, StringComparison.OrdinalIgnoreCase);
             if (separatorIndex != -1)
             {
                 writer.WriteAttributeString("domain", userNameProperty.Substring(0, separatorIndex));

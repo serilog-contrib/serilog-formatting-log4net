@@ -1,6 +1,6 @@
 ﻿[assembly: System.CLSCompliant(true)]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/serilog-contrib/serilog-formatting-log4net")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName="")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
 namespace Serilog.Formatting.Log4Net
 {
     public enum CDataMode

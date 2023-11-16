@@ -6,7 +6,7 @@ namespace Serilog.Formatting.Log4Net;
 /// <summary>
 /// Options for configuring the XML format produced by <see cref="Log4NetTextFormatter"/>.
 /// </summary>
-internal class Log4NetTextFormatterOptions
+internal sealed class Log4NetTextFormatterOptions
 {
     internal Log4NetTextFormatterOptions(IFormatProvider? formatProvider, CDataMode cDataMode, XmlQualifiedName? xmlNamespace, XmlWriterSettings xmlWriterSettings, PropertyFilter filterProperty, ExceptionFormatter formatException)
     {

@@ -37,10 +37,7 @@ public class PublicApi
             var project = XDocument.Load(csprojPath);
             var targetFrameworks = project.XPathSelectElement("/Project/PropertyGroup/TargetFrameworks")
                                    ?? throw new Exception($"TargetFrameworks element not found in {csprojPath}");
-            foreach (var targetFramework in targetFrameworks.Value.Split(';'))
-            {
-                Add(targetFramework);
-            }
+            AddRange(targetFrameworks.Value.Split(';'));
         }
     }
 }

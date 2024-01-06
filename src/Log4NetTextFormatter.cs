@@ -289,9 +289,6 @@ public class Log4NetTextFormatter : ITextFormatter
     {
         switch (propertyValue)
         {
-            case ScalarValue scalarValue:
-                WriteScalarProperty(writer, propertyName, scalarValue);
-                break;
             case DictionaryValue dictionaryValue:
                 WriteDictionaryProperty(writer, propertyName, dictionaryValue);
                 break;
@@ -305,17 +302,6 @@ public class Log4NetTextFormatter : ITextFormatter
                 WritePropertyElement(writer, propertyName, propertyValue);
                 break;
         }
-    }
-
-    /// <summary>
-    /// Write a <see cref="ScalarValue"/> property.
-    /// </summary>
-    /// <param name="writer">The XML writer.</param>
-    /// <param name="propertyName">The property name.</param>
-    /// <param name="scalarValue">The <see cref="ScalarValue"/> to write.</param>
-    private void WriteScalarProperty(XmlWriter writer, string propertyName, ScalarValue scalarValue)
-    {
-        WritePropertyElement(writer, propertyName, scalarValue);
     }
 
     /// <summary>

@@ -11,7 +11,6 @@ using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
 
-[UsesVerify]
 public class PublicApi
 {
     [Theory]

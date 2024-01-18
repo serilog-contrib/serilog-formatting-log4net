@@ -27,7 +27,6 @@ public static class ExceptionExtensions
     }
 }
 
-[UsesVerify]
 public class Log4NetTextFormatterTest : IDisposable
 {
     private readonly TextWriter _selfLogWriter;

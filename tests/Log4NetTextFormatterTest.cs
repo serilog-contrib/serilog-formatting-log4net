@@ -27,7 +27,7 @@ public static class ExceptionExtensions
     }
 }
 
-public class Log4NetTextFormatterTest : IDisposable
+public sealed class Log4NetTextFormatterTest : IDisposable
 {
     private readonly TextWriter _selfLogWriter;
     private string? SelfLogValue => _selfLogWriter.ToString();
@@ -313,7 +313,7 @@ public class Log4NetTextFormatterTest : IDisposable
         // Arrange
         using var output = new StringWriter();
         var logEvent = CreateLogEvent(
-            exception: new Exception("An error occurred").SetStackTrace(@"  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"),
+            exception: new Exception("An error occurred").SetStackTrace("  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"),
             properties: new LogEventProperty("π", new ScalarValue(3.14m))
         );
         var formatter = useStaticInstance ? Log4NetTextFormatter.Log4JFormatter : new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
@@ -346,10 +346,10 @@ public class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new[]{
+        var logEvent = CreateLogEvent(properties: [
             new LogEventProperty("one", new ScalarValue(1)),
             new LogEventProperty("two", new ScalarValue(2)),
-        });
+        ]);
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -364,10 +364,10 @@ public class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new[]{
+        var logEvent = CreateLogEvent(properties: [
             new LogEventProperty("n/a", new ScalarValue(null)),
-            new LogEventProperty("one", new ScalarValue(1)),
-        });
+            new LogEventProperty("one", new ScalarValue(1))
+        ]);
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -382,10 +382,10 @@ public class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new[]{
+        var logEvent = CreateLogEvent(properties: [
             new LogEventProperty("one", new ScalarValue(1)),
             new LogEventProperty("two", new ScalarValue(2)),
-        });
+        ]);
         var formatter = new Log4NetTextFormatter(options => options.UsePropertyFilter((_, propertyName) => propertyName != "one"));
 
         // Act
@@ -400,10 +400,10 @@ public class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new[]{
+        var logEvent = CreateLogEvent(properties: [
             new LogEventProperty("one", new ScalarValue(1)),
             new LogEventProperty("two", new ScalarValue(2)),
-        });
+        ]);
         var formatter = new Log4NetTextFormatter(options => options.UsePropertyFilter((_, propertyName) =>
         {
             if (propertyName == "one")
@@ -442,7 +442,7 @@ public class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(exception: new Exception("An error occurred").SetStackTrace(@"  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"));
+        var logEvent = CreateLogEvent(exception: new Exception("An error occurred").SetStackTrace("  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"));
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -517,8 +517,8 @@ public class Log4NetTextFormatterTest : IDisposable
 
     [Theory]
     [InlineData(null)]
-    [InlineData(@"")]
-    [InlineData(@"TheUser")]
+    [InlineData("")]
+    [InlineData("TheUser")]
     [InlineData(@"TheDomain\TheUser")]
     [InlineData(@"TheDomain\TheUser\Name")]
     public Task DomainAndUserNameProperty(string? environmentUserName)

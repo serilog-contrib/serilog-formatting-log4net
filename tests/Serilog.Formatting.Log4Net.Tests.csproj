@@ -38,24 +38,24 @@
 
   <Target Name="GenerateHtmlCoverageReport" AfterTargets="VSTest" Condition="$(TargetFramework) != ''">
     <ItemGroup>
-      <CoverletReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
+      <CoverageReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
     </ItemGroup>
-    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="Html;TextSummary" />
+    <ReportGenerator ReportFiles="@(CoverageReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="Html;TextSummary" />
   </Target>
 
   <!-- Because of https://github.com/microsoft/vstest/issues/2378 -->
-  <Target Name="MoveCoverletReport" AfterTargets="GenerateHtmlCoverageReport" Condition="$(TargetFramework) != ''">
-    <Move SourceFiles="@(CoverletReport)" DestinationFolder="$(CoverageReportDirectory)" />
+  <Target Name="MoveCoverageReport" AfterTargets="GenerateHtmlCoverageReport" Condition="$(TargetFramework) != ''">
+    <Move SourceFiles="@(CoverageReport)" DestinationFolder="$(CoverageReportDirectory)" />
     <PropertyGroup>
-      <CoverletReport>@(CoverletReport)</CoverletReport>
+      <CoverageReport>@(CoverageReport)</CoverageReport>
     </PropertyGroup>
     <ItemGroup>
-      <CoverletReportParentDirectory Include="$([System.IO.Path]::Combine($(CoverletReport),'..'))" Condition="$(CoverletReport) != ''" />
+      <CoverageReportParentDirectory Include="$([System.IO.Path]::Combine($(CoverageReport),'..'))" Condition="$(CoverageReport) != ''" />
     </ItemGroup>
-    <RemoveDir Directories="@(CoverletReportParentDirectory)" />
+    <RemoveDir Directories="@(CoverageReportParentDirectory)" />
   </Target>
 
-  <Target Name="DisplayCoverageSummary" AfterTargets="MoveCoverletReport" Condition="$(TargetFramework) != ''">
+  <Target Name="DisplayCoverageSummary" AfterTargets="MoveCoverageReport" Condition="$(TargetFramework) != ''">
     <PropertyGroup>
       <CatCommand Condition="!$([MSBuild]::IsOSPlatform('Windows'))">cat</CatCommand>
       <CatCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">type</CatCommand>
@@ -63,7 +63,7 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(CatCommand) Summary.txt" />
   </Target>
   
-  <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverletReport" Condition="$(TargetFramework) != '' AND $(ContinuousIntegrationBuild) != 'true'">
+  <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverageReport" Condition="$(TargetFramework) != '' AND $(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>

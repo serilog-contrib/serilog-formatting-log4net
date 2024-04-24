@@ -64,7 +64,7 @@
   <Target Name="ValidateNuGetPackage" AfterTargets="Pack">
     <!-- For reference: the file `.config/dotnet-tools.json` was created by running `dotnet new tool-manifest && dotnet tool install dotnet-validate` -->
     <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet validate package local $([MSBuild]::EnsureTrailingSlash($(PackageOutputPath)))$(PackageId).$(PackageVersion).nupkg" />
+    <Exec Command="dotnet validate package local $([MSBuild]::EnsureTrailingSlash($(PackageOutputPath)))$(PackageId).$(PackageVersion).nupkg" EnvironmentVariables="DOTNET_ROLL_FORWARD=LatestMajor" />
   </Target>
 
 </Project>

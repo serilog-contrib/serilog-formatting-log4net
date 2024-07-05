@@ -1,4 +1,5 @@
 ﻿[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "True")]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/serilog-contrib/serilog-formatting-log4net")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 namespace Serilog.Formatting.Log4Net

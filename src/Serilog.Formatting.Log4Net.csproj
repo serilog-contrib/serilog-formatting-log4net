@@ -8,6 +8,7 @@
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
     <AnalysisMode>All</AnalysisMode>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 

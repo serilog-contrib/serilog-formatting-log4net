@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased][Unreleased]
 
-- Add support for .NET 8.
+- Add support for .NET 8 and mark `Serilog.Formatting.Log4Net` as [trimmable](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained) for [AOT compatibility](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/).
 
 ## [1.1.0][1.1.0] - 2023-05-02
 

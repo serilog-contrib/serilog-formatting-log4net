@@ -505,7 +505,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new LogEventProperty(ThreadIdEnricher.ThreadIdPropertyName, new ScalarValue(threadId)));
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("ThreadId", new ScalarValue(threadId)));
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -525,7 +525,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new LogEventProperty(EnvironmentUserNameEnricher.EnvironmentUserNamePropertyName, new ScalarValue(environmentUserName)));
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("EnvironmentUserName", new ScalarValue(environmentUserName)));
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -540,7 +540,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new LogEventProperty(EnvironmentUserNameEnricher.EnvironmentUserNamePropertyName, new StructureValue(new List<LogEventProperty>())));
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("EnvironmentUserName", new StructureValue(new List<LogEventProperty>())));
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -557,7 +557,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new ScalarValue(machineName)));
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("MachineName", new ScalarValue(machineName)));
         var formatter = new Log4NetTextFormatter();
 
         // Act
@@ -572,7 +572,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new LogEventProperty(MachineNameEnricher.MachineNamePropertyName, new StructureValue(new List<LogEventProperty>())));
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("MachineName", new StructureValue(new List<LogEventProperty>())));
         var formatter = new Log4NetTextFormatter();
 
         // Act

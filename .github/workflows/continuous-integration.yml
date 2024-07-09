@@ -19,48 +19,48 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       checks: write
-    name: Run tests and create NuGet package
+    name: 🛠 Build, test and pack
     steps:
-      - name: Checkout git repository
+      - name: 🧑‍💻 Checkout git repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install .NET SDK
+      - name: 🧑‍🔧 Install .NET SDK
         uses: actions/setup-dotnet@v4
-      - name: Show .NET info
+      - name: ℹ️ Show .NET info
         run: dotnet --info
-      - name: Retrieve cached NuGet packages
+      - name: 💾 Retrieve cached NuGet packages
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-      - name: Restore NuGet packages
+      - name: ⚙️ Restore NuGet packages
         run: dotnet restore
-      - name: Build solution
+      - name: 🏗 Build solution
         run: dotnet build --no-restore
-      - name: Run tests
+      - name: 🧪 Run tests
         run: dotnet test --no-build
-      - name: Upload received files from failing tests
+      - name: 📤 Upload received files from failing tests
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: Received-${{ runner.os }}
           path: "**/*.received.*"
-      - name: Upload test results
+      - name: 📤 Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: TestResults (${{ runner.os }})
           path: TestResults-*.html
-      - name: Upload coverage report to Codecov
+      - name: ☂️ Upload coverage report to Codecov
         if: matrix.os == 'ubuntu-latest' && env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v4
         with:
           files: coverage/*/coverage.cobertura.xml
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Upload coverage report to Codacy
+      - name: ☂️ Upload coverage report to Codacy
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         if: matrix.os == 'ubuntu-latest' && env.CODACY_PROJECT_TOKEN != ''
@@ -68,27 +68,27 @@ jobs:
         with:
           project-token: ${{ env.CODACY_PROJECT_TOKEN }}
           coverage-reports: coverage/*/coverage.cobertura.xml
-      - name: Create NuGet package
+      - name: 📦 Create NuGet package
         run: dotnet pack --no-build --output .
-      - name: Upload NuGet package artifact
+      - name: 📤 Upload NuGet package artifact
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: NuGet package
           path: "*.nupkg"
-      - name: Run mutation tests and upload report to Stryker dashboard
+      - name: 👽 Run mutation tests and upload report to Stryker dashboard
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         if: matrix.os == 'ubuntu-latest' && env.STRYKER_DASHBOARD_API_KEY != ''
         run: |
           dotnet tool restore
           dotnet tool run dotnet-stryker --reporter dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ env.STRYKER_DASHBOARD_API_KEY }}
-      - name: Retrieve release notes from tag
+      - name: 📝 Retrieve release notes from tag
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
         run: |
           git fetch --tags --force
           git tag --list ${{ github.ref_name }} --format='%(contents)' > ReleaseNotes.md
-      - name: Upload release notes
+      - name: 📤 Upload release notes
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
@@ -100,21 +100,21 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
-    name: Publish NuGet package and create GitHub release
+    name: 🐿 Publish
     steps:
-      - name: Download NuGet package artifact
+      - name: 📥 Download NuGet package artifact
         uses: actions/download-artifact@v4
         with:
           name: NuGet package
-      - name: Download release notes artifact
+      - name: 📥 Download release notes artifact
         uses: actions/download-artifact@v4
         with:
           name: Release Notes
-      - name: Create GitHub Release
+      - name: 🚢 Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Version ${{ github.ref_name }}
           body_path: ReleaseNotes.md
           prerelease: ${{ contains(github.ref_name, '-') }}
-      - name: Publish NuGet package on nuget.org
+      - name: 🚀 Publish NuGet package on nuget.org
         run: dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

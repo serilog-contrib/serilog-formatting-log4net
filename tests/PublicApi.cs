@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -19,7 +18,7 @@ public class PublicApi
     {
         var testAssembly = typeof(PublicApi).Assembly;
         var configuration = testAssembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration
-                            ?? throw new Exception($"{nameof(AssemblyConfigurationAttribute)} not found in {testAssembly.Location}");
+                            ?? throw new InvalidDataException($"{nameof(AssemblyConfigurationAttribute)} not found in {testAssembly.Location}");
         var assemblyPath = Path.Combine(GetSrcDirectoryPath(), "bin", configuration, targetFramework, "Serilog.Formatting.Log4Net.dll");
         var assembly = Assembly.LoadFile(assemblyPath);
         var publicApi = assembly.GeneratePublicApi();
@@ -35,7 +34,7 @@ public class PublicApi
             var csprojPath = Path.Combine(GetSrcDirectoryPath(), "Serilog.Formatting.Log4Net.csproj");
             var project = XDocument.Load(csprojPath);
             var targetFrameworks = project.XPathSelectElement("/Project/PropertyGroup/TargetFrameworks")
-                                   ?? throw new Exception($"TargetFrameworks element not found in {csprojPath}");
+                                   ?? throw new InvalidDataException($"TargetFrameworks element not found in {csprojPath}");
             AddRange(targetFrameworks.Value.Split(';'));
         }
     }

@@ -7,16 +7,7 @@
           <CoverageFileName>coverage.cobertura.xml</CoverageFileName>
           <Format>cobertura</Format>
           <IncludeTestAssembly>false</IncludeTestAssembly>
-          <CodeCoverage>
-            <ModulePaths>
-              <Exclude>
-                <ModulePath>Argon</ModulePath>
-                <ModulePath>DiffEngine</ModulePath>
-                <ModulePath>EmptyFiles</ModulePath>
-                <ModulePath>PublicApiGenerator</ModulePath>
-              </Exclude>
-            </ModulePaths>
-          </CodeCoverage>
+          <ExcludeAssembliesWithoutSources>MissingAll</ExcludeAssembliesWithoutSources>
         </Configuration>
       </DataCollector>
     </DataCollectors>

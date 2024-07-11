@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Serilog.Core;
-using Serilog.Enrichers;
 using Serilog.Events;
 using Serilog.Parsing;
 using VerifyTests;

@@ -177,22 +177,7 @@ public class Log4NetTextFormatterOptionsBuilder
     }
 
     internal Log4NetTextFormatterOptions Build()
-        => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException);
-
-    private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
-    {
-        var xmlWriterSettings = new XmlWriterSettings
-        {
-            Indent = indentationSettings is not null,
-            NewLineChars = lineEnding.ToCharacters(),
-            ConformanceLevel = ConformanceLevel.Fragment,
-        };
-        if (indentationSettings is not null)
-        {
-            xmlWriterSettings.IndentChars = indentationSettings.ToString();
-        }
-        return xmlWriterSettings;
-    }
+        => new(_formatProvider, _cDataMode, _xmlNamespace, _lineEnding, _indentationSettings, _filterProperty, _formatException);
 }
 
 /// <summary>

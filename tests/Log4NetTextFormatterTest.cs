@@ -325,6 +325,21 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
+    public Task BasicLog4J()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent();
+        var formatter = new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output).DisableRequireUniquePrefix();
+    }
+
+    [Fact]
     public Task ExplicitFormatProvider()
     {
         // Arrange

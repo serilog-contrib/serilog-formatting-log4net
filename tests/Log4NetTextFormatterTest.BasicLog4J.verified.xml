@@ -1,0 +1,3 @@
+﻿<log4j:event timestamp="1041689366535" level="INFO">
+  <log4j:message><![CDATA[Hello from Serilog]]></log4j:message>
+</log4j:event>

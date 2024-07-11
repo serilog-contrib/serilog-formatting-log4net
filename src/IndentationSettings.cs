@@ -21,16 +21,20 @@ public class IndentationSettings
         {
             throw new ArgumentOutOfRangeException(nameof(size), size, $"The value of argument '{nameof(size)}' must be greater than 0.");
         }
-        _indentationString = indentation switch
+        (Character, _indentationString) = indentation switch
         {
-            Indentation.Space => new string(c: ' ', size),
-            Indentation.Tab => new string(c: '\t', size),
+            Indentation.Space => (' ', new string(c: ' ', size)),
+            Indentation.Tab => ('\t', new string(c: '\t', size)),
             _ => throw new ArgumentOutOfRangeException(nameof(indentation), indentation, $"The value of argument '{nameof(indentation)}' ({indentation}) is invalid for enum type '{nameof(Indentation)}'.")
         };
+        Size = size;
     }
 
     /// <summary>
     /// Returns a string representation of the indentation settings.
     /// </summary>
     public override string ToString() => _indentationString;
+
+    internal char Character { get; }
+    internal byte Size { get; }
 }

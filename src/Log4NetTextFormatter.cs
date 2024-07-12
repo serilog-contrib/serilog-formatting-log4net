@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Serilog.Core;
@@ -84,7 +85,7 @@ public class Log4NetTextFormatter : ITextFormatter
         var optionsBuilder = new Log4NetTextFormatterOptionsBuilder();
         configureOptions?.Invoke(optionsBuilder);
         _options = optionsBuilder.Build();
-        _usesLog4JCompatibility = ReferenceEquals(Log4NetTextFormatterOptionsBuilder.Log4JXmlNamespace, _options.XmlNamespace);
+        _usesLog4JCompatibility = ReferenceEquals(Log4JXmlNamespaceResolver.Log4JXmlNamespace, _options.XmlNamespace);
     }
 
     /// <summary>
@@ -104,29 +105,17 @@ public class Log4NetTextFormatter : ITextFormatter
         {
             throw new ArgumentNullException(nameof(output));
         }
-        var xmlWriterOutput = _usesLog4JCompatibility ? new StringWriter() : output;
-        using var writer = XmlWriter.Create(xmlWriterOutput, _options.XmlWriterSettings);
-        WriteEvent(logEvent, writer);
-        writer.Flush();
+        using var writer = XmlWriter.Create(output, _options.XmlWriterSettings);
         if (_usesLog4JCompatibility)
         {
-            // log4j writes the XML "manually", see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145
-            // The resulting XML is impossible to write with a standard compliant XML writer such as XmlWriter.
-            // That's why we write the event in a StringWriter then massage the output to remove the xmlns:log4j attribute to match log4j output.
-            // The XML fragment becomes valid when surrounded by an external entity, see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L31-L49
-            const string log4JNamespaceAttribute = """
-                                                    xmlns:log4j="http://jakarta.apache.org/log4j/"
-                                                   """;
-            var xmlString = ((StringWriter)xmlWriterOutput).ToString();
-            var i = xmlString.IndexOf(log4JNamespaceAttribute, StringComparison.Ordinal);
-#if NETSTANDARD2_0
-            output.Write(xmlString.Substring(0, i));
-            output.Write(xmlString.Substring(i + log4JNamespaceAttribute.Length));
-#else
-            output.Write(xmlString.AsSpan(0, i));
-            output.Write(xmlString.AsSpan(i + log4JNamespaceAttribute.Length));
-#endif
+            var predefinedNamespaces = writer.GetType().GetField("_predefinedNamespaces", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (predefinedNamespaces != null && typeof(IXmlNamespaceResolver).IsAssignableFrom(predefinedNamespaces.FieldType))
+            {
+                predefinedNamespaces.SetValue(writer, Log4JXmlNamespaceResolver.Instance);
+            }
         }
+        WriteEvent(logEvent, writer);
+        writer.Flush();
         output.Write(_options.XmlWriterSettings.NewLineChars);
     }
 

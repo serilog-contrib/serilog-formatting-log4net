@@ -16,12 +16,6 @@ public class Log4NetTextFormatterOptionsBuilder
     private static readonly XmlQualifiedName Log4NetXmlNamespace = new("log4net", "http://logging.apache.org/log4net/schemas/log4net-events-1.2/");
 
     /// <summary>
-    /// The XML namespace used for Log4j events.
-    /// </summary>
-    /// <remarks>https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137</remarks>
-    internal static readonly XmlQualifiedName Log4JXmlNamespace = new("log4j", "http://jakarta.apache.org/log4j/");
-
-    /// <summary>
     /// Initialize a new instance of the <see cref="Log4NetTextFormatterOptionsBuilder"/> class.
     /// </summary>
     internal Log4NetTextFormatterOptionsBuilder()
@@ -170,7 +164,7 @@ public class Log4NetTextFormatterOptionsBuilder
         _lineEnding = LineEnding.CarriageReturn | LineEnding.LineFeed;
 
         // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137
-        _xmlNamespace = Log4JXmlNamespace;
+        _xmlNamespace = Log4JXmlNamespaceResolver.Log4JXmlNamespace;
 
         // https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L147
         _cDataMode = CDataMode.Always;

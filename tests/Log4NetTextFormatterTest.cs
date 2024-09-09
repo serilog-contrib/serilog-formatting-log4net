@@ -36,11 +36,10 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     /// </summary>
     private static DictionaryValue CreateDictionary()
     {
-        return new DictionaryValue(new[]
-        {
+        return new DictionaryValue([
             new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("one")),
             new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue("two"), new ScalarValue(2)),
-        });
+        ]);
     }
 
     private static LogEvent CreateLogEvent(LogEventLevel level = Events.LogEventLevel.Information, string messageTemplate = "Hello from Serilog", Exception? exception = null, params LogEventProperty[] properties)
@@ -365,7 +364,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         using var output = new StringWriter();
         var logEvent = CreateLogEvent(properties: [
             new LogEventProperty("n/a", new ScalarValue(null)),
-            new LogEventProperty("one", new ScalarValue(1))
+            new LogEventProperty("one", new ScalarValue(1)),
         ]);
         var formatter = new Log4NetTextFormatter();
 

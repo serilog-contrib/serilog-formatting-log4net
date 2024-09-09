@@ -36,7 +36,7 @@ public class Log4NetTextFormatter : ITextFormatter
     private const string ThreadIdPropertyName = "ThreadId";
 
     /// <summary>
-    /// The name of the user name property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.Environment/">Serilog.Enrichers.Environment</a>
+    /// The name of the username property, set by <a href="https://www.nuget.org/packages/Serilog.Enrichers.Environment/">Serilog.Enrichers.Environment</a>
     /// </summary>
     /// <remarks>https://github.com/serilog/serilog-enrichers-environment/blob/v2.1.3/src/Serilog.Enrichers.Environment/Enrichers/EnvironmentUserNameEnricher.cs#L31</remarks>
     private const string UserNamePropertyName = "EnvironmentUserName";
@@ -112,7 +112,7 @@ public class Log4NetTextFormatter : ITextFormatter
         {
             // log4j writes the XML "manually", see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145
             // The resulting XML is impossible to write with a standard compliant XML writer such as XmlWriter.
-            // That's why we write the event in a StringWriter then massage the output to remove the xmlns:log4j attribute to match log4j output.
+            // That's why we write the event in a StringWriter then tweak the output to remove the xmlns:log4j attribute to match log4j output.
             // The XML fragment becomes valid when surrounded by an external entity, see https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L31-L49
             const string log4JNamespaceAttribute = """
                                                     xmlns:log4j="http://jakarta.apache.org/log4j/"
@@ -193,7 +193,7 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <param name="writer">The XML writer.</param>
     /// <param name="attributeName">The name of the XML attribute.</param>
     /// <param name="propertyName">The name of the Serilog property.</param>
-    /// <remarks>Only properties with a non null <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
+    /// <remarks>Only properties with a non-null <see cref="ScalarValue"/> are supported, other types are ignored.</remarks>
     private void WriteEventAttribute(LogEvent logEvent, XmlWriter writer, string attributeName, string propertyName)
     {
         if (logEvent.Properties.TryGetValue(propertyName, out var propertyValue) && propertyValue is ScalarValue { Value: not null })

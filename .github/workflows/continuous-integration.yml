@@ -118,5 +118,6 @@ jobs:
           name: Version ${{ github.ref_name }}
           body_path: ReleaseNotes.md
           prerelease: ${{ contains(github.ref_name, '-') }}
+          files: "*.nupkg"
       - name: 🚀 Publish NuGet package on nuget.org
         run: dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"

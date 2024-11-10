@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageDownload Include="Microsoft.TestPlatform.Portable" version="[17.11.1]" />
+  </ItemGroup>
+
+  <ItemGroup>
     <VSTestLogger Include="GitHubActions%3Bsummary.includePassedTests=true%3Bsummary.includeSkippedTests=true" Visible="false" Condition="$(GITHUB_STEP_SUMMARY) != ''" />
     <VSTestLogger Include="trx%3BLogFileName=TestResults-$(TargetFramework).trx" Visible="false" Condition="$(ContinuousIntegrationBuild) == 'true'" />
     <VSTestLogger Include="html%3BLogFileName=TestResults-$(TargetFramework).html" Visible="false" />

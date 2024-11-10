@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Serilog.Core;
@@ -13,18 +13,6 @@ using VerifyXunit;
 using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
-
-public static class ExceptionExtensions
-{
-    // See https://stackoverflow.com/questions/37093261/attach-stacktrace-to-exception-without-throwing-in-c-sharp-net/37605142#37605142
-    private static readonly FieldInfo StackTraceStringField = typeof(Exception).GetField("_stackTraceString", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new MissingFieldException(nameof(Exception), "_stackTraceString");
-
-    public static Exception SetStackTrace(this Exception exception, string stackTrace)
-    {
-        StackTraceStringField.SetValue(exception, stackTrace) ;
-        return exception;
-    }
-}
 
 public sealed class Log4NetTextFormatterTest : IDisposable
 {
@@ -311,7 +299,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         // Arrange
         using var output = new StringWriter();
         var logEvent = CreateLogEvent(
-            exception: new Exception("An error occurred").SetStackTrace("  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"),
+            exception: ExceptionDispatchInfo.SetRemoteStackTrace(new Exception("An error occurred"), "  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"),
             properties: new LogEventProperty("π", new ScalarValue(3.14m))
         );
         var formatter = useStaticInstance ? Log4NetTextFormatter.Log4JFormatter : new Log4NetTextFormatter(c => c.UseLog4JCompatibility());
@@ -440,7 +428,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(exception: new Exception("An error occurred").SetStackTrace("  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"));
+        var logEvent = CreateLogEvent(exception: ExceptionDispatchInfo.SetRemoteStackTrace(new Exception("An error occurred"), "  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123"));
         var formatter = new Log4NetTextFormatter();
 
         // Act

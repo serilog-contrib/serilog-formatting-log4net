@@ -4,5 +4,7 @@
   </log4j:properties>
   <log4j:message><![CDATA[Hello from Serilog]]></log4j:message>
   <log4j:throwable><![CDATA[System.Exception: An error occurred
-  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123]]></log4j:throwable>
+  at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.BasicMessage_WithException() in Log4NetTextFormatterTest.cs:123
+--- End of stack trace from previous location ---
+]]></log4j:throwable>
 </log4j:event>

@@ -12,7 +12,7 @@
     <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="PublicApiGenerator" Version="11.1.0" />
-    <PackageReference Include="ReportGenerator" Version="5.3.11" PrivateAssets="all" />
+    <PackageReference Include="ReportGenerator" Version="5.4.1" PrivateAssets="all" />
     <PackageReference Include="Serilog" Version="4.1.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />

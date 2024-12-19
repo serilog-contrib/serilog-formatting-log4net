@@ -308,7 +308,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         formatter.Format(logEvent, output);
 
         // Assert
-        return Verify(output).DisableRequireUniquePrefix();
+        return Verify(output).IgnoreParameters().DisableRequireUniquePrefix();
     }
 
     [Fact]

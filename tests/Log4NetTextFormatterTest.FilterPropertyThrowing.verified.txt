@@ -1,0 +1,8 @@
+﻿{
+  target: null,
+  SelfLog:
+[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while filtering property 'two'. Including the property in the log4net event.
+System.InvalidOperationException: Can't handle property 'two'.
+   at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c.<FilterPropertyThrowing>b__24_1(LogEvent _, String propertyName) in {ProjectDirectory}Log4NetTextFormatterTest.cs:line 389
+   at Serilog.Formatting.Log4Net.Log4NetTextFormatter.IncludeProperty(LogEvent logEvent, String propertyName) in {SolutionDirectory}src/Log4NetTextFormatter.cs:line 266
+}

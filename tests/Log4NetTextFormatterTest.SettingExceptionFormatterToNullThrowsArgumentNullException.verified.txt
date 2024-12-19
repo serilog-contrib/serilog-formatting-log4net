@@ -1,0 +1,10 @@
+﻿{
+  Type: ArgumentNullException,
+  Message: The exception formatter can not be null.,
+  ParamName: formatException,
+  StackTrace:
+at Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.UseExceptionFormatter(ExceptionFormatter formatException)
+at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c.<SettingExceptionFormatterToNullThrowsArgumentNullException>b__7_1(Log4NetTextFormatterOptionsBuilder c)
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter..ctor(Action`1 configureOptions)
+at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c.<SettingExceptionFormatterToNullThrowsArgumentNullException>b__7_0()
+}

@@ -1,5 +1,5 @@
-using System;
-using FluentAssertions;
+using System.Threading.Tasks;
+using VerifyXunit;
 using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
@@ -7,11 +7,11 @@ namespace Serilog.Formatting.Log4Net.Tests;
 public class IndentationSettingsTest
 {
     [Theory]
-    [InlineData(Indentation.Space, 2, "  ")]
-    [InlineData(Indentation.Tab, 2, "\t\t")]
-    [InlineData(Indentation.Space, 4, "    ")]
-    [InlineData(Indentation.Tab, 4, "\t\t\t\t")]
-    public void IndentationSettingsToString(Indentation indentation, byte size, string expectedString)
+    [InlineData(Indentation.Space, 2)]
+    [InlineData(Indentation.Tab, 2)]
+    [InlineData(Indentation.Space, 4)]
+    [InlineData(Indentation.Tab, 4)]
+    public Task IndentationSettingsToString(Indentation indentation, byte size)
     {
         // Arrange
         var indentationSettings = new IndentationSettings(indentation, size);
@@ -20,28 +20,18 @@ public class IndentationSettingsTest
         var indentationString = indentationSettings.ToString();
 
         // Assert
-        indentationString.Should().Be(expectedString);
+        return Verifier.Verify(indentationString).UseParameters(indentation, size);
     }
 
     [Fact]
-    public void InvalidIndentation()
+    public Task InvalidIndentation()
     {
-        // Act
-        var action = () => new IndentationSettings((Indentation)(-1), size: 1);
-
-        // Assert
-        action.Should().ThrowExactly<ArgumentOutOfRangeException>()
-            .Which.Message.Should().StartWith("The value of argument 'indentation' (-1) is invalid for enum type 'Indentation'.");
+        return Verifier.Throws(() => new IndentationSettings((Indentation)(-1), size: 1));
     }
 
     [Fact]
-    public void InvalidSize()
+    public Task InvalidSize()
     {
-        // Act
-        var action = () => new IndentationSettings(indentation: default, size: 0);
-
-        // Assert
-        action.Should().ThrowExactly<ArgumentOutOfRangeException>()
-            .Which.Message.Should().StartWith("The value of argument 'size' must be greater than 0.");
+        return Verifier.Throws(() => new IndentationSettings(indentation: default, size: 0));
     }
 }

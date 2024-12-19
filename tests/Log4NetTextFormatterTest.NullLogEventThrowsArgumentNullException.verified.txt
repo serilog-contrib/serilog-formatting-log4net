@@ -1,0 +1,8 @@
+﻿{
+  Type: ArgumentNullException,
+  Message: Value cannot be null.,
+  ParamName: logEvent,
+  StackTrace:
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format(LogEvent logEvent, TextWriter output)
+at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c__DisplayClass4_0.<NullLogEventThrowsArgumentNullException>b__0()
+}

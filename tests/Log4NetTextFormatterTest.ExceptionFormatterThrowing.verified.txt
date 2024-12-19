@@ -1,0 +1,8 @@
+﻿{
+  target: null,
+  SelfLog:
+[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while formatting an exception. Using the default exception formatter.
+System.InvalidOperationException: 💥 Boom 💥
+   at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c.<ExceptionFormatterThrowing>b__29_1(Exception _) in {ProjectDirectory}Log4NetTextFormatterTest.cs:line 466
+   at Serilog.Formatting.Log4Net.Log4NetTextFormatter.FormatException(Exception exception) in {SolutionDirectory}src/Log4NetTextFormatter.cs:line 424
+}

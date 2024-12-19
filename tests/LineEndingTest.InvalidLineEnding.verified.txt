@@ -1,0 +1,14 @@
+﻿{
+  Type: ArgumentOutOfRangeException,
+  Message:
+The value of argument 'lineEnding' (4) is invalid for enum type 'LineEnding'. (Parameter 'lineEnding')
+Actual value was 4.,
+  ActualValue: 4,
+  ParamName: lineEnding,
+  StackTrace:
+at Serilog.Formatting.Log4Net.LineEndingExtensions.ToCharacters(LineEnding lineEnding)
+at Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings indentationSettings)
+at Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.Build()
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter..ctor(Action`1 configureOptions)
+at Serilog.Formatting.Log4Net.Tests.LineEndingTest.<>c.<InvalidLineEnding>b__0_0()
+}

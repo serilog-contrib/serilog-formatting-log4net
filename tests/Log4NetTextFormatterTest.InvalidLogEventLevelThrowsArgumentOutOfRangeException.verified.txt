@@ -1,0 +1,13 @@
+﻿{
+  Type: ArgumentOutOfRangeException,
+  Message:
+The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'. (Parameter 'level')
+Actual value was -1.,
+  ActualValue: -1,
+  ParamName: level,
+  StackTrace:
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter.LogLevel(LogEventLevel level)
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter.WriteEvent(LogEvent logEvent, XmlWriter writer)
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format(LogEvent logEvent, TextWriter output)
+at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c__DisplayClass9_0.<InvalidLogEventLevelThrowsArgumentOutOfRangeException>b__0()
+}

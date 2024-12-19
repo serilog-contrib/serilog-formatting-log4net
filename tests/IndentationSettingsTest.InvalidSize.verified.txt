@@ -1,0 +1,11 @@
+﻿{
+  Type: ArgumentOutOfRangeException,
+  Message:
+The value of argument 'size' must be greater than 0. (Parameter 'size')
+Actual value was 0.,
+  ActualValue: 0,
+  ParamName: size,
+  StackTrace:
+at Serilog.Formatting.Log4Net.IndentationSettings..ctor(Indentation indentation, Byte size)
+at Serilog.Formatting.Log4Net.Tests.IndentationSettingsTest.<>c.<InvalidSize>b__2_0()
+}

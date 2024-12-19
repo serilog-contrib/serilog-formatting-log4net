@@ -1,0 +1,11 @@
+﻿{
+  Type: ArgumentOutOfRangeException,
+  Message:
+The value of argument 'indentation' (-1) is invalid for enum type 'Indentation'. (Parameter 'indentation')
+Actual value was -1.,
+  ActualValue: -1,
+  ParamName: indentation,
+  StackTrace:
+at Serilog.Formatting.Log4Net.IndentationSettings..ctor(Indentation indentation, Byte size)
+at Serilog.Formatting.Log4Net.Tests.IndentationSettingsTest.<>c.<InvalidIndentation>b__1_0()
+}

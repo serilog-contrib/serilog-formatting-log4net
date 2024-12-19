@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -16,9 +15,6 @@ namespace Serilog.Formatting.Log4Net.Tests;
 
 public sealed class Log4NetTextFormatterTest : IDisposable
 {
-    private readonly TextWriter _selfLogWriter;
-    private string? SelfLogValue => _selfLogWriter.ToString();
-
     /// <summary>
     /// Create a <see cref="DictionaryValue"/> containing two entries, mapping scalar values 1 to "one" and "two" to 2.
     /// </summary>
@@ -43,18 +39,19 @@ public sealed class Log4NetTextFormatterTest : IDisposable
 
     public Log4NetTextFormatterTest()
     {
-        _selfLogWriter = new StringWriter();
-        Debugging.SelfLog.Enable(_selfLogWriter);
+        Recording.Start();
+        // Strip the SelfLog date prefix (29 characters)
+        Debugging.SelfLog.Enable(message => Recording.Add("SelfLog", message[29..]));
     }
 
     public void Dispose()
     {
         Debugging.SelfLog.Disable();
-        _selfLogWriter.Dispose();
+        Recording.Clear();
     }
 
     [Fact]
-    public void NullLogEventThrowsArgumentNullException()
+    public Task NullLogEventThrowsArgumentNullException()
     {
         // Arrange
         var formatter = new Log4NetTextFormatter();
@@ -63,12 +60,11 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         var action = () => formatter.Format(null!, TextWriter.Null);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>().WithParameterName("logEvent")
-            .Which.StackTrace!.TrimStart().Should().StartWith("at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format");
+        return Verifier.Throws(action);
     }
 
     [Fact]
-    public void NullOutputThrowsArgumentNullException()
+    public Task NullOutputThrowsArgumentNullException()
     {
         // Arrange
         var logEvent = CreateLogEvent();
@@ -78,32 +74,27 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         var action = () => formatter.Format(logEvent, null!);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>().WithParameterName("output")
-            .Which.StackTrace!.TrimStart().Should().StartWith("at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format");
+        return Verifier.Throws(action);
     }
 
     [Fact]
-    public void SettingPropertyFilterToNullThrowsArgumentNullException()
+    public Task SettingPropertyFilterToNullThrowsArgumentNullException()
     {
         // Act
         Action action = () => _ = new Log4NetTextFormatter(c => c.UsePropertyFilter(null!));
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>()
-            .WithMessage("The property filter can not be null.*")
-            .And.ParamName.Should().Be("filterProperty");
+        return Verifier.Throws(action);
     }
 
     [Fact]
-    public void SettingExceptionFormatterToNullThrowsArgumentNullException()
+    public Task SettingExceptionFormatterToNullThrowsArgumentNullException()
     {
         // Act
         Action action = () => _ = new Log4NetTextFormatter(c => c.UseExceptionFormatter(null!));
 
         // Assert
-        action.Should().ThrowExactly<ArgumentNullException>()
-            .WithMessage("The exception formatter can not be null.*")
-            .And.ParamName.Should().Be("formatException");
+        return Verifier.Throws(action);
     }
 
     [Theory]
@@ -128,7 +119,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
-    public void InvalidLogEventLevelThrowsArgumentOutOfRangeException()
+    public Task InvalidLogEventLevelThrowsArgumentOutOfRangeException()
     {
         // Arrange
         var logEvent = CreateLogEvent((LogEventLevel)(-1));
@@ -138,8 +129,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         var action = () => formatter.Format(logEvent, TextWriter.Null);
 
         // Assert
-        action.Should().ThrowExactly<ArgumentOutOfRangeException>()
-            .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'.");
+        return Verifier.Throws(action);
     }
 
     [Theory]
@@ -403,7 +393,6 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         formatter.Format(logEvent, output);
 
         // Assert
-        SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while filtering property 'two'.");
         return Verify(output);
     }
 
@@ -480,7 +469,6 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         formatter.Format(logEvent, output);
 
         // Assert
-        SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while formatting an exception.");
         return Verify(output);
     }
 

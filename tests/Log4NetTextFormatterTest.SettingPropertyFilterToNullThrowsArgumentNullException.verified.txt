@@ -1,0 +1,10 @@
+﻿{
+  Type: ArgumentNullException,
+  Message: The property filter can not be null.,
+  ParamName: filterProperty,
+  StackTrace:
+at Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder.UsePropertyFilter(PropertyFilter filterProperty)
+at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c.<SettingPropertyFilterToNullThrowsArgumentNullException>b__6_1(Log4NetTextFormatterOptionsBuilder c)
+at Serilog.Formatting.Log4Net.Log4NetTextFormatter..ctor(Action`1 configureOptions)
+at Serilog.Formatting.Log4Net.Tests.Log4NetTextFormatterTest.<>c.<SettingPropertyFilterToNullThrowsArgumentNullException>b__6_0()
+}

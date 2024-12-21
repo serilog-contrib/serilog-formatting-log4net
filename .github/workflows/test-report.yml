@@ -20,6 +20,6 @@ jobs:
     - uses: dorny/test-reporter@v1
       with:
         artifact: TestResults-${{ matrix.os }}.trx
-        name: Test Results (${{ matrix.os }})
+        name: 🚦 Test Results (${{ matrix.os }})
         path: '*.trx'
         reporter: dotnet-trx

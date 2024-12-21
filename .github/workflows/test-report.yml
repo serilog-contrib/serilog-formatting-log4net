@@ -1,0 +1,25 @@
+name: 'Test Report'
+
+on:
+  workflow_run:
+    workflows: ['Continuous Integration']
+    types:
+      - completed
+
+permissions:
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ Linux, macOS, Windows ]
+      fail-fast: false
+    steps:
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: TestResults-${{ matrix.os }}.trx
+        name: Test Results (${{ matrix.os }})
+        path: '*.trx'
+        reporter: dotnet-trx

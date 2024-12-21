@@ -5,7 +5,6 @@ ProjectSection(SolutionItems) = preProject
 	global.json = global.json
 	NuGet.config = NuGet.config
 	.config\dotnet-tools.json = .config\dotnet-tools.json
-	.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
 	src\packages.lock.json = src\packages.lock.json
 	.github\dependabot.yml = .github\dependabot.yml
 	MAINTENANCE.md = MAINTENANCE.md
@@ -17,6 +16,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net", "src\Serilog.Formatting.Log4Net.csproj", "{66DF8036-B2E9-4FD1-9204-012EE3F9A2E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Formatting.Log4Net.Tests", "tests\Serilog.Formatting.Log4Net.Tests.csproj", "{E94ABEEA-1E45-42DE-9752-896974FC4389}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{7AA372D2-2CE3-417F-ADA5-FD96743FCAB1}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\continuous-integration.yml = .github\workflows\continuous-integration.yml
+		.github\workflows\test-report.yml = .github\workflows\test-report.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,5 +37,8 @@ Global
 		{E94ABEEA-1E45-42DE-9752-896974FC4389}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E94ABEEA-1E45-42DE-9752-896974FC4389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E94ABEEA-1E45-42DE-9752-896974FC4389}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7AA372D2-2CE3-417F-ADA5-FD96743FCAB1} = {F0707B5E-7B54-4D36-993B-17293615DEF7}
 	EndGlobalSection
 EndGlobal

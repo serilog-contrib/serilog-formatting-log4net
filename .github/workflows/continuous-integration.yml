@@ -17,8 +17,6 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    permissions:
-      checks: write
     name: 🛠 Build, test and pack
     steps:
       - name: 🧑‍💻 Checkout git repository
@@ -52,8 +50,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: TestResults (${{ runner.os }})
-          path: TestResults-*.html
+          name: TestResults-${{ runner.os }}.trx
+          path: "*.trx"
       - name: ☂️ Upload coverage report to Codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

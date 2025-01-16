@@ -13,10 +13,10 @@ using VerifyTUnit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
 
-public sealed class Log4NetTextFormatterTest
+public sealed class Log4NetTextFormatterTest : IDisposable
 {
-    private TextWriter? _selfLogWriter;
-    private string? SelfLogValue => _selfLogWriter?.ToString();
+    private readonly TextWriter _selfLogWriter;
+    private string? SelfLogValue => _selfLogWriter.ToString();
 
     /// <summary>
     /// Create a <see cref="DictionaryValue"/> containing two entries, mapping scalar values 1 to "one" and "two" to 2.
@@ -40,19 +40,16 @@ public sealed class Log4NetTextFormatterTest
         );
     }
 
-    [Before(Test)]
-    public void EnableSelfLog()
+    public Log4NetTextFormatterTest()
     {
         _selfLogWriter = new StringWriter();
         Debugging.SelfLog.Enable(_selfLogWriter);
     }
 
-    [After(Test)]
-    public void DisableSelfLog()
+    public void Dispose()
     {
         Debugging.SelfLog.Disable();
-        _selfLogWriter?.Dispose();
-        _selfLogWriter = null;
+        _selfLogWriter.Dispose();
     }
 
     [Test]

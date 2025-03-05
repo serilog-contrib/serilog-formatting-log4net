@@ -61,7 +61,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         if: matrix.os == 'ubuntu-latest' && env.CODECOV_TOKEN != ''
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: coverage/*/coverage.cobertura.xml
           token: ${{ env.CODECOV_TOKEN }}

@@ -43,9 +43,11 @@ jobs:
       - name: ⚙️ Restore NuGet packages
         run: dotnet restore
       - name: 🏗 Build solution
-        run: dotnet build --no-restore
+        # --configuration should not be needed, see https://github.com/dotnet/sdk/issues/52358
+        run: dotnet build --no-restore --configuration ${{ env.Configuration }}
       - name: 🧪 Run tests
-        run: dotnet test --no-build
+        # --configuration should not be needed, see https://github.com/dotnet/sdk/issues/52358
+        run: dotnet test --no-build --configuration ${{ env.Configuration }}
       - name: 📤 Upload received files from failing tests
         uses: actions/upload-artifact@v4
         if: failure()
@@ -88,7 +90,8 @@ jobs:
           project-token: ${{ env.CODACY_PROJECT_TOKEN }}
           coverage-reports: coverage/*/coverage.cobertura.xml
       - name: 📦 Create NuGet package
-        run: dotnet pack --no-build --output .
+        # --configuration should not be needed, see https://github.com/dotnet/sdk/issues/52358
+        run: dotnet pack --no-build --output . --configuration ${{ env.Configuration }}
       - name: 📤 Upload NuGet package artifact
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
@@ -101,7 +104,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && env.STRYKER_DASHBOARD_API_KEY != ''
         run: |
           dotnet tool restore
-          dotnet tool run dotnet-stryker --reporter dashboard --open-report:dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ env.STRYKER_DASHBOARD_API_KEY }} --configuration ${{ env.Configuration }}
+          dotnet tool run dotnet-stryker --testrunner mtp --reporter dashboard --open-report:dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ env.STRYKER_DASHBOARD_API_KEY }} --configuration ${{ env.Configuration }}
       - name: 📝 Retrieve release notes from tag
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
         run: |

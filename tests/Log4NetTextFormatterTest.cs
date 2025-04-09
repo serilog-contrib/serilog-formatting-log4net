@@ -95,6 +95,18 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
+    public void SettingMessageFormatterToNullThrowsArgumentNullException()
+    {
+        // Act
+        Action action = () => _ = new Log4NetTextFormatter(c => c.UseMessageFormatter(null!));
+
+        // Assert
+        action.Should().ThrowExactly<ArgumentNullException>()
+            .WithMessage("The message formatter can not be null.*")
+            .And.ParamName.Should().Be("formatMessage");
+    }
+
+    [Fact]
     public void SettingExceptionFormatterToNullThrowsArgumentNullException()
     {
         // Act
@@ -435,6 +447,75 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         formatter.Format(logEvent, output);
 
         // Assert
+        return Verify(output);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task DefaultMessageFormatter(bool hasEventId)
+    {
+        // Arrange
+        using var output = new StringWriter();
+        List<LogEventProperty> properties = [ new("Name", new ScalarValue("World")) ];
+        if (hasEventId)
+        {
+            LogEventProperty[] eventIdProperties = [ new("Id", new ScalarValue(1)), new("Name", new ScalarValue("EventIdName")) ];
+            properties.Add(new LogEventProperty("EventId", new StructureValue(eventIdProperties)));
+        }
+        var logEvent = CreateLogEvent(messageTemplate: "Hello {Name}!", properties: properties.ToArray());
+        var formatter = new Log4NetTextFormatter();
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output).UseParameters(hasEventId);
+    }
+
+    [Fact]
+    public Task CustomMessageFormatter()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent();
+        var formatter = new Log4NetTextFormatter(options => options.UseMessageFormatter((_, _) => "Custom message"));
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task MessageFormatterReturningNull()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent();
+        var formatter = new Log4NetTextFormatter(options => options.UseMessageFormatter((_, _) => null!));
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
+    public Task MessageFormatterThrowing()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent();
+        var formatter = new Log4NetTextFormatter(options => options.UseMessageFormatter((_, _) => throw new InvalidOperationException("💥 Boom 💥")));
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        SelfLogValue.Should().Contain("[Serilog.Formatting.Log4Net.Log4NetTextFormatter] An exception was thrown while formatting a message.");
         return Verify(output);
     }
 

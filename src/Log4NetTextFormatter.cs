@@ -54,6 +54,12 @@ public class Log4NetTextFormatter : ITextFormatter
     private const string CallerPropertyName = "Caller";
 
     /// <summary>
+    /// The name of the event id property, set by <a href="https://www.nuget.org/packages/Serilog.Extensions.Logging/">Serilog.Extensions.Logging</a>
+    /// </summary>
+    /// <remarks>https://github.com/serilog/serilog-extensions-logging/blob/v9.0.1/src/Serilog.Extensions.Logging/Extensions/Logging/SerilogLogger.cs#L158</remarks>
+    private const string EventIdPropertyName = "EventId";
+
+    /// <summary>
     /// The regular exception matching "class", "method", and optionally "file" and "line" for the caller property.
     /// </summary>
     private static readonly Regex CallerRegex = new(@"(?<class>.*)\.(?<method>.*\(.*\))(?: (?<file>.*):(?<line>\d+))?", RegexOptions.Compiled);
@@ -128,6 +134,36 @@ public class Log4NetTextFormatter : ITextFormatter
 #endif
         }
         output.Write(_options.XmlWriterSettings.NewLineChars);
+    }
+
+    /// <summary>
+    /// The default message formatter.
+    /// <list type="bullet">
+    ///   <item>If the log event comes from <c>Microsoft.Extensions.Logging</c> (detected by the presence of the <c>EventId</c> property) then the message is formatted by switching off quoting of strings.</item>
+    ///   <item>If the log event comes from Serilog, then the message is formatted by calling <see cref="LogEvent.RenderMessage(System.IO.TextWriter,System.IFormatProvider)"/>.</item>
+    /// </list>
+    /// </summary>
+    /// <param name="logEvent">The log event to format.</param>
+    /// <param name="formatProvider">The <see cref="IFormatProvider"/> that supplies culture-specific formatting information, or <see langword="null"/>.</param>
+    /// <returns>The formatted message.</returns>
+    internal static string DefaultMessageFormatter(LogEvent logEvent, IFormatProvider? formatProvider)
+    {
+        // https://github.com/serilog/serilog-extensions-logging/blob/v9.0.1/src/Serilog.Extensions.Logging/Extensions/Logging/EventIdPropertyCache.cs#L58-L73
+        var isMicrosoftExtensionsLoggingEvent = logEvent.Properties.TryGetValue(EventIdPropertyName, out var property)
+                                                && property is StructureValue structure
+                                                && structure.Properties.Count == 2
+                                                && structure.Properties[0].Name == "Id"
+                                                && structure.Properties[1].Name == "Name";
+
+        if (isMicrosoftExtensionsLoggingEvent)
+        {
+            var formatter = new MessageTemplateTextFormatter($"{{{OutputProperties.MessagePropertyName}:l}}", formatProvider);
+            using var output = new StringWriter();
+            formatter.Format(logEvent, output);
+            return output.ToString();
+        }
+
+        return logEvent.RenderMessage(formatProvider);
     }
 
     /// <summary>
@@ -386,9 +422,20 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <param name="logEvent">The log event.</param>
     /// <param name="writer">The XML writer.</param>
     /// <remarks>https://github.com/apache/logging-log4net/blob/rel/2.0.8/src/Layout/XmlLayout.cs#L245-L257</remarks>
+    [SuppressMessage("Microsoft.Design", "CA1031", Justification = "Protecting from user-provided code which might throw anything")]
     private void WriteMessage(LogEvent logEvent, XmlWriter writer)
     {
-        var message = logEvent.RenderMessage(_options.FormatProvider);
+        string message;
+        try
+        {
+            message = _options.FormatMessage(logEvent, _options.FormatProvider);
+        }
+        catch (Exception exception)
+        {
+            Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting a message. Using the default message formatter.\n{exception}");
+            message = DefaultMessageFormatter(logEvent, _options.FormatProvider);
+        }
+
         WriteContent(writer, "message", message);
     }
 

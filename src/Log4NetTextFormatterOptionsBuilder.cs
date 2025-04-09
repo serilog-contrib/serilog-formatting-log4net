@@ -47,7 +47,7 @@ public class Log4NetTextFormatterOptionsBuilder
     private PropertyFilter _filterProperty = (_, _) => true;
 
     /// <summary>See <see cref="UseExceptionFormatter"/></summary>
-    private ExceptionFormatter _formatException = exception => exception.ToString();
+    private ExceptionFormatter _formatException = Log4NetTextFormatter.DefaultExceptionFormatter;
 
     /// <summary>
     /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
@@ -206,5 +206,6 @@ public delegate bool PropertyFilter(LogEvent logEvent, string propertyName);
 /// <summary>
 /// Represents the method that formats an <see cref="Exception"/>.
 /// </summary>
-/// <param name="exception">The exception to be formatted.</param>
+/// <param name="exception">The exception to format.</param>
+/// <returns>The formatted exception.</returns>
 public delegate string ExceptionFormatter(Exception exception);

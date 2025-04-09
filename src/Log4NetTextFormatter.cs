@@ -131,6 +131,13 @@ public class Log4NetTextFormatter : ITextFormatter
     }
 
     /// <summary>
+    /// The default exception formatter. Calls the <see cref="Exception.ToString"/> method on the exception.
+    /// </summary>
+    /// <param name="exception">The exception to format.</param>
+    /// <returns>The formatted exception.</returns>
+    internal static string DefaultExceptionFormatter(Exception exception) => exception.ToString();
+
+    /// <summary>
     /// Write the log event into the XML writer.
     /// </summary>
     /// <param name="logEvent">The log event.</param>
@@ -426,7 +433,7 @@ public class Log4NetTextFormatter : ITextFormatter
         catch (Exception formattingException)
         {
             Debugging.SelfLog.WriteLine($"[{GetType().FullName}] An exception was thrown while formatting an exception. Using the default exception formatter.\n{formattingException}");
-            return exception.ToString();
+            return DefaultExceptionFormatter(exception);
         }
     }
 

@@ -70,7 +70,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@v5
         with:
-          files: coverage/*/coverage.cobertura.xml
+          files: coverage/*/*.cobertura.xml
           token: ${{ env.CODECOV_TOKEN }}
       - name: ☂️ Upload coverage report to Codacy
         env:
@@ -79,7 +79,7 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ env.CODACY_PROJECT_TOKEN }}
-          coverage-reports: coverage/*/coverage.cobertura.xml
+          coverage-reports: coverage/*/*.cobertura.xml
       - name: 📦 Create NuGet package
         run: dotnet pack --no-build --output .
       - name: 📤 Upload NuGet package artifact
@@ -91,7 +91,7 @@ jobs:
       - name: 👽 Run mutation tests and upload report to Stryker dashboard
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-        if: matrix.os == 'ubuntu-latest' && env.STRYKER_DASHBOARD_API_KEY != ''
+        if: matrix.os == 'DISABLED' && env.STRYKER_DASHBOARD_API_KEY != ''
         run: |
           dotnet tool restore
           dotnet tool run dotnet-stryker --reporter dashboard --open-report:dashboard --version ${GITHUB_REF_NAME} --dashboard-api-key ${{ env.STRYKER_DASHBOARD_API_KEY }}

@@ -9,15 +9,14 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;
 using VerifyTests;
-using VerifyXunit;
-using Xunit;
+using VerifyTUnit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
 
-public sealed class Log4NetTextFormatterTest : IDisposable
+public sealed class Log4NetTextFormatterTest
 {
-    private readonly TextWriter _selfLogWriter;
-    private string? SelfLogValue => _selfLogWriter.ToString();
+    private TextWriter? _selfLogWriter;
+    private string? SelfLogValue => _selfLogWriter?.ToString();
 
     /// <summary>
     /// Create a <see cref="DictionaryValue"/> containing two entries, mapping scalar values 1 to "one" and "two" to 2.
@@ -41,19 +40,22 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         );
     }
 
-    public Log4NetTextFormatterTest()
+    [Before(Test)]
+    public void EnableSelfLog()
     {
         _selfLogWriter = new StringWriter();
         Debugging.SelfLog.Enable(_selfLogWriter);
     }
 
-    public void Dispose()
+    [After(Test)]
+    public void DisableSelfLog()
     {
         Debugging.SelfLog.Disable();
-        _selfLogWriter.Dispose();
+        _selfLogWriter?.Dispose();
+        _selfLogWriter = null;
     }
 
-    [Fact]
+    [Test]
     public void NullLogEventThrowsArgumentNullException()
     {
         // Arrange
@@ -67,7 +69,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
             .Which.StackTrace!.TrimStart().Should().StartWith("at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format");
     }
 
-    [Fact]
+    [Test]
     public void NullOutputThrowsArgumentNullException()
     {
         // Arrange
@@ -82,7 +84,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
             .Which.StackTrace!.TrimStart().Should().StartWith("at Serilog.Formatting.Log4Net.Log4NetTextFormatter.Format");
     }
 
-    [Fact]
+    [Test]
     public void SettingPropertyFilterToNullThrowsArgumentNullException()
     {
         // Act
@@ -94,7 +96,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
             .And.ParamName.Should().Be("filterProperty");
     }
 
-    [Fact]
+    [Test]
     public void SettingMessageFormatterToNullThrowsArgumentNullException()
     {
         // Act
@@ -106,7 +108,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
             .And.ParamName.Should().Be("formatMessage");
     }
 
-    [Fact]
+    [Test]
     public void SettingExceptionFormatterToNullThrowsArgumentNullException()
     {
         // Act
@@ -118,13 +120,13 @@ public sealed class Log4NetTextFormatterTest : IDisposable
             .And.ParamName.Should().Be("formatException");
     }
 
-    [Theory]
-    [InlineData(Events.LogEventLevel.Verbose)]
-    [InlineData(Events.LogEventLevel.Debug)]
-    [InlineData(Events.LogEventLevel.Information)]
-    [InlineData(Events.LogEventLevel.Warning)]
-    [InlineData(Events.LogEventLevel.Error)]
-    [InlineData(Events.LogEventLevel.Fatal)]
+    [Test]
+    [Arguments(Events.LogEventLevel.Verbose)]
+    [Arguments(Events.LogEventLevel.Debug)]
+    [Arguments(Events.LogEventLevel.Information)]
+    [Arguments(Events.LogEventLevel.Warning)]
+    [Arguments(Events.LogEventLevel.Error)]
+    [Arguments(Events.LogEventLevel.Fatal)]
     public Task LogEventLevel(LogEventLevel level)
     {
         // Arrange
@@ -139,7 +141,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(level);
     }
 
-    [Fact]
+    [Test]
     public void InvalidLogEventLevelThrowsArgumentOutOfRangeException()
     {
         // Arrange
@@ -154,13 +156,13 @@ public sealed class Log4NetTextFormatterTest : IDisposable
             .And.Message.Should().StartWith("The value of argument 'level' (-1) is invalid for enum type 'LogEventLevel'.");
     }
 
-    [Theory]
-    [InlineData(CDataMode.Always, true)]
-    [InlineData(CDataMode.Always, false)]
-    [InlineData(CDataMode.Never, true)]
-    [InlineData(CDataMode.Never, false)]
-    [InlineData(CDataMode.IfNeeded, true)]
-    [InlineData(CDataMode.IfNeeded, false)]
+    [Test]
+    [Arguments(CDataMode.Always, true)]
+    [Arguments(CDataMode.Always, false)]
+    [Arguments(CDataMode.Never, true)]
+    [Arguments(CDataMode.Never, false)]
+    [Arguments(CDataMode.IfNeeded, true)]
+    [Arguments(CDataMode.IfNeeded, false)]
     public Task MessageCDataMode(CDataMode mode, bool needsEscaping)
     {
         // Arrange
@@ -175,11 +177,11 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(mode, needsEscaping);
     }
 
-    [Theory]
-    [InlineData(LineEnding.None)]
-    [InlineData(LineEnding.LineFeed)]
-    [InlineData(LineEnding.CarriageReturn)]
-    [InlineData(LineEnding.CarriageReturn | LineEnding.LineFeed)]
+    [Test]
+    [Arguments(LineEnding.None)]
+    [Arguments(LineEnding.LineFeed)]
+    [Arguments(LineEnding.CarriageReturn)]
+    [Arguments(LineEnding.CarriageReturn | LineEnding.LineFeed)]
     public Task XmlElementsLineEnding(LineEnding lineEnding)
     {
         // Arrange
@@ -194,11 +196,11 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(lineEnding);
     }
 
-    [Theory]
-    [InlineData(Indentation.Space, 2)]
-    [InlineData(Indentation.Space, 4)]
-    [InlineData(Indentation.Tab, 2)]
-    [InlineData(Indentation.Tab, 4)]
+    [Test]
+    [Arguments(Indentation.Space, (byte)2)]
+    [Arguments(Indentation.Space, (byte)4)]
+    [Arguments(Indentation.Tab, (byte)2)]
+    [Arguments(Indentation.Tab, (byte)4)]
     public Task IndentationSettings(Indentation indentation, byte size)
     {
         // Arrange
@@ -213,7 +215,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(indentation, size);
     }
 
-    [Fact]
+    [Test]
     public Task NoIndentation()
     {
         // Arrange
@@ -228,7 +230,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task NoNamespace()
     {
         // Arrange
@@ -243,7 +245,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task NullProperty()
     {
         // Arrange
@@ -258,7 +260,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task LoggerName()
     {
         // Arrange
@@ -273,7 +275,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task LoggerNameStructureValue()
     {
         // Arrange
@@ -288,7 +290,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task DefaultFormatProvider()
     {
         // Arrange
@@ -303,9 +305,9 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
     public Task Log4JCompatibility(bool useStaticInstance)
     {
         // Arrange
@@ -323,7 +325,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).IgnoreParameters().DisableRequireUniquePrefix();
     }
 
-    [Fact]
+    [Test]
     public Task ExplicitFormatProvider()
     {
         // Arrange
@@ -339,7 +341,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task TwoProperties()
     {
         // Arrange
@@ -357,7 +359,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task TwoPropertiesOneNull()
     {
         // Arrange
@@ -375,7 +377,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task FilterProperty()
     {
         // Arrange
@@ -393,7 +395,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test, NotInParallel]
     public Task FilterPropertyThrowing()
     {
         // Arrange
@@ -419,7 +421,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task TwoEvents()
     {
         // Arrange
@@ -435,7 +437,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task Exception()
     {
         // Arrange
@@ -450,11 +452,11 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Theory]
-    [InlineData(0, null)]
-    [InlineData(0, "EventName")]
-    [InlineData(1, null)]
-    [InlineData(1, "EventName")]
+    [Test]
+    [Arguments(0, null)]
+    [Arguments(0, "EventName")]
+    [Arguments(1, null)]
+    [Arguments(1, "EventName")]
     public Task DefaultMessageFormatter(int eventId, string? eventIdName)
     {
         // Arrange
@@ -487,7 +489,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(eventId, eventIdName);
     }
 
-    [Fact]
+    [Test]
     public Task CustomMessageFormatter()
     {
         // Arrange
@@ -502,7 +504,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task MessageFormatterReturningNull()
     {
         // Arrange
@@ -517,7 +519,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test, NotInParallel]
     public Task MessageFormatterThrowing()
     {
         // Arrange
@@ -533,7 +535,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task ExceptionFormatter()
     {
         // Arrange
@@ -548,7 +550,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task ExceptionFormatterReturningNull()
     {
         // Arrange
@@ -563,7 +565,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test, NotInParallel]
     public Task ExceptionFormatterThrowing()
     {
         // Arrange
@@ -579,9 +581,9 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(1)]
+    [Test]
+    [Arguments(null)]
+    [Arguments(1)]
     public Task ThreadIdProperty(int? threadId)
     {
         // Arrange
@@ -596,12 +598,12 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(threadId);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("TheUser")]
-    [InlineData(@"TheDomain\TheUser")]
-    [InlineData(@"TheDomain\TheUser\Name")]
+    [Test]
+    [Arguments(null)]
+    [Arguments("")]
+    [Arguments("TheUser")]
+    [Arguments(@"TheDomain\TheUser")]
+    [Arguments(@"TheDomain\TheUser\Name")]
     public Task DomainAndUserNameProperty(string? environmentUserName)
     {
         // Arrange
@@ -616,7 +618,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(environmentUserName);
     }
 
-    [Fact]
+    [Test]
     public Task DomainAndUserNamePropertyStructureValue()
     {
         // Arrange
@@ -631,9 +633,9 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("TheMachineName")]
+    [Test]
+    [Arguments(null)]
+    [Arguments("TheMachineName")]
     public Task MachineNameProperty(string? machineName)
     {
         // Arrange
@@ -648,7 +650,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output).UseParameters(machineName);
     }
 
-    [Fact]
+    [Test]
     public Task MachineNamePropertyStructureValue()
     {
         // Arrange
@@ -663,7 +665,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task Caller()
     {
         // Arrange
@@ -679,7 +681,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task CallerNonScalar()
     {
         // Arrange
@@ -695,7 +697,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task CallerWithFile()
     {
         // Arrange
@@ -711,7 +713,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task CallerLog4J()
     {
         // Arrange
@@ -727,7 +729,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task SequenceProperty()
     {
         // Arrange
@@ -743,7 +745,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task DictionaryProperty()
     {
         // Arrange
@@ -764,7 +766,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task StructureProperty()
     {
         // Arrange
@@ -785,7 +787,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
+    [Test]
     public Task CustomLogEventPropertyValue()
     {
         // Arrange

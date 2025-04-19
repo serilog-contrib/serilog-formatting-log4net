@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0][1.3.0] - 2025-04-19
+
+- The formatting of the `message` XML element has changed. If a log event is coming from `Microsoft.Extensions.Logging`, then the message is now formatted by switching off quoting of strings. The formatting of properties remains unchanged.
+
+Before (1.2.0)
+
+```xml
+<event logger="Microsoft.EntityFrameworkCore.Database.Command" timestamp="2003-01-04T15:09:26.535+01:00" level="INFO">
+  <properties>
+    <data name="elapsed" value="10" />
+    <!-- ... -->
+    <data name="EventId.Id" value="20101" />
+    <data name="EventId.Name" value="Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted" />
+  </properties>
+  <message>Executed DbCommand ("10"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT COUNT(*) FROM \"sqlite_master\" WHERE \"type\" = 'table' AND \"rootpage\" IS NOT NULL;"</message>
+</event>
+```
+
+After (1.3.0)
+
+```xml
+<event logger="Microsoft.EntityFrameworkCore.Database.Command" timestamp="2003-01-04T15:09:26.535+01:00" level="INFO">
+  <properties>
+    <data name="elapsed" value="10" />
+    <!-- ... -->
+    <data name="EventId.Id" value="20101" />
+    <data name="EventId.Name" value="Microsoft.EntityFrameworkCore.Database.Command.CommandExecuted" />
+  </properties>
+  <message>Executed DbCommand (10ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "type" = 'table' AND "rootpage" IS NOT NULL;</message>
+</event>
+```
+
+- The message formatting behaviour can be configured with the new `UseMessageFormatter()` method of the options' builder. For example, all log events with the `UppercaseMessage` property set to `true` can have their messages uppercased.
+
+```csharp
+var formatter = new Log4NetTextFormatter(options => options.UseMessageFormatter((logEvent, formatProvider) =>
+{
+    if (logEvent.Properties.TryGetValue("UppercaseMessage", out var up) && up is ScalarValue { Value: true })
+    {
+        return logEvent.RenderMessage(formatProvider).ToUpperInvariant();
+    }
+    return logEvent.RenderMessage(formatProvider);
+}));
+```
+
 ## [1.2.0][1.2.0] - 2024-09-10
 
 - Add support for .NET 8 and mark `Serilog.Formatting.Log4Net` as [trimmable](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained) for [AOT compatibility](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/).
@@ -40,12 +87,12 @@ Serilog.Formatting.Log4Net.Log4NetTextFormatter::Log4JFormatter, Serilog.Formatt
   - Converted the `LineEndingExtensions` class from public to internal
 - Improve log4j compatibility mode: don't write the `xmlns:log4j` attribute to be [exactly compatible](https://github.com/apache/log4j/blob/v1_2_17/src/main/java/org/apache/log4j/xml/XMLLayout.java#L137-L145) with log4j
 
-Before (1.0.0-rc.2):
+Before (1.0.0-rc.2)
 
 ```xml
 <log4j:event timestamp="1041689366535" level="INFO" xmlns:log4j="http://jakarta.apache.org/log4j/"> 
   <log4j:message><![CDATA[Hello from Serilog]]></log4j:message> 
-</log4j:event> 
+</log4j:event>
 ```
 
 After (1.0.0-rc.3)
@@ -53,7 +100,7 @@ After (1.0.0-rc.3)
 ```xml
 <log4j:event timestamp="1041689366535" level="INFO"> 
   <log4j:message><![CDATA[Hello from Serilog]]></log4j:message> 
-</log4j:event> 
+</log4j:event>
 ```
 
 ## [1.0.0-rc.2][1.0.0-rc.2] - 2021-03-25
@@ -62,7 +109,7 @@ After (1.0.0-rc.3)
 - The `Log4NetTextFormatterOptionsBuilder` constructor is now internal
 - Include the index in the property name when formatting a SequenceValue
 
-Before (1.0.0-rc.1):
+Before (1.0.0-rc.1)
 
 ```xml
 <log4net:data name="Args" value="--first-argument" />
@@ -88,7 +135,8 @@ Still trying to figure out how to make everything fit together with [MinVer](htt
 
 - Implement log4j compatibility mode.
 
-[Unreleased]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.2...1.1.0
 [1.0.2]: https://github.com/serilog-contrib/serilog-formatting-log4net/compare/1.0.1...1.0.2

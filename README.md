@@ -60,6 +60,36 @@ Running this app writes the following XML events into the `logs.xml` file in the
 
 You can configure `Log4NetTextFormatter` in multiple ways, the fluent options builder will help you discover all the possibilities.
 
+### Message formatting
+
+Since version 1.3.0, the contents of the `message` XML elements can be customized by using the new `UseMessageFormatter` method. For example, to always [format the message](https://github.com/serilog/serilog/wiki/Formatting-Output) by switching off quoting of strings, use this:
+
+```csharp
+new Log4NetTextFormatter(options => options.UseMessageFormatter(FormatMessageWithoutQuotes));
+
+static string FormatMessageWithoutQuotes(LogEvent logEvent, IFormatProvider? formatProvider)
+{
+    var messageFormatter = new MessageTemplateTextFormatter("{Message:l}", formatProvider);
+    using var output = new StringWriter();
+    messageFormatter.Format(logEvent, output);
+    return output.ToString();
+}
+```
+
+> [!NOTE]  
+> By default, only log events coming from `Microsoft.Extensions.Logging` are formatted without quotes.
+
+To restore the behaviour of version 1.2.0 and earlier (i.e. quoting of all strings), apply te following message formatter:
+
+```csharp
+new Log4NetTextFormatter(options => options.UseMessageFormatter((logEvent, formatProvider) =>
+{
+    return logEvent.RenderMessage(formatProvider);
+}));
+```
+
+See also the [release notes](CHANGELOG.md) of version 1.3.0 for a concrete example of what changed from previous versions.
+
 ### Exception formatting
 
 By default, Log4NetTextFormatter formats exception by calling [ToString()](https://docs.microsoft.com/en-us/dotnet/api/system.exception.tostring). You can customise this behaviour by setting your own formatting delegate. For example, you could use [Ben.Demystifier](https://github.com/benaadams/Ben.Demystifier/) like this:

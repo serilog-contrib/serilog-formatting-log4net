@@ -43,9 +43,11 @@ namespace Serilog.Formatting.Log4Net
         public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder UseIndentationSettings(Serilog.Formatting.Log4Net.IndentationSettings indentationSettings) { }
         public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder UseLineEnding(Serilog.Formatting.Log4Net.LineEnding lineEnding) { }
         public void UseLog4JCompatibility() { }
+        public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder UseMessageFormatter(Serilog.Formatting.Log4Net.MessageFormatter formatMessage) { }
         public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder UseNoIndentation() { }
         public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder UseNoXmlNamespace() { }
         public Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder UsePropertyFilter(Serilog.Formatting.Log4Net.PropertyFilter filterProperty) { }
     }
+    public delegate string MessageFormatter(Serilog.Events.LogEvent logEvent, System.IFormatProvider? formatProvider);
     public delegate bool PropertyFilter(Serilog.Events.LogEvent logEvent, string propertyName);
 }

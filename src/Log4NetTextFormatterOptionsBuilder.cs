@@ -46,8 +46,11 @@ public class Log4NetTextFormatterOptionsBuilder
     /// <summary>See <see cref="UsePropertyFilter"/></summary>
     private PropertyFilter _filterProperty = (_, _) => true;
 
+    /// <summary>See <see cref="UseMessageFormatter"/></summary>
+    private MessageFormatter _formatMessage = Log4NetTextFormatter.DefaultMessageFormatter;
+
     /// <summary>See <see cref="UseExceptionFormatter"/></summary>
-    private ExceptionFormatter _formatException = exception => exception.ToString();
+    private ExceptionFormatter _formatException = Log4NetTextFormatter.DefaultExceptionFormatter;
 
     /// <summary>
     /// Sets the <see cref="IFormatProvider"/> used when formatting message and properties of log4net events.
@@ -137,6 +140,23 @@ public class Log4NetTextFormatterOptionsBuilder
     }
 
     /// <summary>
+    /// Sets the <see cref="MessageFormatter"/> controlling how all messages are formatted.
+    /// <para/>
+    /// The default message formatter has two formatting modes.
+    /// <list type="bullet">
+    ///   <item>If the log event comes from <c>Microsoft.Extensions.Logging</c> (detected by the presence of the <c>EventId</c> property) then the message is formatted by switching off quoting of strings.</item>
+    ///   <item>If the log event comes from Serilog, then the message is formatted by calling <see cref="LogEvent.RenderMessage(System.IO.TextWriter,System.IFormatProvider)"/>.</item>
+    /// </list>
+    /// </summary>
+    /// <remarks>If an exception is thrown while executing the formatter, the default formatter will be used.</remarks>
+    /// <returns>The builder in order to fluently chain all options.</returns>
+    public Log4NetTextFormatterOptionsBuilder UseMessageFormatter(MessageFormatter formatMessage)
+    {
+        _formatMessage = formatMessage ?? throw new ArgumentNullException(nameof(formatMessage), "The message formatter can not be null.");
+        return this;
+    }
+
+    /// <summary>
     /// Sets the <see cref="ExceptionFormatter"/> controlling how all exceptions are formatted.
     /// <para/>
     /// If the formatter returns <see langword="null"/>, the exception will not be written to the log4net event.
@@ -177,7 +197,7 @@ public class Log4NetTextFormatterOptionsBuilder
     }
 
     internal Log4NetTextFormatterOptions Build()
-        => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatException);
+        => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatMessage, _formatException);
 
     private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
     {
@@ -204,7 +224,16 @@ public class Log4NetTextFormatterOptionsBuilder
 public delegate bool PropertyFilter(LogEvent logEvent, string propertyName);
 
 /// <summary>
+/// Represents the method that formats the message for a <see cref="LogEvent"/>.
+/// </summary>
+/// <param name="logEvent">The log event to format.</param>
+/// <param name="formatProvider">The <see cref="IFormatProvider"/> that supplies culture-specific formatting information, or <see langword="null"/>.</param>
+/// <returns>The formatted message.</returns>
+public delegate string MessageFormatter(LogEvent logEvent, IFormatProvider? formatProvider);
+
+/// <summary>
 /// Represents the method that formats an <see cref="Exception"/>.
 /// </summary>
-/// <param name="exception">The exception to be formatted.</param>
+/// <param name="exception">The exception to format.</param>
+/// <returns>The formatted exception.</returns>
 public delegate string ExceptionFormatter(Exception exception);

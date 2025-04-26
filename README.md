@@ -77,7 +77,7 @@ static string FormatMessageWithoutQuotes(LogEvent logEvent, IFormatProvider? for
 ```
 
 > [!NOTE]  
-> By default, only log events coming from `Microsoft.Extensions.Logging` are formatted without quotes.
+> By default, only log events coming from `Microsoft.Extensions.Logging` are formatted without quotes. Log events are identified as coming from `Microsoft.Extensions.Logging` if they have a non-zero [event ID](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging#log-event-id) or a non-null [EventId](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.eventid) name.
 
 To restore the behaviour of version 1.2.0 and earlier (i.e. quoting of all strings), apply te following message formatter:
 

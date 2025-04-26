@@ -1,0 +1,9 @@
+﻿<log4net:event timestamp="2003-01-04T15:09:26.535+01:00" level="INFO" xmlns:log4net="http://logging.apache.org/log4net/schemas/log4net-events-1.2/">
+  <log4net:properties>
+    <log4net:data name="Name" value="World" />
+    <log4net:data name="EventId.Id" value="1" />
+    <log4net:data name="EventId.Name" value="EventName" />
+    <log4net:data name="EventId.More" />
+  </log4net:properties>
+  <log4net:message><![CDATA[Hello World!]]></log4net:message>
+</log4net:event>

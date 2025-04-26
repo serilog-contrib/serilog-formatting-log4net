@@ -451,16 +451,30 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public Task DefaultMessageFormatter(bool hasEventId)
+    [InlineData(0, null)]
+    [InlineData(0, "EventName")]
+    [InlineData(1, null)]
+    [InlineData(1, "EventName")]
+    public Task DefaultMessageFormatter(int eventId, string? eventIdName)
     {
         // Arrange
         using var output = new StringWriter();
         List<LogEventProperty> properties = [ new("Name", new ScalarValue("World")) ];
-        if (hasEventId)
+        List<LogEventProperty> eventIdProperties = [];
+        if (eventId != 0)
         {
-            LogEventProperty[] eventIdProperties = [ new("Id", new ScalarValue(1)), new("Name", new ScalarValue("EventIdName")) ];
+            eventIdProperties.Add(new LogEventProperty("Id", new ScalarValue(eventId)));
+        }
+        if (eventIdName != null)
+        {
+            eventIdProperties.Add(new LogEventProperty("Name", new ScalarValue(eventIdName)));
+        }
+        if (eventIdProperties.Count > 0)
+        {
+            if (eventIdProperties.Count == 2)
+            {
+                eventIdProperties.Add(new LogEventProperty("More", new ScalarValue(null)));
+            }
             properties.Add(new LogEventProperty("EventId", new StructureValue(eventIdProperties)));
         }
         var logEvent = CreateLogEvent(messageTemplate: "Hello {Name}!", properties: properties.ToArray());
@@ -470,7 +484,7 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         formatter.Format(logEvent, output);
 
         // Assert
-        return Verify(output).UseParameters(hasEventId);
+        return Verify(output).UseParameters(eventId, eventIdName);
     }
 
     [Fact]

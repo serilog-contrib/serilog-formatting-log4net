@@ -151,9 +151,7 @@ public class Log4NetTextFormatter : ITextFormatter
         // https://github.com/serilog/serilog-extensions-logging/blob/v9.0.1/src/Serilog.Extensions.Logging/Extensions/Logging/EventIdPropertyCache.cs#L58-L73
         var isMicrosoftExtensionsLoggingEvent = logEvent.Properties.TryGetValue(EventIdPropertyName, out var property)
                                                 && property is StructureValue structure
-                                                && structure.Properties.Count == 2
-                                                && structure.Properties[0].Name == "Id"
-                                                && structure.Properties[1].Name == "Name";
+                                                && structure.Properties.Any(e => e.Name is "Id" or "Name");
 
         if (isMicrosoftExtensionsLoggingEvent)
         {

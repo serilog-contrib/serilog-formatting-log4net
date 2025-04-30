@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [1.3.1][1.3.1] - 2025-04-30
 
-- Log events coming from `Microsoft.Extensions.Logging` are now identified if they have **either** an `EventId.Id` or a `EventId.Name` property. Previously, log events coming from `Microsoft.Extensions.Logging` were identified if they had **both** an `Id` and a `Name` property.
+- Log events coming from `Microsoft.Extensions.Logging` are now identified if they have **either** an `EventId.Id` or an `EventId.Name` property. Previously, log events coming from `Microsoft.Extensions.Logging` were identified if they had **both** an `Id` and a `Name` property.
 
 ## [1.3.0][1.3.0] - 2025-04-19
 

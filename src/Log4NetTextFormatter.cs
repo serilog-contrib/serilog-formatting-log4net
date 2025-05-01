@@ -406,10 +406,13 @@ public class Log4NetTextFormatter : ITextFormatter
     {
         WriteStartElement(writer, "data");
         writer.WriteAttributeString("name", name);
-        var isNullValue = value is ScalarValue { Value: null };
-        if (!isNullValue)
+        if (value is not ScalarValue { Value: null })
         {
             writer.WriteAttributeString("value", RenderValue(value));
+        }
+        else if (_options.NullText != null)
+        {
+            writer.WriteAttributeString("value", _options.NullText);
         }
         writer.WriteEndElement();
     }

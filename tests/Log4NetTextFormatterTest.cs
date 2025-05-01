@@ -83,6 +83,18 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
+    public void SettingNullTextToNullThrowsArgumentNullException()
+    {
+        // Act
+        Action action = () => _ = new Log4NetTextFormatter(c => c.UseNullText(null!));
+
+        // Assert
+        action.Should().ThrowExactly<ArgumentNullException>()
+            .WithMessage("The null text can not be null.*")
+            .And.ParamName.Should().Be("nullText");
+    }
+
+    [Fact]
     public void SettingPropertyFilterToNullThrowsArgumentNullException()
     {
         // Act
@@ -243,19 +255,23 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
-    public Task NullProperty()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("<null>")]
+    [InlineData("🌀")]
+    public Task NullProperty(string? nullText)
     {
         // Arrange
         using var output = new StringWriter();
         var logEvent = CreateLogEvent(properties: new LogEventProperty("n/a", new ScalarValue(null)));
-        var formatter = new Log4NetTextFormatter();
+        var formatter = new Log4NetTextFormatter(options => { if (nullText != null) { options.UseNullText(nullText); } });
 
         // Act
         formatter.Format(logEvent, output);
 
         // Assert
-        return Verify(output);
+        return Verify(output).UseParameters(nullText);
     }
 
     [Fact]

@@ -3,7 +3,7 @@
     <log4net:data name="Name" value="World" />
     <log4net:data name="EventId.Id" value="1" />
     <log4net:data name="EventId.Name" value="EventName" />
-    <log4net:data name="EventId.More" />
+    <log4net:data name="EventId.More" value="(null)" />
   </log4net:properties>
   <log4net:message><![CDATA[Hello World!]]></log4net:message>
 </log4net:event>

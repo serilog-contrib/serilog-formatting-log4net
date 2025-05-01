@@ -31,8 +31,11 @@ public class Log4NetTextFormatterOptionsBuilder
     /// <summary>See <see cref="UseFormatProvider"/></summary>
     private IFormatProvider? _formatProvider;
 
-    /// <summary> See <see cref="UseCDataMode"/></summary>
+    /// <summary>See <see cref="UseCDataMode"/></summary>
     private CDataMode _cDataMode = CDataMode.Always;
+
+    /// <summary>See <see cref="UseNullText"/></summary>
+    private string? _nullText = "(null)";
 
     /// <summary>See <see cref="UseNoXmlNamespace"/></summary>
     private XmlQualifiedName? _xmlNamespace = Log4NetXmlNamespace;
@@ -75,6 +78,23 @@ public class Log4NetTextFormatterOptionsBuilder
     public Log4NetTextFormatterOptionsBuilder UseCDataMode(CDataMode cDataMode)
     {
         _cDataMode = cDataMode;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets how <see langword="null"/> properties are rendered as textual representation inside XML attributes.
+    /// <para/>
+    /// The default value is <c>(null)</c>.
+    /// </summary>
+    /// <param name="nullText">The text to use to represent <see langword="null"/> properties.</param>
+    /// <returns>The builder in order to fluently chain all options.</returns>
+    /// <remarks>
+    /// Pass <see langword="null"/> for <paramref name="nullText"/> to omit the <c>value</c> attribute, i.e. <code>&lt;log4net:data name="MiddleName" /&gt;</code>
+    /// Note that this is not strictly compatible with log4net/log4j XML formats and should be used to keep compatibility with Serilog.Formatting.Log4Net 1.3.1 and earlier if needed.
+    /// </remarks>
+    public Log4NetTextFormatterOptionsBuilder UseNullText(string? nullText)
+    {
+        _nullText = nullText;
         return this;
     }
 
@@ -197,7 +217,7 @@ public class Log4NetTextFormatterOptionsBuilder
     }
 
     internal Log4NetTextFormatterOptions Build()
-        => new(_formatProvider, _cDataMode, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatMessage, _formatException);
+        => new(_formatProvider, _cDataMode, _nullText, _xmlNamespace, CreateXmlWriterSettings(_lineEnding, _indentationSettings), _filterProperty, _formatMessage, _formatException);
 
     private static XmlWriterSettings CreateXmlWriterSettings(LineEnding lineEnding, IndentationSettings? indentationSettings)
     {

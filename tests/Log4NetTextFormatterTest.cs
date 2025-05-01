@@ -243,19 +243,24 @@ public sealed class Log4NetTextFormatterTest : IDisposable
         return Verify(output);
     }
 
-    [Fact]
-    public Task NullProperty()
+    [Theory]
+    [InlineData("_DEFAULT_")]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("<null>")]
+    [InlineData("🌀")]
+    public Task NullProperty(string? nullText)
     {
         // Arrange
         using var output = new StringWriter();
         var logEvent = CreateLogEvent(properties: new LogEventProperty("n/a", new ScalarValue(null)));
-        var formatter = new Log4NetTextFormatter();
+        var formatter = new Log4NetTextFormatter(options => { if (nullText != "_DEFAULT_") { options.UseNullText(nullText); } });
 
         // Act
         formatter.Format(logEvent, output);
 
         // Assert
-        return Verify(output);
+        return Verify(output).UseParameters(nullText);
     }
 
     [Fact]

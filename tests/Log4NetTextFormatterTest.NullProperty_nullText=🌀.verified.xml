@@ -1,7 +1,6 @@
 ﻿<log4net:event timestamp="2003-01-04T15:09:26.535+01:00" level="INFO" xmlns:log4net="http://logging.apache.org/log4net/schemas/log4net-events-1.2/">
   <log4net:properties>
-    <log4net:data name="n/a" value="(null)" />
-    <log4net:data name="one" value="1" />
+    <log4net:data name="n/a" value="🌀" />
   </log4net:properties>
   <log4net:message><![CDATA[Hello from Serilog]]></log4net:message>
 </log4net:event>

@@ -5,11 +5,16 @@ on: push
 env:
   Configuration: Release
   ContinuousIntegrationBuild: true
+  DISABLE_GITHUB_REPORTER: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
   DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
   REPORTGENERATOR_LICENSE: ${{ secrets.REPORTGENERATOR_LICENSE }}
   TERM: xterm
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   package:
@@ -27,8 +32,8 @@ jobs:
       - name: 🏎 Optimize Windows runner
         if: matrix.os == 'windows-latest'
         run: |
-          echo "DOTNET_INSTALL_DIR=D:\dotnet" >> $env:GITHUB_ENV
-          echo "NUGET_PACKAGES=D:\nuget" >> $env:GITHUB_ENV
+          echo "DOTNET_INSTALL_DIR=D:\dotnet" >> $GITHUB_ENV
+          echo "NUGET_PACKAGES=D:\nuget" >> $GITHUB_ENV
       - name: 🧑‍🔧 Install .NET SDK
         uses: actions/setup-dotnet@v4
       - name: ℹ️ Show .NET info
@@ -46,6 +51,10 @@ jobs:
         run: dotnet build --no-restore
       - name: 🧪 Run tests
         run: dotnet test --no-build
+      - name: 📊 Write tests summary
+        run: |
+          dotnet tool restore
+          dotnet liquid --inputs "File=*.trx" --output-file $GITHUB_STEP_SUMMARY
       - name: 📤 Upload received files from failing tests
         uses: actions/upload-artifact@v4
         if: failure()

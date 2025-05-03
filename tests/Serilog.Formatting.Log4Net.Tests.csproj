@@ -39,7 +39,7 @@
     <ItemGroup>
       <CoverageReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
     </ItemGroup>
-    <ReportGenerator ReportFiles="@(CoverageReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="Html;TextSummary" />
+    <ReportGenerator ReportFiles="@(CoverageReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="HtmlInline;TextSummary" />
   </Target>
 
   <!-- Because of https://github.com/microsoft/vstest/issues/2378 -->

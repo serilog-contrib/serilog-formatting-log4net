@@ -8,6 +8,7 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
   DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+  REPORTGENERATOR_LICENSE: ${{ secrets.REPORTGENERATOR_LICENSE }}
   TERM: xterm
 
 jobs:
@@ -57,6 +58,12 @@ jobs:
         with:
           name: TestResults-${{ runner.os }}.trx
           path: "*.trx"
+      - name: 📤 Upload coverage report
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Coverage Report
+          path: coverage
       - name: ☂️ Upload coverage report to Codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Parsing;

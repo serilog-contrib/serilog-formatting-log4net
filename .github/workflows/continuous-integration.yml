@@ -58,6 +58,13 @@ jobs:
         with:
           name: TestResults-${{ runner.os }}.trx
           path: "*.trx"
+      - name: 📊 Test Report
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: 🚦 Test Results
+          path: '*.trx'
+          reporter: dotnet-trx
       - name: 📤 Upload coverage report
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4

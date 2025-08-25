@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" Version="9.1.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" PrivateAssets="all" />
-    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="PublicApiGenerator" Version="11.4.6" />
     <PackageReference Include="ReportGenerator" Version="5.4.12" PrivateAssets="all" />
@@ -21,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <VSTestLogger Include="GitHubActions%3Bsummary.includePassedTests=true%3Bsummary.includeSkippedTests=true" Visible="false" Condition="$(GITHUB_STEP_SUMMARY) != ''" />
     <VSTestLogger Include="trx%3BLogFileName=TestResults-$(TargetFramework).trx" Visible="false" Condition="$(ContinuousIntegrationBuild) == 'true'" />
     <VSTestLogger Include="html%3BLogFileName=TestResults-$(TargetFramework).html" Visible="false" />
   </ItemGroup>

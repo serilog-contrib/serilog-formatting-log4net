@@ -6,7 +6,6 @@ ProjectSection(SolutionItems) = preProject
 	NuGet.config = NuGet.config
 	.config\dotnet-tools.json = .config\dotnet-tools.json
 	src\packages.lock.json = src\packages.lock.json
-	.github\dependabot.yml = .github\dependabot.yml
 	MAINTENANCE.md = MAINTENANCE.md
 	CHANGELOG.md = CHANGELOG.md
 	CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md

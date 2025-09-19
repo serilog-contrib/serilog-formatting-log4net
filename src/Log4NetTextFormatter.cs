@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -100,6 +101,61 @@ public partial class Log4NetTextFormatter : ITextFormatter
         configureOptions?.Invoke(optionsBuilder);
         _options = optionsBuilder.Build();
         _usesLog4JCompatibility = ReferenceEquals(Log4NetTextFormatterOptionsBuilder.Log4JXmlNamespace, _options.XmlNamespace);
+    }
+
+    /// <summary>
+    /// A highly improbable value to be used as the null text.
+    /// </summary>
+    private const string NullTextDefaultMarker = "$Serilog.Formatting.Log4Net.Log4NetTextFormatter.nullText$";
+
+    /// <summary>
+    /// Do not use this constructor. It is only available for the <a href="https://github.com/serilog/serilog-settings-configuration">Serilog.Settings.Configuration</a> integration.
+    /// The property filter, the message formatter and the exception formatter can only be configured through
+    /// the <see cref="Log4NetTextFormatter(Action&lt;Log4NetTextFormatterOptionsBuilder&gt;)"/> constructor.
+    /// </summary>
+    /// <remarks>
+    /// Binary compatibility across versions is not guaranteed. New optional parameters will be added in order to match new options.
+    /// </remarks>
+    [Obsolete("This constructor is only for use by the Serilog.Settings.Configuration package.", error: true)]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used by Serilog.Settings.Configuration through reflection.")]
+    public Log4NetTextFormatter(
+        string? formatProvider = null,
+        CDataMode? cDataMode = null,
+        string? nullText = NullTextDefaultMarker,
+        // in order to support options.UseNullText(null) on .NET < 10, see https://learn.microsoft.com/en-us/dotnet/core/compatibility/extensions/10.0/configuration-null-values-preserved
+        bool noNullText = false,
+        bool noXmlNamespace = false,
+        LineEnding? lineEnding = null,
+        Indentation? indentation = null,
+        byte? indentationSize = null,
+        bool noIndentation = false,
+        bool log4JCompatibility = false
+    ) : this(options =>
+        {
+            if (formatProvider != null)
+                options.UseFormatProvider(CultureInfo.GetCultureInfo(formatProvider));
+            if (cDataMode != null)
+                options.UseCDataMode(cDataMode.Value);
+            if (nullText != NullTextDefaultMarker)
+                options.UseNullText(nullText);
+            if (noNullText)
+                options.UseNullText(null);
+            if (noXmlNamespace)
+                options.UseNoXmlNamespace();
+            if (lineEnding != null)
+                options.UseLineEnding(lineEnding.Value);
+            if (indentation != null && indentationSize != null)
+                options.UseIndentationSettings(new IndentationSettings(indentation.Value, indentationSize.Value));
+            else if (indentation != null)
+                options.UseIndentationSettings(new IndentationSettings(indentation.Value, Log4NetTextFormatterOptionsBuilder.DefaultIndentationSize));
+            else if (indentationSize != null)
+                options.UseIndentationSettings(new IndentationSettings(Log4NetTextFormatterOptionsBuilder.DefaultIndentation, indentationSize.Value));
+            if (noIndentation)
+                options.UseNoIndentation();
+            if (log4JCompatibility)
+                options.UseLog4JCompatibility();
+        })
+    {
     }
 
     /// <summary>

@@ -21,26 +21,26 @@ internal sealed class Log4NetTextFormatterOptions
     }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseFormatProvider"/></summary>
-    internal IFormatProvider? FormatProvider { get; }
+    public IFormatProvider? FormatProvider { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseCDataMode"/></summary>
-    internal CDataMode CDataMode { get; }
+    public CDataMode CDataMode { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseNullText"/></summary>
-    internal string? NullText { get; }
+    public string? NullText { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseNoXmlNamespace"/></summary>
-    internal XmlQualifiedName? XmlNamespace { get; }
+    public XmlQualifiedName? XmlNamespace { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.CreateXmlWriterSettings"/></summary>
-    internal XmlWriterSettings XmlWriterSettings { get; }
+    public XmlWriterSettings XmlWriterSettings { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UsePropertyFilter"/></summary>
-    internal PropertyFilter FilterProperty { get; }
+    public PropertyFilter FilterProperty { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseMessageFormatter"/></summary>
-    internal MessageFormatter FormatMessage { get; }
+    public MessageFormatter FormatMessage { get; }
 
     /// <summary>See <see cref="Log4NetTextFormatterOptionsBuilder.UseExceptionFormatter"/></summary>
-    internal ExceptionFormatter FormatException { get; }
+    public ExceptionFormatter FormatException { get; }
 }

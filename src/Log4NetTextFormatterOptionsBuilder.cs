@@ -22,6 +22,16 @@ public class Log4NetTextFormatterOptionsBuilder
     internal static readonly XmlQualifiedName Log4JXmlNamespace = new("log4j", "http://jakarta.apache.org/log4j/");
 
     /// <summary>
+    /// The default indentation style, i.e. <c>space</c>
+    /// </summary>
+    internal const Indentation DefaultIndentation = Indentation.Space;
+
+    /// <summary>
+    /// The default indentation size, i.e. <c>2</c>
+    /// </summary>
+    internal const byte DefaultIndentationSize = 2;
+
+    /// <summary>
     /// Initialize a new instance of the <see cref="Log4NetTextFormatterOptionsBuilder"/> class.
     /// </summary>
     internal Log4NetTextFormatterOptionsBuilder()
@@ -44,7 +54,7 @@ public class Log4NetTextFormatterOptionsBuilder
     private LineEnding _lineEnding = LineEnding.LineFeed;
 
     /// <summary>See <see cref="UseIndentationSettings"/></summary>
-    private IndentationSettings? _indentationSettings = new(Indentation.Space, size: 2);
+    private IndentationSettings? _indentationSettings = new(DefaultIndentation, DefaultIndentationSize);
 
     /// <summary>See <see cref="UsePropertyFilter"/></summary>
     private PropertyFilter _filterProperty = (_, _) => true;

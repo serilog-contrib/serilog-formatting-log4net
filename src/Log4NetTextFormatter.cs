@@ -14,7 +14,6 @@ namespace Serilog.Formatting.Log4Net;
 /// <summary>
 /// A text formatter that serialize log events into <a href="https://logging.apache.org/log4net/">log4net</a> or <a href="https://logging.apache.org/log4j/">log4j</a> compatible XML format.
 /// </summary>
-// ReSharper disable once PartialTypeWithSinglePart -- Used for [GeneratedRegex] on .NET 8 onwards
 public partial class Log4NetTextFormatter : ITextFormatter
 {
     /// <summary>

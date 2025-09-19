@@ -216,6 +216,13 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ```
 
+## Configuration with [Serilog.Settings.Configuration](https://github.com/serilog/serilog-settings-configuration)
+
+Available since version 2.0.0
+
+> [!TIP]
+> The the message formatter, the exception formatter and the property filter can only be configured through code. Use the `Serilog.Settings.Configuration` integration only if you don't need them.
+
 ## Enrichers
 
 The log4Net XML format defines some special attributes which are not included by default in Serilog events. They can be added by using the appropriate Serilog [enrichers](https://github.com/serilog/serilog/wiki/Enrichment).

@@ -1,6 +1,7 @@
 ﻿[assembly: System.CLSCompliant(true)]
 [assembly: System.Reflection.AssemblyMetadata("IsTrimmable", "True")]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/serilog-contrib/serilog-formatting-log4net")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Serilog.Formatting.Log4Net.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
 namespace Serilog.Formatting.Log4Net
 {
@@ -32,6 +33,8 @@ namespace Serilog.Formatting.Log4Net
     {
         public Log4NetTextFormatter() { }
         public Log4NetTextFormatter(System.Action<Serilog.Formatting.Log4Net.Log4NetTextFormatterOptionsBuilder>? configureOptions) { }
+        [System.Obsolete("This constructor is only for use by the Serilog.Settings.Configuration package.", true)]
+        public Log4NetTextFormatter(string? formatProvider = null, Serilog.Formatting.Log4Net.CDataMode? cDataMode = default, string? nullText = "(null)", bool noNullText = false, bool noXmlNamespace = false, Serilog.Formatting.Log4Net.LineEnding? lineEnding = default, string? indentation = null, bool log4JCompatibility = false) { }
         public static Serilog.Formatting.Log4Net.Log4NetTextFormatter Log4JFormatter { get; }
         public void Format(Serilog.Events.LogEvent logEvent, System.IO.TextWriter output) { }
     }

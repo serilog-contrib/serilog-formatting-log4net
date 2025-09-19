@@ -35,7 +35,7 @@ public class Log4NetTextFormatterOptionsBuilder
     private CDataMode _cDataMode = CDataMode.Always;
 
     /// <summary>See <see cref="UseNullText"/></summary>
-    private string? _nullText = "(null)";
+    private string? _nullText = Log4NetTextFormatter.DefaultNullText;
 
     /// <summary>See <see cref="UseNoXmlNamespace"/></summary>
     private XmlQualifiedName? _xmlNamespace = Log4NetXmlNamespace;

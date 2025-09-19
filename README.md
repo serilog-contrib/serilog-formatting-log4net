@@ -106,6 +106,28 @@ By default, Log4NetTextFormatter writes all messages and exceptions with a [CDAT
 new Log4NetTextFormatter(c => c.UseCDataMode(CDataMode.Never))
 ```
 
+### Null text
+
+Available since version 1.4.0
+
+By default, when a property value is `null`, the text used for its representation is `(null)`. This can be changed with the `UseNullText()` configuration method.
+
+Here's how to configure the formatter to use `🔷null🔷` when a property value is `null`.
+
+```c#
+new Log4NetTextFormatter(c => c.UseNullText("🔷null🔷"));
+```
+
+This will produce the following output.
+
+```xml
+<log4net:properties>
+  <log4net:data name="key" value="🔷null🔷" />
+</log4net:properties>
+```
+
+To restore compatibility with version 1.3.1 and earlier (which produced a non-compatible XML), `UseNullText(null)` can be called.
+
 ### XML Namespace
 
 You can remove the `log4net` XML namespace by calling `UseNoXmlNamespace()` on the options builder. This is useful if you want to spare some bytes and your log reader supports log4net XML events without namespace, like [Log4View](https://www.log4view.com) does.

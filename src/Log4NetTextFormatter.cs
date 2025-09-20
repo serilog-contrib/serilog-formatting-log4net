@@ -14,7 +14,8 @@ namespace Serilog.Formatting.Log4Net;
 /// <summary>
 /// A text formatter that serialize log events into <a href="https://logging.apache.org/log4net/">log4net</a> or <a href="https://logging.apache.org/log4j/">log4j</a> compatible XML format.
 /// </summary>
-public class Log4NetTextFormatter : ITextFormatter
+// ReSharper disable once PartialTypeWithSinglePart -- Used for [GeneratedRegex] on .NET 8 onwards
+public partial class Log4NetTextFormatter : ITextFormatter
 {
     /// <summary>
     /// The characters that must be escaped inside an XML element. Used when <see cref="CDataMode"/> is <see cref="CDataMode.IfNeeded"/>.
@@ -62,7 +63,15 @@ public class Log4NetTextFormatter : ITextFormatter
     /// <summary>
     /// The regular exception matching "class", "method", and optionally "file" and "line" for the caller property.
     /// </summary>
-    private static readonly Regex CallerRegex = new(@"(?<class>.*)\.(?<method>.*\(.*\))(?: (?<file>.*):(?<line>\d+))?", RegexOptions.Compiled);
+    private const string CallerRegularExpression = @"(?<class>.*)\.(?<method>.*\(.*\))(?: (?<file>.*):(?<line>\d+))?";
+
+#if NET8_0_OR_GREATER
+    [GeneratedRegex(CallerRegularExpression)]
+    private static partial Regex CallerRegex();
+#else
+    private static readonly Regex CallerRegexField = new(CallerRegularExpression, RegexOptions.Compiled);
+    private static Regex CallerRegex() => CallerRegexField;
+#endif
 
     private readonly Log4NetTextFormatterOptions _options;
     private readonly bool _usesLog4JCompatibility;
@@ -498,7 +507,7 @@ public class Log4NetTextFormatter : ITextFormatter
     {
         if (logEvent.Properties.TryGetValue(CallerPropertyName, out var callerProperty) && callerProperty is ScalarValue { Value: string caller })
         {
-            var match = CallerRegex.Match(caller);
+            var match = CallerRegex().Match(caller);
             if (match.Success)
             {
                 WriteStartElement(writer, "locationInfo");

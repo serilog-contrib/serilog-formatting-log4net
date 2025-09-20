@@ -30,7 +30,7 @@
     <CoverageReportDirectory>$([System.IO.Path]::Combine($(RootDirectory),'coverage',$(TargetFramework)))</CoverageReportDirectory>
     <VSTestResultsDirectory Condition="$(ContinuousIntegrationBuild) == 'true'">$(RootDirectory)</VSTestResultsDirectory>
     <VSTestResultsDirectory Condition="$(ContinuousIntegrationBuild) != 'true'">$([System.IO.Path]::Combine($(CoverageReportDirectory),'results'))</VSTestResultsDirectory>
-    <VSTestCollect>XPlat Code Coverage</VSTestCollect>
+    <VSTestCollect>XPlat Code Coverage%3BExcludeByAttribute=GeneratedCodeAttribute</VSTestCollect>
     <VSTestLogger>@(VSTestLogger)</VSTestLogger>
   </PropertyGroup>
 

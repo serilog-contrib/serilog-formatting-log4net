@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [2.0.0][Unreleased] - Unreleased
+
+- **Breaking Change**: Drop support for .NET 6 which  [ended](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) on November 12, 2024. Note that .NET Standard 2.0 is still supported.
+
 ## [1.4.0][1.4.0] - 2025-09-19
 
 - Properties whose values are `null` are now always serialized with a `value` attribute. Thanks to @southernprogrammer for reporting this issue. See the [Null text](https://github.com/serilog-contrib/serilog-formatting-log4net#null-text) documentation in the README for more information.

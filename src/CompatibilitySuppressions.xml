@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/en-us/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:Serilog.Formatting.Log4Net.CDataMode</Target>
+    <Left>lib/net6.0/Serilog.Formatting.Log4Net.dll</Left>
+    <Right>lib/netstandard2.0/Serilog.Formatting.Log4Net.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:Serilog.Formatting.Log4Net.Indentation</Target>
+    <Left>lib/net6.0/Serilog.Formatting.Log4Net.dll</Left>
+    <Right>lib/netstandard2.0/Serilog.Formatting.Log4Net.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0008</DiagnosticId>
+    <Target>T:Serilog.Formatting.Log4Net.LineEnding</Target>
+    <Left>lib/net6.0/Serilog.Formatting.Log4Net.dll</Left>
+    <Right>lib/netstandard2.0/Serilog.Formatting.Log4Net.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

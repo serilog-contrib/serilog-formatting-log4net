@@ -141,6 +141,6 @@ jobs:
         uses: NuGet/login@v1
         id: nuget-login
         with:
-          user: 0xced
+          user: '0xced'
       - name: 🚀 Publish NuGet package on nuget.org
         run: dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"

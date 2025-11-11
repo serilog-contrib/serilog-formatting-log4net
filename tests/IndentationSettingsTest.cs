@@ -1,16 +1,15 @@
 using System;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
 
 public class IndentationSettingsTest
 {
-    [Theory]
-    [InlineData(Indentation.Space, 2, "  ")]
-    [InlineData(Indentation.Tab, 2, "\t\t")]
-    [InlineData(Indentation.Space, 4, "    ")]
-    [InlineData(Indentation.Tab, 4, "\t\t\t\t")]
+    [Test]
+    [Arguments(Indentation.Space, (byte)2, "  ")]
+    [Arguments(Indentation.Tab, (byte)2, "\t\t")]
+    [Arguments(Indentation.Space, (byte)4, "    ")]
+    [Arguments(Indentation.Tab, (byte)4, "\t\t\t\t")]
     public void IndentationSettingsToString(Indentation indentation, byte size, string expectedString)
     {
         // Arrange
@@ -23,7 +22,7 @@ public class IndentationSettingsTest
         indentationString.Should().Be(expectedString);
     }
 
-    [Fact]
+    [Test]
     public void InvalidIndentation()
     {
         // Act
@@ -34,7 +33,7 @@ public class IndentationSettingsTest
             .Which.Message.Should().StartWith("The value of argument 'indentation' (-1) is invalid for enum type 'Indentation'.");
     }
 
-    [Fact]
+    [Test]
     public void InvalidSize()
     {
         // Act

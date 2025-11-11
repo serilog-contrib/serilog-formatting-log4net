@@ -7,53 +7,36 @@
 
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-    <PackageReference Include="coverlet.collector" Version="6.0.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.1.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
     <PackageReference Include="PublicApiGenerator" Version="11.5.4" />
     <PackageReference Include="ReportGenerator" Version="5.5.1" PrivateAssets="all" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageReference Include="TUnit.Engine" Version="1.6.15" />
     <PackageReference Include="Verify" Version="31.9.0" GeneratePathProperty="true" />
-    <PackageReference Include="Verify.Xunit" Version="31.9.0" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <VSTestLogger Include="trx%3BLogFileName=TestResults-$(TargetFramework).trx" Visible="false" Condition="$(ContinuousIntegrationBuild) == 'true'" />
-    <VSTestLogger Include="html%3BLogFileName=TestResults-$(TargetFramework).html" Visible="false" />
+    <PackageReference Include="Verify.TUnit" Version="31.9.0" />
   </ItemGroup>
 
   <PropertyGroup Label="Coverage">
     <RootDirectory>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</RootDirectory>
-    <CoverageReportDirectory>$([System.IO.Path]::Combine($(RootDirectory),'coverage',$(TargetFramework)))</CoverageReportDirectory>
-    <VSTestResultsDirectory Condition="$(ContinuousIntegrationBuild) == 'true'">$(RootDirectory)</VSTestResultsDirectory>
-    <VSTestResultsDirectory Condition="$(ContinuousIntegrationBuild) != 'true'">$([System.IO.Path]::Combine($(CoverageReportDirectory),'results'))</VSTestResultsDirectory>
-    <VSTestCollect>XPlat Code Coverage%3BExcludeByAttribute=GeneratedCodeAttribute</VSTestCollect>
-    <VSTestLogger>@(VSTestLogger)</VSTestLogger>
+    <CoverageReportDirectory>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine($(RootDirectory),'coverage',$(TargetFramework)))))</CoverageReportDirectory>
+    <CoverageReportFile>$([System.IO.Path]::Combine($(CoverageReportDirectory),'$(MSBuildProjectName).cobertura.xml'))</CoverageReportFile>
+    <CoverageReportAfterTargets Condition="$(DisableCoverage) != 'true'">VSTest</CoverageReportAfterTargets>
+    <ArgsCoverage Condition="$(DisableCoverage) != 'true'">--coverage --coverage-output-format cobertura --coverage-output $(CoverageReportFile) --coverage-settings coverage.xml</ArgsCoverage>
+    <ArgsTrx Condition="$(ContinuousIntegrationBuild) == 'true'"> --report-trx --report-trx-filename $(MSBuildProjectName).trx --results-directory $(RootDirectory)</ArgsTrx>
+    <TestingPlatformCommandLineArguments>$(ArgsCoverage)$(ArgsTrx)</TestingPlatformCommandLineArguments>
   </PropertyGroup>
 
-  <Target Name="GenerateHtmlCoverageReport" AfterTargets="VSTest" Condition="$(TargetFramework) != ''">
+  <Target Name="GenerateCoverageReports" AfterTargets="$(CoverageReportAfterTargets)" Condition="$(TargetFramework) != ''">
     <ItemGroup>
-      <CoverageReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
+      <CoverageReport Include="$(CoverageReportDirectory)/*.cobertura.xml" />
     </ItemGroup>
     <ReportGenerator ReportFiles="@(CoverageReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="HtmlInline;TextSummary" />
   </Target>
 
-  <!-- Because of https://github.com/microsoft/vstest/issues/2378 -->
-  <Target Name="MoveCoverageReport" AfterTargets="GenerateHtmlCoverageReport" Condition="$(TargetFramework) != ''">
-    <Move SourceFiles="@(CoverageReport)" DestinationFolder="$(CoverageReportDirectory)" />
-    <PropertyGroup>
-      <CoverageReport>@(CoverageReport)</CoverageReport>
-    </PropertyGroup>
-    <ItemGroup>
-      <CoverageReportParentDirectory Include="$([System.IO.Path]::Combine($(CoverageReport),'..'))" Condition="$(CoverageReport) != ''" />
-    </ItemGroup>
-    <RemoveDir Directories="@(CoverageReportParentDirectory)" />
-  </Target>
-
-  <Target Name="DisplayCoverageSummary" AfterTargets="MoveCoverageReport" Condition="$(TargetFramework) != ''">
+  <Target Name="DisplayCoverageSummary" AfterTargets="GenerateCoverageReports" Condition="$(TargetFramework) != ''">
     <PropertyGroup>
       <CatCommand Condition="!$([MSBuild]::IsOSPlatform('Windows'))">cat</CatCommand>
       <CatCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">type</CatCommand>
@@ -61,7 +44,7 @@
     <Exec WorkingDirectory="$(CoverageReportDirectory)" Command="$(CatCommand) Summary.txt" />
   </Target>
   
-  <Target Name="OpenHtmlCoverageReport" AfterTargets="MoveCoverageReport" Condition="$(TargetFramework) != '' AND $(ContinuousIntegrationBuild) != 'true'">
+  <Target Name="OpenHtmlCoverageReport" AfterTargets="DisplayCoverageSummary" Condition="$(TargetFramework) != '' AND $(ContinuousIntegrationBuild) != 'true'">
     <PropertyGroup>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('Linux'))">xdg-open</OpenCommand>
       <OpenCommand Condition="$([MSBuild]::IsOSPlatform('OSX'))">open</OpenCommand>

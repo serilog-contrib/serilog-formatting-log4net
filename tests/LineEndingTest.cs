@@ -1,12 +1,11 @@
 using System;
 using AwesomeAssertions;
-using Xunit;
 
 namespace Serilog.Formatting.Log4Net.Tests;
 
 public class LineEndingTest
 {
-    [Fact]
+    [Test]
     public void InvalidLineEnding()
     {
         Action action = () => _ = new Log4NetTextFormatter(c => c.UseLineEnding((LineEnding)4));

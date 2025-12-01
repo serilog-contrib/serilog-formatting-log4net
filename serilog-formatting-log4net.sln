@@ -2,7 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{F0707B5E-7B54-4D36-993B-17293615DEF7}"
 ProjectSection(SolutionItems) = preProject
-	global.json = global.json
 	NuGet.config = NuGet.config
 	.config\dotnet-tools.json = .config\dotnet-tools.json
 	src\packages.lock.json = src\packages.lock.json

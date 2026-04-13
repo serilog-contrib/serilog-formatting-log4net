@@ -21,7 +21,7 @@ jobs:
     name: 🛠 Build, test and pack
     steps:
       - name: 🧑‍💻 Checkout git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: 🏎 Optimize Windows runner
@@ -30,7 +30,7 @@ jobs:
           echo "DOTNET_INSTALL_DIR=D:\dotnet" >> $env:GITHUB_ENV
           echo "NUGET_PACKAGES=D:\nuget" >> $env:GITHUB_ENV
       - name: 🧑‍🔧 Install .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
       - name: ℹ️ Show .NET info
         run: dotnet --info
       - name: 💾 Retrieve cached NuGet packages
@@ -47,13 +47,13 @@ jobs:
       - name: 🧪 Run tests
         run: dotnet test --no-build
       - name: 📤 Upload received files from failing tests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: Received-${{ runner.os }}
           path: "**/*.received.*"
       - name: 📤 Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: TestResults-${{ runner.os }}.trx
@@ -67,7 +67,7 @@ jobs:
           reporter: dotnet-trx
       - name: 📤 Upload coverage report
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Coverage Report
           path: coverage
@@ -91,7 +91,7 @@ jobs:
         run: dotnet pack --no-build --output .
       - name: 📤 Upload NuGet package artifact
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: NuGet package
           path: "*.nupkg"
@@ -109,7 +109,7 @@ jobs:
           git tag --list ${{ github.ref_name }} --format='%(contents)' > ReleaseNotes.md
       - name: 📤 Upload release notes
         if: matrix.os == 'ubuntu-latest' && startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Release Notes
           path: ReleaseNotes.md
@@ -123,11 +123,11 @@ jobs:
     name: 🐿 Publish
     steps:
       - name: 📥 Download NuGet package artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: NuGet package
       - name: 📥 Download release notes artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: Release Notes
       - name: 🚢 Create GitHub Release
@@ -141,6 +141,6 @@ jobs:
         uses: NuGet/login@v1
         id: nuget-login
         with:
-          user: '0xced'
+          user: "0xced"
       - name: 🚀 Publish NuGet package on nuget.org
         run: dotnet nuget push "*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"

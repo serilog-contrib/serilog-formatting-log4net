@@ -27,8 +27,13 @@ jobs:
       - name: 🏎 Optimize Windows runner
         if: matrix.os == 'windows-latest'
         run: |
+          # extremely slow Network/Disk IO on Windows agent compared to Ubuntu/Mac
+          # https://github.com/actions/setup-dotnet/issues/260#issuecomment-2533613266
           echo "DOTNET_INSTALL_DIR=D:\dotnet" >> $env:GITHUB_ENV
           echo "NUGET_PACKAGES=D:\nuget" >> $env:GITHUB_ENV
+          # Cache restoration is orders of magnitude slower on Windows compared to Linux
+          # https://github.com/actions/cache/issues/752#issuecomment-4267871236
+          echo "ACTIONS_CACHE_PREFER_BSD_TAR_ON_WINDOWS=true" >> $env:GITHUB_ENV
       - name: 🧑‍🔧 Install .NET SDK
         uses: actions/setup-dotnet@v5
       - name: ℹ️ Show .NET info

@@ -1,48 +1,54 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
-    <PackageReference Include="coverlet.collector" Version="10.0.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+    <!-- Starting with version 18.5.1, coverage is empty when ContinuousIntegrationBuild is set to true -->
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="[18.4.1, 18.5.1)" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.1" />
     <PackageReference Include="PublicApiGenerator" Version="11.5.4" />
     <PackageReference Include="ReportGenerator" Version="5.5.10" PrivateAssets="all" />
     <PackageReference Include="Serilog" Version="4.3.1" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageReference Include="Verify.XunitV3" Version="31.20.0" />
-    <PackageReference Include="xunit.v3.mtp-off" Version="3.2.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <VSTestLogger Include="trx%3BLogFileName=$(MSBuildProjectName).trx" Visible="false" />
-    <VSTestLogger Include="html%3BLogFileName=$(MSBuildProjectName).html" Visible="false" />
-  </ItemGroup>
+  <PropertyGroup Label="xUnit">
+    <!-- UseMicrosoftTestingPlatformRunner is required for JetBrains Rider to see the tests when discovery is configured to use metadata (Settings | Build, Execution, Deployment | Unit Testing | xUnit.net) -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <!-- TestingPlatformDotnetTestSupport is ignored with the .NET 10 SDK but is required for older SDKs -->
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+  </PropertyGroup>
 
   <PropertyGroup Label="Coverage">
+    <TestResultsDirectory>$([System.IO.Path]::Combine($(ArtifactsPath),'test-results',$(TargetFramework)))</TestResultsDirectory>
     <CoverageReportDirectory>$([System.IO.Path]::Combine($(ArtifactsPath),'coverage',$(TargetFramework)))</CoverageReportDirectory>
-    <VSTestResultsDirectory>$([System.IO.Path]::Combine($(ArtifactsPath),'test-results',$(TargetFramework)))</VSTestResultsDirectory>
-    <VSTestCollect>XPlat Code Coverage%3BExcludeByAttribute=GeneratedCodeAttribute</VSTestCollect>
-    <VSTestLogger>@(VSTestLogger)</VSTestLogger>
+    <CoverageReportFile>$([System.IO.Path]::Combine($(CoverageReportDirectory),'$(MSBuildProjectName).cobertura.xml'))</CoverageReportFile>
+    <CoverageSettingsFile>$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine($(MSBuildThisFileDirectory), 'coverage.xml'))))</CoverageSettingsFile>
+    <ArgsCoverage>--coverage --coverage-output-format cobertura --coverage-output $(CoverageReportFile) --coverage-settings $(CoverageSettingsFile)</ArgsCoverage>
+    <ArgsTrx>--report-trx --report-trx-filename $(MSBuildProjectName).trx --results-directory $(TestResultsDirectory)</ArgsTrx>
+    <TestingPlatformCommandLineArguments>$(ArgsCoverage) $(ArgsTrx)</TestingPlatformCommandLineArguments>
   </PropertyGroup>
 
   <Target Name="GenerateCoverageReports" AfterTargets="VSTest" Condition="$(TargetFramework) != ''">
     <ItemGroup>
-      <CoverageReport Include="$(VSTestResultsDirectory)/*/coverage.cobertura.xml" />
+      <CoverageReport Include="$(CoverageReportDirectory)/*.cobertura.xml" />
     </ItemGroup>
     <ReportGenerator ReportFiles="@(CoverageReport)" TargetDirectory="$(CoverageReportDirectory)" ReportTypes="HtmlInline;TextSummary" />
     <Move SourceFiles="@(CoverageReport)" DestinationFolder="$(CoverageReportDirectory)" />
   </Target>
 
-  <!-- Because of https://github.com/microsoft/vstest/issues/2334 and https://github.com/microsoft/vstest/issues/2378 -->
+  <!-- Because of https://github.com/microsoft/vstest/issues/2334 -->
   <Target Name="RemoveSpuriousDirectories" AfterTargets="GenerateCoverageReports" Condition="$(TargetFramework) != ''">
     <ItemGroup>
-      <SpuriousDirectory Include="$([System.IO.Directory]::GetDirectories($(VSTestResultsDirectory)))" />
+      <SpuriousDirectory Include="$([System.IO.Directory]::GetDirectories($(TestResultsDirectory)))" />
     </ItemGroup>
     <RemoveDir Directories="@(SpuriousDirectory)" />
   </Target>

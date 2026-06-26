@@ -685,6 +685,22 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
+    public Task CallerWithFile()
+    {
+        // Arrange
+        using var output = new StringWriter();
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new ScalarValue("Fully.Qualified.ClassName.MethodName(System.String) /Absolute/Path/To/FileName.cs:123")));
+
+        var formatter = new Log4NetTextFormatter();
+
+        // Act
+        formatter.Format(logEvent, output);
+
+        // Assert
+        return Verify(output);
+    }
+
+    [Fact]
     public Task CallerNonScalar()
     {
         // Arrange
@@ -701,11 +717,11 @@ public sealed class Log4NetTextFormatterTest : IDisposable
     }
 
     [Fact]
-    public Task CallerWithFile()
+    public Task CallerInvalidFormat()
     {
         // Arrange
         using var output = new StringWriter();
-        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new ScalarValue("Fully.Qualified.ClassName.MethodName(System.String) /Absolute/Path/To/FileName.cs:123")));
+        var logEvent = CreateLogEvent(properties: new LogEventProperty("Caller", new ScalarValue("NotFullyQualifiedMethodName")));
 
         var formatter = new Log4NetTextFormatter();
 

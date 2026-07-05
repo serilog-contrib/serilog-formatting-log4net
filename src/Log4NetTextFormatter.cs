@@ -160,8 +160,7 @@ public partial class Log4NetTextFormatter : ITextFormatter
         // https://github.com/serilog/serilog-extensions-logging/blob/v9.0.1/src/Serilog.Extensions.Logging/Extensions/Logging/EventIdPropertyCache.cs#L58-L73
         var isMicrosoftExtensionsLoggingEvent = logEvent.Properties.TryGetValue(EventIdPropertyName, out var property)
                                                 && property is StructureValue structure
-                                                // ReSharper disable once MergeIntoLogicalPattern -- Wrong coverage report, see https://github.com/coverlet-coverage/coverlet/issues/1969
-                                                && structure.Properties.Any(e => e.Name == "Id" || e.Name ==  "Name");
+                                                && structure.Properties.Any(e => e.Name is "Id" or "Name");
 
         if (isMicrosoftExtensionsLoggingEvent)
         {
